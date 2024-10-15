@@ -19,6 +19,9 @@
 		2B0AC9132CB86D1E0047022D /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0AC9122CB86D1E0047022D /* SignUpView.swift */; };
 		2B0AC9152CB86D310047022D /* WorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0AC9142CB86D310047022D /* WorkoutView.swift */; };
 		2B0AC9172CB86D3D0047022D /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0AC9162CB86D3D0047022D /* ProgressView.swift */; };
+		AAEA79A52CBEEEE10097A0A5 /* WorkoutModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A42CBEEEE10097A0A5 /* WorkoutModels.swift */; };
+		AAEA79A72CBEEF0A0097A0A5 /* WorkoutPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */; };
+		AAEA79A92CBEEF500097A0A5 /* WorkoutSessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +57,9 @@
 		2B0AC9122CB86D1E0047022D /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		2B0AC9142CB86D310047022D /* WorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutView.swift; sourceTree = "<group>"; };
 		2B0AC9162CB86D3D0047022D /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		AAEA79A42CBEEEE10097A0A5 /* WorkoutModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutModels.swift; sourceTree = "<group>"; };
+		AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutPlanView.swift; sourceTree = "<group>"; };
+		AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSessionDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +115,7 @@
 				2B0AC8E62CB491D60047022D /* Assets.xcassets */,
 				2B0AC8E82CB491D60047022D /* Preview Content */,
 				2B0AC90E2CB5AC960047022D /* Exercise.swift */,
+				AAEA79A42CBEEEE10097A0A5 /* WorkoutModels.swift */,
 			);
 			path = SpartanFit;
 			sourceTree = "<group>";
@@ -142,6 +149,8 @@
 			isa = PBXGroup;
 			children = (
 				2B0AC8E42CB491D30047022D /* LoginView.swift */,
+				AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */,
+				AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */,
 				2B0AC9162CB86D3D0047022D /* ProgressView.swift */,
 				2B0AC9102CB86CE00047022D /* WelcomeView.swift */,
 				2B0AC9122CB86D1E0047022D /* SignUpView.swift */,
@@ -214,7 +223,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					2B0AC8DE2CB491D30047022D = {
 						CreatedOnToolsVersion = 15.0.1;
@@ -284,7 +293,10 @@
 				2B0AC9132CB86D1E0047022D /* SignUpView.swift in Sources */,
 				2B0AC8E32CB491D30047022D /* SpartanFitApp.swift in Sources */,
 				2B0AC90F2CB5AC960047022D /* Exercise.swift in Sources */,
+				AAEA79A92CBEEF500097A0A5 /* WorkoutSessionDetailView.swift in Sources */,
+				AAEA79A72CBEEF0A0097A0A5 /* WorkoutPlanView.swift in Sources */,
 				2B0AC9172CB86D3D0047022D /* ProgressView.swift in Sources */,
+				AAEA79A52CBEEEE10097A0A5 /* WorkoutModels.swift in Sources */,
 				2B0AC9152CB86D310047022D /* WorkoutView.swift in Sources */,
 				2B0AC9112CB86CE10047022D /* WelcomeView.swift in Sources */,
 			);
@@ -503,7 +515,6 @@
 		2B0AC9072CB491D60047022D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -523,7 +534,6 @@
 		2B0AC9082CB491D60047022D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -543,7 +553,6 @@
 		2B0AC90A2CB491D60047022D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UMHUNBYB53;
@@ -561,7 +570,6 @@
 		2B0AC90B2CB491D60047022D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UMHUNBYB53;

@@ -11,7 +11,6 @@ struct LoginView: View {
     @State private var showingWorkoutScreen = false
     @State private var showingSignUpScree = false
     @State private var path = NavigationPath()
-    @StateObject var example1 = Exercise(name:"Bench Press",setCount: 4,regularWeight: 135.0,warmUpCount: 1,warmUpWeight: 95.0,setVariation: SetVariation.one)
         @State var email = ""
         @State var password = ""
     var body: some View {

@@ -83,6 +83,7 @@ struct WorkoutSessionDetailView: View {
             .padding()
         }
         .navigationTitle("Workout Session")
+        .navigationBarBackButtonHidden(true)
     }
 }
 

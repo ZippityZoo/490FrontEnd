@@ -15,7 +15,7 @@ struct WelcomeView: View {
             Color("Gold").ignoresSafeArea()
             VStack{
                 Text("Welcome to SpartanFit").font(.largeTitle).fontWeight(.heavy).padding(.bottom,5)
-                Divider().padding(5).background()
+                Divider().padding(5).background(in:RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
                 Text(date,style: .date).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                 Text(date,style: .time)
                 Spacer()
@@ -24,6 +24,7 @@ struct WelcomeView: View {
                     Color("DarkBlue")
                 }.clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)).padding(5)
                 //Workout View
+                
                 ZStack{
                     Color("DarkBlue")
                 }.clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)).padding(5)
@@ -31,6 +32,7 @@ struct WelcomeView: View {
         }
     }
 }
+
 
 #Preview {
     WelcomeView(fromLogin: false)

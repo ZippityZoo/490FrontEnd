@@ -64,6 +64,8 @@ struct WorkoutPlanView: View {
 }
 
 
+
+
 // Sample data for WorkoutPlan with multiple sessions
 let session1Exercises = [
     Exercise(name: "Bench Press", setCount: 4, regularWeight: 135.0, warmUpCount: 2, warmUpWeight: 95.0, setVariation: .one),

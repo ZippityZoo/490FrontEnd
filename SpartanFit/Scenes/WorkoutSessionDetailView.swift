@@ -40,23 +40,32 @@ struct WorkoutSessionDetailView: View {
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .padding(.bottom, 5)
-
+                            Divider().background(Color.white)
                             // Set details within the exercise
                             ForEach(exercise.sets, id: \.id) { set in
                                 VStack(alignment: .leading) {
-                                    Text("Set Type: \(set.type == .warmup ? "Warmup" : set.type == .max ? "Maxout" : "Regular")")
+                                    Text("\(set.type == .warmup ? "Warmup" : set.type == .max ? "Maxout" : "Regular") Set")
                                         .font(.subheadline)
                                         .foregroundColor(.white)
 
                                     HStack {
-                                        Text("Weight: \(set.weight, specifier: "%.1f") lbs")
-                                            .foregroundColor(.white)
+                                        VStack{
+                                            Text("Weight ").foregroundColor(.white)
+                                            Text("\(set.weight, specifier: "%.1f") lbs")
+                                                .foregroundColor(.white).padding(4)
+                                        }
                                         Spacer()
-                                        Text("Reps: \(set.repsInput.map { String($0) }.joined(separator: ", "))")
-                                            .foregroundColor(.white)
+                                        VStack{
+                                            Text("Reps").foregroundColor(.white)
+                                            Text("\(set.repsInput.map { String($0) }.joined(separator: ", "))")
+                                                .foregroundColor(.white).padding(4)
+                                        }
                                         Spacer()
-                                        Text("Goal Reps: \(set.repsAssumed.map { String($0) }.joined(separator: ", "))")
-                                            .foregroundColor(.white)
+                                        VStack{
+                                            Text("Goal Reps").foregroundColor(.white)
+                                            Text("\(set.repsAssumed.map { String($0) }.joined(separator: ", "))")
+                                                .foregroundColor(.white).padding(4)
+                                        }
                                     }
                                     Divider().background(Color.white)  // White divider
                                 }

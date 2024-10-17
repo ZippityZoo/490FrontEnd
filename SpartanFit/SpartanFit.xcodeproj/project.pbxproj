@@ -22,6 +22,7 @@
 		AAEA79A52CBEEEE10097A0A5 /* WorkoutModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A42CBEEEE10097A0A5 /* WorkoutModels.swift */; };
 		AAEA79A72CBEEF0A0097A0A5 /* WorkoutPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */; };
 		AAEA79A92CBEEF500097A0A5 /* WorkoutSessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */; };
+		AAEA79AB2CC18F660097A0A5 /* SetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79AA2CC18F660097A0A5 /* SetView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 		AAEA79A42CBEEEE10097A0A5 /* WorkoutModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutModels.swift; sourceTree = "<group>"; };
 		AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutPlanView.swift; sourceTree = "<group>"; };
 		AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSessionDetailView.swift; sourceTree = "<group>"; };
+		AAEA79AA2CC18F660097A0A5 /* SetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +157,7 @@
 				2B0AC9102CB86CE00047022D /* WelcomeView.swift */,
 				2B0AC9122CB86D1E0047022D /* SignUpView.swift */,
 				2B0AC9142CB86D310047022D /* WorkoutView.swift */,
+				AAEA79AA2CC18F660097A0A5 /* SetView.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -297,6 +300,7 @@
 				AAEA79A72CBEEF0A0097A0A5 /* WorkoutPlanView.swift in Sources */,
 				2B0AC9172CB86D3D0047022D /* ProgressView.swift in Sources */,
 				AAEA79A52CBEEEE10097A0A5 /* WorkoutModels.swift in Sources */,
+				AAEA79AB2CC18F660097A0A5 /* SetView.swift in Sources */,
 				2B0AC9152CB86D310047022D /* WorkoutView.swift in Sources */,
 				2B0AC9112CB86CE10047022D /* WelcomeView.swift in Sources */,
 			);

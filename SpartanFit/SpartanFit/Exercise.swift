@@ -18,55 +18,57 @@ enum SetType {
 }
 
 
-// Class to represent each set within an exercise
+// WorkoutSet class (reflecting the set-level details within an exercise)
 class WorkoutSet: Identifiable {
-    var id = UUID()  // Make each set identifiable
+    var id = UUID()
     @Published var type: SetType
     @Published var weight: Double
     @Published var repsInput: [Int]
     @Published var repsAssumed: [Int]
-    
-    init(type: SetType, weight: Double, repsAssumed: [Int]) {
+    @Published var restTime: Int  // Rest time in seconds
+
+    init(type: SetType, weight: Double, repsAssumed: [Int], restTime: Int) {
         self.type = type
         self.weight = weight
         self.repsAssumed = repsAssumed
-        self.repsInput = Array(repeating: 0, count: repsAssumed.count)  // Initialize repsInput with zeros
+        self.repsInput = Array(repeating: 0, count: repsAssumed.count)
+        self.restTime = restTime
     }
 }
 
 
-// New Exercise class
+// New Exercise class mapped to DB
 class Exercise: ObservableObject, Identifiable {
-    var id = UUID() 
+    var id: Int
     @Published var name: String
     @Published var sets: [WorkoutSet]
+    @Published var apiId: Int
+    @Published var planSets: Int
+    @Published var planReps: Int
+    @Published var planWeight: Double
+    @Published var restTime: Int
     @Published var setVariation: SetVariation
     
-  
-    init(name: String, setCount: Int, regularWeight: Double, warmUpCount: Int, warmUpWeight: Double, setVariation: SetVariation) {
+    // Sample initializer
+    init(id: Int, name: String, apiId: Int, planSets: Int, planReps: Int, planWeight: Double, restTime: Int, setVariation: SetVariation) {
+        self.id = id
         self.name = name
-        self.sets = []
+        self.apiId = apiId
+        self.planSets = planSets
+        self.planReps = planReps
+        self.planWeight = planWeight
+        self.restTime = restTime
         self.setVariation = setVariation
-        
-        // Initialize the warm-up sets
-        for _ in 0..<warmUpCount {
-            let warmUpSet = WorkoutSet(type: .warmup, weight: warmUpWeight, repsAssumed: setVariation == .alternate ? [10,8] : [10])
-            self.sets.append(warmUpSet)
-        }
-        
-        // Initialize the regular sets
-        for _ in warmUpCount..<setCount {
-            let regularSet = WorkoutSet(type: .regular, weight: regularWeight, repsAssumed: setVariation == .alternate ? [10, 8] : [10])
-            self.sets.append(regularSet)
-        }
-        
-        // If maxout variation, handle special logic for maxout sets
-        if setVariation == .maxout {
-            self.sets.removeLast()  // Remove the last regular set
-            let maxOutSet = WorkoutSet(type: .max, weight: warmUpWeight, repsAssumed: [10])
-            self.sets.append(maxOutSet)
+        self.sets = []
+
+        // Initialize the sets (warmup and regular)
+        for _ in 0..<planSets {
+            let workoutSet = WorkoutSet(type: .regular, weight: planWeight, repsAssumed: [planReps], restTime: restTime)
+            self.sets.append(workoutSet)
         }
     }
+    
+    
     // Method to render exercise details in SwiftUI view
     func exercisePage() -> some View {
         VStack(alignment: .leading) {

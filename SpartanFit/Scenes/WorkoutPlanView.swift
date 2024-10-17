@@ -7,64 +7,63 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct WorkoutPlanView: View {
     @State var workoutPlan: WorkoutPlan
+    
     var body: some View {
-        
         NavigationView {
             ZStack {
-                Color("Gold").ignoresSafeArea() // Gold background for the entire view
+                Color("Gold").ignoresSafeArea() // Gold background
                 
                 VStack {
                     Text(workoutPlan.name)
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.black)
                         .padding(.top, 50)
-                    WorkoutPlanBody(workoutPlan: self.workoutPlan)
-                    
+                    WorkoutPlanBody(workoutPlan: workoutPlan)
                 }
             }
         }
     }
 }
 
-struct WorkoutPlanBody:View{
+struct WorkoutPlanBody: View {
     @State var workoutPlan: WorkoutPlan
-    var body: some View{
+    
+    var body: some View {
         List {
             ForEach(workoutPlan.sessions) { session in
-                // Each session will have a full blue background
                 Section {
                     VStack(alignment: .leading, spacing: 10) {
-                        // Exercises within the session
-                        ForEach(session.exercises, id: \.id) { exercise in
+                        ForEach(session.exercises) { exercise in
                             NavigationLink(destination: WorkoutSessionDetailView(session: session)) {
                                 HStack {
                                     Text(exercise.name)
                                         .font(.subheadline)
-                                        .foregroundColor(.white) // White text for better contrast
+                                        .foregroundColor(.white)
                                     Spacer()
                                     Text("\(exercise.sets.count) sets")
                                         .foregroundColor(.white)
                                 }
                                 .padding(.horizontal)
                                 .padding(.vertical, 10)
-                                
                             }
                         }
                     }
-                    .padding() // Add padding around the exercise list within the session
-                    .background(Color("DarkBlue").cornerRadius(25)).overlay(RoundedRectangle(cornerRadius: 25) // Rounded rectangle for the border
-                        .stroke(.black, lineWidth: 5)) // Blue background for entire session and black border
+                    .padding()
+                    .background(Color("DarkBlue").cornerRadius(25))
+                    .overlay(RoundedRectangle(cornerRadius: 25).stroke(.black, lineWidth: 5))
                     
                 } header: {
                     Text(session.date, style: .date)
                         .font(.headline)
                         .foregroundColor(.white)
-                        .padding(.vertical, 5) // Padding for session date header
+                        .padding(.vertical, 5)
                 }
-                .listRowBackground(Color.clear) // Remove default list background
+                .listRowBackground(Color.clear)
             }
         }
         .listStyle(InsetGroupedListStyle())
@@ -72,37 +71,41 @@ struct WorkoutPlanBody:View{
     }
 }
 
-
-
-// Sample data for WorkoutPlan with multiple sessions
 let session1Exercises = [
-    Exercise(name: "Bench Press", setCount: 4, regularWeight: 135.0, warmUpCount: 2, warmUpWeight: 95.0, setVariation: .one),
-    Exercise(name: "Squat", setCount: 3, regularWeight: 185.0, warmUpCount: 1, warmUpWeight: 135.0, setVariation: .alternate)
+    Exercise(id: 1, name: "Bench Press", apiId: 101, planSets: 4, planReps: 12, planWeight: 135.0, restTime: 60,  setVariation: .one),
+    Exercise(id: 2, name: "Squat", apiId: 102, planSets: 3, planReps: 10, planWeight: 185.0, restTime: 90,  setVariation: .alternate),
+    Exercise(id: 3, name: "Deadlift", apiId: 103, planSets: 4, planReps: 12, planWeight: 225.0, restTime: 60, setVariation: .one),
+    Exercise(id: 4, name: "Overhead Press", apiId: 104, planSets: 3, planReps: 8, planWeight: 95.0, restTime: 90, setVariation: .maxout),
+    Exercise(id: 5, name: "Pull-Ups", apiId: 105, planSets: 3, planReps: 10, planWeight: 0.0, restTime: 0, setVariation: .one),
+    Exercise(id: 6, name: "Barbell Row", apiId: 106, planSets: 4, planReps: 8, planWeight: 135.0, restTime: 60, setVariation: .alternate)
 ]
 
 let session2Exercises = [
-    Exercise(name: "Deadlift", setCount: 4, regularWeight: 225.0, warmUpCount: 1, warmUpWeight: 135.0, setVariation: .one),
-    Exercise(name: "Overhead Press", setCount: 3, regularWeight: 95.0, warmUpCount: 1, warmUpWeight: 45.0, setVariation: .maxout)
+    Exercise(id: 3, name: "Deadlift", apiId: 103, planSets: 4, planReps: 12, planWeight: 225.0, restTime: 60, setVariation: .one),
+    Exercise(id: 4, name: "Overhead Press", apiId: 104, planSets: 3, planReps: 8, planWeight: 95.0, restTime: 90, setVariation: .maxout)
 ]
 
 let session3Exercises = [
-    Exercise(name: "Pull-Ups", setCount: 3, regularWeight: 0.0, warmUpCount: 0, warmUpWeight: 0.0, setVariation: .one),
-    Exercise(name: "Barbell Row", setCount: 4, regularWeight: 135.0, warmUpCount: 1, warmUpWeight: 95.0, setVariation: .alternate),
-    Exercise(name: "Dips", setCount: 3, regularWeight: 0.0, warmUpCount: 0, warmUpWeight: 0.0, setVariation: .maxout)
+    Exercise(id: 5, name: "Pull-Ups", apiId: 105, planSets: 3, planReps: 10, planWeight: 0.0, restTime: 0, setVariation: .one),
+    Exercise(id: 6, name: "Barbell Row", apiId: 106, planSets: 4, planReps: 8, planWeight: 135.0, restTime: 60, setVariation: .alternate)
 ]
 
-// Create multiple workout sessions with different exercises
 let sampleWorkoutSessions = [
-    WorkoutSession(date: Date().addingTimeInterval(-86400 * 3), exercises: session1Exercises),  // Session 3 days ago
-    WorkoutSession(date: Date().addingTimeInterval(-86400 * 2), exercises: session2Exercises),  // Session 2 days ago
-    WorkoutSession(date: Date().addingTimeInterval(-86400), exercises: session3Exercises)       // Session 1 day ago
+    WorkoutSession(id: 1, date: Date().addingTimeInterval(0), calories: 300, type: "Strength", intensity: "Advanced", duration: 45, exercises: session1Exercises),
+    WorkoutSession(id: 2, date: Date().addingTimeInterval(86400), calories: 400, type: "Strength", intensity: "Advanced", duration: 60, exercises: session2Exercises),
+    WorkoutSession(id: 3, date: Date().addingTimeInterval(86400 * 2), calories: 250, type: "Endurance", intensity: "Beginner", duration: 30, exercises: session3Exercises)
 ]
 
-// Sample workout plan with multiple sessions
-let sampleWorkoutPlan = WorkoutPlan(name: "Full Body Strength Training", sessions: sampleWorkoutSessions)
+let sampleWorkoutPlan = WorkoutPlan(
+    id: 1,
+    userId: 3601,
+    name: "Full Body Strength Training",
+    startDate: Date().addingTimeInterval(-86400 * 30), // 30 days ago
+    endDate: Date().addingTimeInterval(86400 * 30),    // 30 days in the future
+    isActive: true,
+    sessions: sampleWorkoutSessions
+)
 
 #Preview {
     WorkoutPlanView(workoutPlan: sampleWorkoutPlan)
 }
-
-

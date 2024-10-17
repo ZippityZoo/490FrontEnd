@@ -6,17 +6,26 @@
 //
 
 import Foundation
+import SwiftUI
 
-// WorkoutPlan model
+// Updated WorkoutPlan model to align with the backend db
 struct WorkoutPlan: Identifiable {
-    var id = UUID()
+    var id: Int
+    var userId: Int
     var name: String
+    var startDate: Date
+    var endDate: Date
+    var isActive: Bool
     var sessions: [WorkoutSession]
 }
 
-// WorkoutSession model
+// Updated WorkoutSession model, mapped to DB
 struct WorkoutSession: Identifiable {
-    var id = UUID()
+    var id: Int
     var date: Date
-    var exercises: [Exercise]  
+    var calories: Int
+    var type: String
+    var intensity: String
+    var duration: Int 
+    var exercises: [Exercise] // Corresponds to exercises for this workout session
 }

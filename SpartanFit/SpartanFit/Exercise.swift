@@ -19,7 +19,7 @@ enum SetType {
 
 
 // WorkoutSet class (reflecting the set-level details within an exercise)
-class WorkoutSet: Identifiable {
+class WorkoutSet: ObservableObject, Identifiable {
     var id = UUID()
     @Published var type: SetType
     @Published var weight: Double

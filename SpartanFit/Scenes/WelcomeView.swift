@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct WelcomeView: View {
     @State var fromLogin: Bool // Will hide the back button if navigated from login/signup
     @State var date: Date = .now
@@ -31,18 +29,24 @@ struct WelcomeView: View {
                     // Header
                     headerView
                     
-                    // Progress View placeholder
-                    progressView
-                        .frame(height: 275) // Set a fixed height for the progress view
+                    // Progress View navigation
+                    NavigationLink(destination: ProgressView()) {
+                        progressView
+                            .frame(height: 275) // Set a fixed height for the progress view
+                    }
                     
-                    // Display today's workout
+                    // Display today's workout with navigation to session detail
                     VStack {
-                        Text("Today's Workout")
+                        Text("Today's Workout:")
                             .font(.title2)
                             .foregroundColor(.black)
+                            .padding(.top, 10)
+                            .underline()
                         
                         if let session = todaysWorkoutSession {
-                            todaysWorkoutView(session: session)
+                            NavigationLink(destination: WorkoutSessionDetailView(session: session)) {
+                                todaysWorkoutView(session: session)
+                            }
                         } else {
                             Text("No workout scheduled for today.")
                                 .font(.subheadline)
@@ -52,7 +56,7 @@ struct WelcomeView: View {
                                 .cornerRadius(25)
                         }
                     }
-                    .frame(height: 300) // Match height to maintain visual balance
+                    .frame(height: 315) // Match height to maintain visual balance
                 }
                 .padding() // Padding around the VStack
             }
@@ -86,47 +90,50 @@ struct WelcomeView: View {
             Color("DarkBlue")
                 .clipShape(RoundedRectangle(cornerRadius: 25))
                 .padding(5)
+            Text("View Progress")
+                .font(.title3)
+                .foregroundColor(.white)
         }
     }
     
     func todaysWorkoutView(session: WorkoutSession) -> some View {
-            ZStack {
-                Color("DarkBlue")
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 10) {
-                            ForEach(session.exercises.indices, id: \.self) { index in
-                                HStack {
-                                    Text(session.exercises[index].name)
-                                        .font(.subheadline)
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                    Text("\(session.exercises[index].sets.count) sets")
-                                        .foregroundColor(.white)
-                                }
-                                .id(index)
-                                .padding()
-                                .background(Color("DarkBlue").cornerRadius(25))
+        ZStack {
+            Color("DarkBlue")
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(session.exercises.indices, id: \.self) { index in
+                            HStack {
+                                Text(session.exercises[index].name)
+                                    .font(.subheadline)
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Text("\(session.exercises[index].sets.count) sets")
+                                    .foregroundColor(.white)
                             }
+                            .id(index)
+                            .padding()
+                            .background(Color("DarkBlue").cornerRadius(25))
                         }
-                        .padding()
-                        .onReceive(timer) { _ in
-                            withAnimation {
-                                if scrollIndex < session.exercises.count - 1 {
-                                    scrollIndex += 1
-                                } else {
-                                    scrollIndex = 0
-                                }
-                                proxy.scrollTo(scrollIndex, anchor: .bottom)
+                    }
+                    .padding()
+                    .onReceive(timer) { _ in
+                        withAnimation {
+                            if scrollIndex < session.exercises.count - 1 {
+                                scrollIndex += 1
+                            } else {
+                                scrollIndex = 0
                             }
+                            proxy.scrollTo(scrollIndex, anchor: .bottom)
                         }
                     }
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 25))
-            .padding(5)
         }
+        .clipShape(RoundedRectangle(cornerRadius: 25))
+        .padding(5)
     }
+}
 
 #Preview {
     WelcomeView(fromLogin: false)

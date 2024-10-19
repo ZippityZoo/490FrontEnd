@@ -91,6 +91,7 @@ struct WelcomeView: View {
     
     func todaysWorkoutView(session: WorkoutSession) -> some View {
             ZStack {
+                
                 Color("DarkBlue")
                 ScrollViewReader { proxy in
                     ScrollView {
@@ -122,6 +123,9 @@ struct WelcomeView: View {
                         }
                     }
                 }
+                NavigationLink(destination: WorkoutSessionDetailView(session: session)){
+                    Color(.clear)
+                }
             }
             .clipShape(RoundedRectangle(cornerRadius: 25))
             .padding(5)
@@ -131,3 +135,4 @@ struct WelcomeView: View {
 #Preview {
     WelcomeView(fromLogin: false)
 }
+

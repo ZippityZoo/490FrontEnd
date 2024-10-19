@@ -33,7 +33,7 @@ struct WorkoutSessionDetailView: View {
                                     SetView(workoutSet: set, setNumber: index + 1)
                                 }
                             }
-                            .padding(20)
+                            .padding()
                             .background(Color("DarkBlue").cornerRadius(25))
                         }
                         .listRowBackground(Color.clear)

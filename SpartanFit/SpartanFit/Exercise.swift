@@ -11,10 +11,18 @@ enum SetVariation {
 
 
 // Enum to represent types of sets
-enum SetType {
+enum SetType : CustomStringConvertible {
     case regular
     case warmup
     case max
+    
+    var description: String{
+        switch self{
+            case .regular: return "Regular"
+            case .warmup:  return "Warm UP"
+            case .max:     return "Max"
+        }
+    }
 }
 
 

@@ -12,22 +12,26 @@ struct SetView: View {
     var setNumber: Int
     
     var body: some View {
+        
         VStack(alignment: .leading) {
-            Text("Set \(setNumber)")
-                .font(.headline)
-                .foregroundColor(.yellow)
-            
-            HStack {
-                Spacer()
+            HStack{
+                Text("Set \(setNumber)")
+                    .font(.headline)
+                    .foregroundColor(.yellow)
+                Text("\(workoutSet.type.description)").font(.headline)
+                    .foregroundColor(.yellow)
+            }
+            Divider()
+            HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text("Weight")
                         .font(.headline)
                         .foregroundColor(.white)
                     Text("\(workoutSet.weight, specifier: "%.1f") lbs")
                         .foregroundColor(.white)
-                    Spacer()
+                        .padding(.top)
+                        .padding(.bottom)
                 }
-                Spacer()
                 VStack(alignment: .leading) {
                     Text("Reps")
                         .font(.headline)
@@ -41,9 +45,63 @@ struct SetView: View {
                             .padding(4)
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(5)
+                            .minimumScaleFactor(1)
+                            
                     }
                 }
+                VStack(alignment: .leading) {
+                    Text("Goal Reps")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    VStack{
+                        ForEach(workoutSet.repsAssumed, id:\.self){goal in
+                            Text("\(goal)").foregroundColor(.white)
+                                .padding(4)
+                            
+                        }
+                        
+                    }
+    
+                }
+                VStack(alignment: .leading) {
+                    Text("Rest")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    Text("\(workoutSet.restTime) sec")
+                        .foregroundColor(.white)
+                        .padding(.top)
+                        .padding(.bottom)
+
+                }
+                
+            }
+                /*
                 Spacer()
+                VStack(alignment: .leading) {
+                    Text("Weight")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    Text("\(workoutSet.weight, specifier: "%.1f") lbs")
+                        .foregroundColor(.white)
+                    Spacer()
+                }
+                //Spacer()
+                VStack(alignment: .leading) {
+                    Text("Reps")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    
+                    // Editable TextField for reps input
+                    ForEach(workoutSet.repsInput.indices, id: \.self) { index in
+                        TextField("Reps", value: $workoutSet.repsInput[index], formatter: NumberFormatter())
+                            .keyboardType(.numberPad)  // Enable number pad for easier input
+                            .foregroundColor(.white)
+                            .padding(4)
+                            .background(Color.gray.opacity(0.2))
+                            .cornerRadius(5)
+                    }.scaledToFit()
+                }
+                //Spacer()
                 VStack(alignment: .leading) {
                     Text("Goal Reps")
                         .font(.headline)
@@ -52,7 +110,7 @@ struct SetView: View {
                         .foregroundColor(.white)
                     Spacer()
                 }
-                Spacer()
+               //Spacer()
                 VStack(alignment: .leading) {
                     Text("Rest")
                         .font(.headline)
@@ -61,9 +119,11 @@ struct SetView: View {
                         .foregroundColor(.white)
                     Spacer()
                 }
-            }
+                 */
+            
             Divider()
                 .background(Color.white)
+                
         }
         .padding()
         .background(Color("DarkBlue").cornerRadius(15))

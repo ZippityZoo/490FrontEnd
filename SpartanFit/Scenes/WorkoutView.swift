@@ -91,6 +91,18 @@ import SwiftUI
 import SwiftUI
 
 struct AutoScrollView: View {
+    @State private var input = ""
+    var body: some View{
+        HStack{
+            Text("Reps")
+            VStack{
+                TextField("Enter Number",text:$input).textFieldStyle(.roundedBorder)
+                TextField("Enter Number",text:$input).textFieldStyle(.roundedBorder)
+            }
+            Text("Rest LOLOLOLOLOOOOOOOOOO")
+        }
+    }
+    /*
     // Sample data
     let items = Array(1...100).map { "Item \($0)" }
     
@@ -127,6 +139,7 @@ struct AutoScrollView: View {
             .padding()
         }
     }
+     */
 }
 
 struct AutoScrollView_Previews: PreviewProvider {

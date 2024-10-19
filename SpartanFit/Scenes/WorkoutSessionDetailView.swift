@@ -9,7 +9,7 @@ struct WorkoutSessionDetailView: View {
             ZStack {
                 //Color("DarkBlue")
                 Color("Gold").ignoresSafeArea() // Background color
-                
+
                 VStack {
                     // Header for the session date
                     Text(session.date, style: .date)
@@ -17,9 +17,9 @@ struct WorkoutSessionDetailView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.black)
                         .padding(.top, 20)
-                    
+
                     // Exercises in the session
-                    
+
                     List {
                         ForEach(session.exercises) { exercise in
                             VStack(alignment: .leading, spacing: 10) {
@@ -41,13 +41,32 @@ struct WorkoutSessionDetailView: View {
                     }
                     .listStyle(InsetGroupedListStyle())
                     .scrollContentBackground(.hidden) // Remove white scroll box background
-                    
+
                 }
             }
             .navigationBarBackButtonHidden(true)
-            
+
+        }
+        .navigationTitle("Today's Workout")
+    }
+
+    /*
+    // Function to go to the previous workout
+    func previousWorkout() {
+        if currentIndex > 0 {
+            currentIndex -= 1
+            session = allSessions[currentIndex]
         }
     }
+
+    // Function to go to the next workout
+    func nextWorkout() {
+        if currentIndex < allSessions.count - 1 {
+            currentIndex += 1
+            session = allSessions[currentIndex]
+        }
+    }
+     */
 }
 
 #Preview {

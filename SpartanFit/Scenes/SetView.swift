@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SetView: View {
-    var workoutSet: WorkoutSet
+    @ObservedObject var workoutSet: WorkoutSet  // ObservedObject to track changes
     var setNumber: Int
     
     var body: some View {
@@ -32,9 +32,16 @@ struct SetView: View {
                     Text("Reps")
                         .font(.headline)
                         .foregroundColor(.white)
-                    Text(workoutSet.repsInput.map { String($0) }.joined(separator: ", "))
-                        .foregroundColor(.white)
-                    Spacer()
+                    
+                    // Editable TextField for reps input
+                    ForEach(workoutSet.repsInput.indices, id: \.self) { index in
+                        TextField("Reps", value: $workoutSet.repsInput[index], formatter: NumberFormatter())
+                            .keyboardType(.numberPad)  // Enable number pad for easier input
+                            .foregroundColor(.white)
+                            .padding(4)
+                            .background(Color.gray.opacity(0.2))
+                            .cornerRadius(5)
+                    }
                 }
                 Spacer()
                 VStack(alignment: .leading) {
@@ -50,14 +57,15 @@ struct SetView: View {
                     Text("Rest")
                         .font(.headline)
                         .foregroundColor(.white)
-                    Text("\(workoutSet.restTime)")
+                    Text("\(workoutSet.restTime) sec")
                         .foregroundColor(.white)
                     Spacer()
                 }
             }
             Divider()
-            .background(Color.white)
+                .background(Color.white)
         }
+        .padding()
         .background(Color("DarkBlue").cornerRadius(15))
     }
 }

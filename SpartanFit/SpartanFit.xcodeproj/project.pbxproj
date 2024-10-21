@@ -23,6 +23,9 @@
 		AAEA79A72CBEEF0A0097A0A5 /* WorkoutPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */; };
 		AAEA79A92CBEEF500097A0A5 /* WorkoutSessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */; };
 		AAEA79AB2CC18F660097A0A5 /* SetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79AA2CC18F660097A0A5 /* SetView.swift */; };
+		AAEA79AD2CC6FCA10097A0A5 /* UserModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79AC2CC6FC9E0097A0A5 /* UserModels.swift */; };
+		AAEA79AF2CC6FCE60097A0A5 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79AE2CC6FCE60097A0A5 /* UserProfileView.swift */; };
+		AAEA79B12CC6FF620097A0A5 /* UserPreferenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79B02CC6FF620097A0A5 /* UserPreferenceView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +65,9 @@
 		AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutPlanView.swift; sourceTree = "<group>"; };
 		AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSessionDetailView.swift; sourceTree = "<group>"; };
 		AAEA79AA2CC18F660097A0A5 /* SetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetView.swift; sourceTree = "<group>"; };
+		AAEA79AC2CC6FC9E0097A0A5 /* UserModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModels.swift; sourceTree = "<group>"; };
+		AAEA79AE2CC6FCE60097A0A5 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
+		AAEA79B02CC6FF620097A0A5 /* UserPreferenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferenceView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +124,7 @@
 				2B0AC8E82CB491D60047022D /* Preview Content */,
 				2B0AC90E2CB5AC960047022D /* Exercise.swift */,
 				AAEA79A42CBEEEE10097A0A5 /* WorkoutModels.swift */,
+				AAEA79AC2CC6FC9E0097A0A5 /* UserModels.swift */,
 			);
 			path = SpartanFit;
 			sourceTree = "<group>";
@@ -153,10 +160,12 @@
 				2B0AC8E42CB491D30047022D /* LoginView.swift */,
 				AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */,
 				AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */,
+				AAEA79AE2CC6FCE60097A0A5 /* UserProfileView.swift */,
 				2B0AC9162CB86D3D0047022D /* ProgressView.swift */,
 				2B0AC9102CB86CE00047022D /* WelcomeView.swift */,
 				2B0AC9122CB86D1E0047022D /* SignUpView.swift */,
 				2B0AC9142CB86D310047022D /* WorkoutView.swift */,
+				AAEA79B02CC6FF620097A0A5 /* UserPreferenceView.swift */,
 				AAEA79AA2CC18F660097A0A5 /* SetView.swift */,
 			);
 			path = Scenes;
@@ -297,11 +306,14 @@
 				2B0AC8E32CB491D30047022D /* SpartanFitApp.swift in Sources */,
 				2B0AC90F2CB5AC960047022D /* Exercise.swift in Sources */,
 				AAEA79A92CBEEF500097A0A5 /* WorkoutSessionDetailView.swift in Sources */,
+				AAEA79AF2CC6FCE60097A0A5 /* UserProfileView.swift in Sources */,
 				AAEA79A72CBEEF0A0097A0A5 /* WorkoutPlanView.swift in Sources */,
 				2B0AC9172CB86D3D0047022D /* ProgressView.swift in Sources */,
 				AAEA79A52CBEEEE10097A0A5 /* WorkoutModels.swift in Sources */,
 				AAEA79AB2CC18F660097A0A5 /* SetView.swift in Sources */,
+				AAEA79B12CC6FF620097A0A5 /* UserPreferenceView.swift in Sources */,
 				2B0AC9152CB86D310047022D /* WorkoutView.swift in Sources */,
+				AAEA79AD2CC6FCA10097A0A5 /* UserModels.swift in Sources */,
 				2B0AC9112CB86CE10047022D /* WelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

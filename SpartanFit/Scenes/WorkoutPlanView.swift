@@ -5,7 +5,6 @@
 //  Created by Garrett Emerich on 10/15/24.
 //
 
-import SwiftUI
 
 import SwiftUI
 
@@ -13,20 +12,20 @@ struct WorkoutPlanView: View {
     @State var workoutPlan: WorkoutPlan
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color("Gold").ignoresSafeArea() // Gold background
-                
-                VStack {
-                    Text(workoutPlan.name)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.black)
-                        .padding(.top, 50)
-                    WorkoutPlanBody(workoutPlan: workoutPlan)
-                }
+        
+        ZStack {
+            Color("Gold").ignoresSafeArea() // Gold background
+            
+            VStack {
+                Text(workoutPlan.name)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+                    .padding(.top, 50)
+                WorkoutPlanBody(workoutPlan: workoutPlan)
             }
         }
+        
     }
 }
 

@@ -13,6 +13,7 @@ struct LoginView: View {
     @State private var path = NavigationPath()
         @State var email = ""
         @State var password = ""
+     var user: User
     var body: some View {
         NavigationView{
             ZStack{
@@ -37,7 +38,7 @@ struct LoginView: View {
                             }
                             HStack{
                                 Spacer()
-                                NavigationLink(destination: { WelcomeView(fromLogin: true)} ,label:{
+                                NavigationLink(destination: { WelcomeView(fromLogin: true, user: user)} ,label:{
                                     Text("Login").frame(alignment: .bottomTrailing).padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)).background().clipShape(RoundedRectangle(cornerRadius: 15.0)).bold().padding(EdgeInsets(top: 15, leading: 5, bottom: 5, trailing: 10))
                                 })
                                 /*
@@ -77,6 +78,6 @@ struct LoginView: View {
 
 
 #Preview {
-    LoginView()
+    LoginView(user: sampleUser)
 }
 

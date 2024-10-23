@@ -91,64 +91,27 @@ import SwiftUI
 import SwiftUI
 import Charts
 
-struct SalesData {
-    let month: String
-    let productA: Double
-    let productB: Double
-    let productC: Double
+struct ValuePerCategory {
+    var category: String
+    var value: Double
 }
 
-let salesData: [SalesData] = [
-    SalesData(month: "January", productA: 3000, productB: 2000, productC: 1500),
-    SalesData(month: "February", productA: 4000, productB: 2500, productC: 2000),
-    SalesData(month: "March", productA: 3500, productB: 3000, productC: 2500)
+
+let data: [ValuePerCategory] = [
+    .init(category: "A", value: 5),
+    .init(category: "B", value: 9),
+    .init(category: "C", value: 7)
 ]
-
-
-struct StackedBarGraph: View {
-    let data: [SalesData]
-
-    var body: some View {
-        VStack {
-            ForEach(data, id: \.month) { entry in
-                HStack(spacing: 10) {
-                    // Product A
-                    Rectangle()
-                        .fill(Color.red)
-                        .frame(width: 30, height: CGFloat(entry.productA / 100)) // Scale for visibility
-                    // Product B
-                    Rectangle()
-                        .fill(Color.blue)
-                        .frame(width: 30, height: CGFloat(entry.productB / 100)) // Scale for visibility
-                    // Product C
-                    Rectangle()
-                        .fill(Color.green)
-                        .frame(width: 30, height: CGFloat(entry.productC / 100)) // Scale for visibility
-                }
-                .frame(height: 200) // Set a fixed height for each row
-                .overlay(
-                    Text(entry.month)
-                        .font(.caption)
-                        .foregroundColor(.black)
-                        .padding(.top, 5),
-                    alignment: .top
-                )
-            }
-        }
-        .padding()
-    }
-}
-#Preview{
-    ContentView()
-}
 
 struct ContentView: View {
     var body: some View {
-        VStack{
-            Text("\(NSDate())")
-            StackedBarGraph(data: salesData)
-                .padding()
-                .border(Color.black)
+        ZStack{
+            Chart(data, id: \.category) { item in
+                BarMark(
+                    x: .value("Category", item.category),
+                    y: .value("Value", item.value)
+                )
+            }
         }
     }
 }
@@ -174,9 +137,10 @@ struct ContentView: View {
         }.padding(50)
     }
 }
+ */
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(numbers:[1.0,5.0,3.0,7.0,7.0,8.0])
+        ContentView()
     }
 }
-*/
+

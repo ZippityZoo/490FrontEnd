@@ -89,66 +89,94 @@ import SwiftUI
 //    WorkoutView()
 //}
 import SwiftUI
+import Charts
 
-struct AutoScrollView: View {
-    @State private var input = ""
-    var body: some View{
-        HStack{
-            Text("Reps")
-            VStack{
-                TextField("Enter Number",text:$input).textFieldStyle(.roundedBorder)
-                TextField("Enter Number",text:$input).textFieldStyle(.roundedBorder)
+struct SalesData {
+    let month: String
+    let productA: Double
+    let productB: Double
+    let productC: Double
+}
+
+let salesData: [SalesData] = [
+    SalesData(month: "January", productA: 3000, productB: 2000, productC: 1500),
+    SalesData(month: "February", productA: 4000, productB: 2500, productC: 2000),
+    SalesData(month: "March", productA: 3500, productB: 3000, productC: 2500)
+]
+
+
+struct StackedBarGraph: View {
+    let data: [SalesData]
+
+    var body: some View {
+        VStack {
+            ForEach(data, id: \.month) { entry in
+                HStack(spacing: 10) {
+                    // Product A
+                    Rectangle()
+                        .fill(Color.red)
+                        .frame(width: 30, height: CGFloat(entry.productA / 100)) // Scale for visibility
+                    // Product B
+                    Rectangle()
+                        .fill(Color.blue)
+                        .frame(width: 30, height: CGFloat(entry.productB / 100)) // Scale for visibility
+                    // Product C
+                    Rectangle()
+                        .fill(Color.green)
+                        .frame(width: 30, height: CGFloat(entry.productC / 100)) // Scale for visibility
+                }
+                .frame(height: 200) // Set a fixed height for each row
+                .overlay(
+                    Text(entry.month)
+                        .font(.caption)
+                        .foregroundColor(.black)
+                        .padding(.top, 5),
+                    alignment: .top
+                )
             }
-            Text("Rest LOLOLOLOLOOOOOOOOOO")
+        }
+        .padding()
+    }
+}
+#Preview{
+    ContentView()
+}
+
+struct ContentView: View {
+    var body: some View {
+        VStack{
+            Text("\(NSDate())")
+            StackedBarGraph(data: salesData)
+                .padding()
+                .border(Color.black)
         }
     }
-    /*
-    // Sample data
-    let items = Array(1...100).map { "Item \($0)" }
-    
-    // State to track the scroll position
-    @State private var scrollToIndex: Int = 0
-    
-    // Timer to control the auto-scroll
-    let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+}
+
+/*so for sets we have to have
+ rep number ex:10
+ what set it is ex:set 2
+ the date ex 10/22/24
+ 
+*/
+/*
+struct ContentView: View {
+    let numbers: [Double]
     
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                VStack {
-                    ForEach(items.indices, id: \.self) { index in
-                        Text(items[index])
-                            .font(.headline)
-                            .padding()
-                            .background(Color.blue.opacity(0.3))
-                            .cornerRadius(8)
-                            .id(index) // Assign an id for scrolling
-                    }
-                }
-                .onReceive(timer) { _ in
-                    withAnimation {
-                        if scrollToIndex < items.count - 1 {
-                            scrollToIndex += 1
-                        } else {
-                            scrollToIndex = 0 // Reset to top if at the end
-                        }
-                        proxy.scrollTo(scrollToIndex, anchor: .bottom) // Scroll to the new index
-                    }
-                }
+        Chart {
+            ForEach(Array(numbers.enumerated()), id: \.offset) { index, value in
+                LineMark(
+                    x: .value("Index", index),
+                    y: .value("Value", value)
+                )
             }
-            .padding()
-        }
+        }.padding(50)
     }
-     */
 }
-
-struct AutoScrollView_Previews: PreviewProvider {
+struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        AutoScrollView()
+        ContentView(numbers:[1.0,5.0,3.0,7.0,7.0,8.0])
     }
 }
-
-
-#Preview {
-    AutoScrollView()
-}
+*/

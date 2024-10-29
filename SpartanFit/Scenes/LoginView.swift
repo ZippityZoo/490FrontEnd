@@ -17,12 +17,12 @@ struct LoginView: View {
     var body: some View {
         NavigationView{
             ZStack{
-                Color("Gold").ignoresSafeArea()
+                cream.ignoresSafeArea()
                 
                 VStack{
-                    Text("SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).lineLimit(0)
+                    Text(" SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(darkBlue)
                     ZStack{
-                        Color("DarkBlue")//.frame(width:393,height:200,alignment: .center)
+                        darkBlue//.frame(width:393,height:200,alignment: .center)
                         VStack{
                             
                             HStack{
@@ -39,7 +39,7 @@ struct LoginView: View {
                             HStack{
                                 Spacer()
                                 NavigationLink(destination: { WelcomeView(fromLogin: true, user: user)} ,label:{
-                                    Text("Login").frame(alignment: .bottomTrailing).padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)).background().clipShape(RoundedRectangle(cornerRadius: 15.0)).bold().padding(EdgeInsets(top: 15, leading: 5, bottom: 5, trailing: 10))
+                                    Text("Login").frame(alignment: .bottomTrailing).padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)).background().clipShape(RoundedRectangle(cornerRadius: 15.0)).bold().padding(EdgeInsets(top: 15, leading: 5, bottom: 5, trailing: 10)).foregroundColor(darkBlue)
                                 })
                                 /*
                                  Button("Login") {

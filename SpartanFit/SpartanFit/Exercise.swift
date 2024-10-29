@@ -1,6 +1,9 @@
 import Foundation
 import SwiftUI
 
+let darkBlue = Color(red: 11/255, green: 11/255, blue: 69/255)
+let cream = Color(red: 243/255, green: 223/255, blue: 201/255)
+let mint = Color(red: 162/255, green: 228/255, blue: 184/255)
 
 // Enum to represent variations in sets
 enum SetVariation {

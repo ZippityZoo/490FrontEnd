@@ -14,13 +14,13 @@ struct WorkoutPlanView: View {
     var body: some View {
         
         ZStack {
-            Color("Gold").ignoresSafeArea() // Gold background
+            cream.ignoresSafeArea() // cream background
             
             VStack {
                 Text(workoutPlan.name)
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(.black)
+                    .foregroundColor(darkBlue)
                     .padding(.top, 50)
                 WorkoutPlanBody(workoutPlan: workoutPlan)
             }
@@ -42,10 +42,10 @@ struct WorkoutPlanBody: View {
                                 HStack {
                                     Text(exercise.name)
                                         .font(.subheadline)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(cream)
                                     Spacer()
                                     Text("\(exercise.sets.count) sets")
-                                        .foregroundColor(.white)
+                                        .foregroundColor(cream)
                                 }
                                 .padding(.horizontal)
                                 .padding(.vertical, 10)
@@ -53,13 +53,13 @@ struct WorkoutPlanBody: View {
                         }
                     }
                     .padding()
-                    .background(Color("DarkBlue").cornerRadius(25))
+                    .background(darkBlue.cornerRadius(25))
                     .overlay(RoundedRectangle(cornerRadius: 25).stroke(.black, lineWidth: 5))
                     
                 } header: {
                     Text(session.date, style: .date)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(darkBlue)
                         .padding(.vertical, 5)
                 }
                 .listRowBackground(Color.clear)

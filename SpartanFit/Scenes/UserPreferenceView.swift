@@ -13,13 +13,14 @@ struct UserPreferencesView: View {
     
     var body: some View {
         ZStack {
-            Color("Gold").ignoresSafeArea()
+            cream.ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 20) {
                 Text("Preferences")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top, 50)
+                    .foregroundColor(darkBlue)
                 
                 if editMode {
                     // Editable fields
@@ -36,8 +37,8 @@ struct UserPreferencesView: View {
                     Text(editMode ? "Save" : "Edit Preferences")
                         .bold()
                         .padding()
-                        .background(Color("DarkBlue"))
-                        .foregroundColor(.white)
+                        .background(darkBlue)
+                        .foregroundColor(cream)
                         .cornerRadius(10)
                 }
             }
@@ -58,7 +59,7 @@ struct UserPreferencesView: View {
             preferenceField(label: "Preferred Exercise", value: $preference.preferredExercise)
         }
         .padding()
-        .background(Color("DarkBlue"))
+        .background(darkBlue)
         .cornerRadius(15)
     }
     
@@ -71,7 +72,7 @@ struct UserPreferencesView: View {
             preferenceRow(label: "Preferred Exercise", value: preference.preferredExercise)
         }
         .padding()
-        .background(Color("DarkBlue"))
+        .background(darkBlue)
         .cornerRadius(15)
     }
     
@@ -89,10 +90,10 @@ struct UserPreferencesView: View {
         HStack {
             Text(label + ":")
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(cream)
             Spacer()
             Text(value)
-                .foregroundColor(.white)
+                .foregroundColor(cream)
         }
         .padding()
         .background(Color.gray.opacity(0.2))
@@ -104,7 +105,7 @@ struct UserPreferencesView: View {
         VStack(alignment: .leading) {
             Text(label)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(cream)
             
             TextField(label, text: value)
                 .textFieldStyle(RoundedBorderTextFieldStyle())

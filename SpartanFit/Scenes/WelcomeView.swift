@@ -25,8 +25,9 @@ struct WelcomeView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color("Gold").ignoresSafeArea() // Background set to gold
-                VStack(spacing: 10) {
+                cream.ignoresSafeArea() // Background set to cream
+                VStack(spacing: 1) {
+                   Spacer()
                     // Header
                     headerView
                     
@@ -35,14 +36,15 @@ struct WelcomeView: View {
                         progressView
                             .frame(height: 275) // Set a fixed height for the progress view
                     }
+                    .padding()
                     
                     // Display today's workout with navigation to session detail
                     VStack {
                         Text("Today's Workout:")
                             .font(.title2)
-                            .foregroundColor(.black)
+                            .foregroundColor(darkBlue)
                             .padding(.top, 10)
-                            .underline()
+                            .fontWeight(.bold)
                         
                         if let session = todaysWorkoutSession {
                             NavigationLink(destination: WorkoutSessionDetailView(session: session)) {
@@ -51,19 +53,20 @@ struct WelcomeView: View {
                         } else {
                             Text("No workout scheduled for today.")
                                 .font(.subheadline)
-                                .foregroundColor(.white)
+                                .foregroundColor(.black)
                                 .padding()
-                                .background(Color("DarkBlue"))
+                                .background(darkBlue)
                                 .cornerRadius(25)
                         }
                     }
-                    .frame(height: 315) // Match height to maintain visual balance
+                    .frame(height: 390) // Match height to maintain visual balance
                 }
                 .padding() // Padding around the VStack
             }
         }
         .navigationBarBackButtonHidden(fromLogin)
     }
+        
     
     // MARK: - Subviews
     
@@ -76,44 +79,47 @@ struct WelcomeView: View {
                     .font(.title)
                     .fontWeight(.heavy)
                     .padding(.bottom, 5)
+                    .foregroundColor(darkBlue)
                 
                 Spacer()
                 NavigationLink(destination: UserProfileView(user: user, userPreference: sampleUserPreference)) {
                     Image(systemName: "person.circle.fill")
                         .font(.title)
-                        .foregroundColor(.black)
+                        .foregroundColor(darkBlue)
                 }
                 .padding(.trailing, 20)
                 Spacer()
             }
+            .padding(.top, 20)
             
             Divider()
                 .padding(1)
-                .background(Color("DarkBlue"), in: RoundedRectangle(cornerRadius: 25))
+                .background(darkBlue, in: RoundedRectangle(cornerRadius: 25))
             
             Text(date, style: .date)
                 .font(.title)
+                .foregroundColor(darkBlue)
             
             Text(date, style: .time)
                 .font(.title2)
+                .foregroundColor(darkBlue)
         }
     }
     
     var progressView: some View {
         ZStack {
-            Color("DarkBlue")
+            Color(darkBlue)
                 .clipShape(RoundedRectangle(cornerRadius: 25))
                 .padding(5)
             Text("View Progress")
                 .font(.title3)
-                .foregroundColor(.white)
+                .foregroundColor(cream)
         }
     }
     
     func todaysWorkoutView(session: WorkoutSession) -> some View {
         ZStack {
-            
-            Color("DarkBlue")
+            darkBlue.ignoresSafeArea()
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
@@ -121,35 +127,36 @@ struct WelcomeView: View {
                             HStack {
                                 Text(session.exercises[index].name)
                                     .font(.subheadline)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(cream)
                                 Spacer()
                                 Text("\(session.exercises[index].sets.count) sets")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(cream)
                             }
                             .id(index)
-                            .padding()
-                            .background(Color("DarkBlue").cornerRadius(25))
+                            .padding(10)
+                            .background(darkBlue.cornerRadius(25))
+                            
                         }
                     }
                 }
                 .padding()
-                .onReceive(timer) { _ in
-                    withAnimation {
-                        if scrollIndex < session.exercises.count - 1 {
-                            scrollIndex += 1
-                        } else {
-                            scrollIndex = 0
-                        }
-                        proxy.scrollTo(scrollIndex, anchor: .bottom)
-                    }
-                }
+//                .onReceive(timer) { _ in
+//                    withAnimation {
+//                        if scrollIndex < session.exercises.count - 1 {
+//                            scrollIndex += 1
+//                        } else {
+//                            scrollIndex = 0
+//                        }
+//                        proxy.scrollTo(scrollIndex, anchor: .bottom)
+//                    }
+//                }
             }
             NavigationLink(destination: WorkoutSessionDetailView(session: session)){
                 Color(.clear)
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 25))
-        .padding(5)
+        .padding()
     }
     
 }

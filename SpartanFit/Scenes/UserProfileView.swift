@@ -15,7 +15,7 @@ struct UserProfileView: View {
     var body: some View {
         
         ZStack {
-            Color("Gold").ignoresSafeArea()  // Gold background
+            cream.ignoresSafeArea()  // cream background
             
             VStack(alignment: .leading, spacing: 20) {
                 
@@ -28,8 +28,8 @@ struct UserProfileView: View {
                         Text(isEditingProfile ? "Save" : "Edit Profile")
                             .bold()
                             .padding(10)
-                            .background(Color("DarkBlue"))
-                            .foregroundColor(.white)
+                            .background(darkBlue)
+                            .foregroundColor(cream)
                             .cornerRadius(10)
                     }
                 }
@@ -46,7 +46,7 @@ struct UserProfileView: View {
                     userInfoRow(label: "Member Since", value: dateFormatter(user.createdAt), isEditing: false)
                 }
                 .padding()
-                .background(Color("DarkBlue"))
+                .background(darkBlue)
                 .cornerRadius(15)
                 .padding(.horizontal)
                 
@@ -58,8 +58,8 @@ struct UserProfileView: View {
                         .bold()
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color("DarkBlue"))
-                        .foregroundColor(.white)
+                        .background(darkBlue)
+                        .foregroundColor(cream)
                         .cornerRadius(10)
                 }
                 .padding(.horizontal)
@@ -74,7 +74,7 @@ struct UserProfileView: View {
         HStack {
             Text(label + ":")
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(cream)
             Spacer()
             if isEditing {
                 TextField(value, text: Binding(get: { value }, set: { _ in })) // Editable field in edit mode
@@ -83,7 +83,7 @@ struct UserProfileView: View {
                     .frame(width: 150)
             } else {
                 Text(value)
-                    .foregroundColor(.white)
+                    .foregroundColor(cream)
             }
         }
         .padding(10)

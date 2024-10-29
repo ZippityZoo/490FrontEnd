@@ -1,25 +1,54 @@
 import SwiftUI
 
+struct AccordionView<Label, Content>: View
+where Label : View, Content : View {
+  @Binding var expandedIndex: Int?
+  let sectionCount: Int
+  @ViewBuilder let label: (Int) -> Label
+  @ViewBuilder let content: (Int) -> Content
+
+  var body: some View {
+    VStack(spacing: 0) {
+        ForEach(0..<sectionCount, id: \ .self) { index in
+        DisclosureGroup(isExpanded: .init(get: {
+          expandedIndex == index
+        }, set: { value in
+          expandedIndex = value ? index : nil
+        }), content: {
+          content(index)
+        }, label: {
+          label(index)
+        })
+        .background(cream)
+        .cornerRadius(15)
+        .padding(.vertical, -1) // Adjust padding to make items touch
+      }
+    }
+  }
+}
+
 struct WorkoutSessionDetailView: View {
     @State var session: WorkoutSession
     @State private var currentIndex: Int = 0 // Tracks the index for the workout session
     let allSessions: [WorkoutSession] = sampleWorkoutSessions // Assuming sampleWorkoutSessions holds the list of all sessions
-    
+    @State private var expandedIndex: Int? = nil
+    @State private var expandedSetIndex: Int? = nil
+
     var body: some View {
         ZStack {
-            Color("Gold").ignoresSafeArea() // Background color
-            
-            VStack {
+            Color("DarkBlue").ignoresSafeArea()
+            VStack(spacing: 0) { // Remove extra space to anchor to top
                 // Button to go to the workout plan (Top Right)
                 HStack {
                     Spacer()
                     NavigationLink(destination: WorkoutPlanView(workoutPlan: sampleWorkoutPlan)) {
                         Image(systemName: "list.bullet.rectangle")
                             .font(.title)
-                            .foregroundColor(.black)
+                            .foregroundColor(cream)
                             .padding(.trailing, 20)
                     }
                 }
+                .zIndex(1) // Keep the header on top
                 
                 // Header with arrows for navigating between workout dates
                 HStack {
@@ -27,53 +56,69 @@ struct WorkoutSessionDetailView: View {
                     Button(action: previousWorkout) {
                         Image(systemName: "chevron.left")
                             .font(.title)
-                            .foregroundColor(.black)
+                            .foregroundColor(cream)
                     }
                     Spacer()
                     
                     Text(session.date, style: .date)
                         .font(.title)
                         .fontWeight(.bold)
-                        .foregroundColor(.black)
+                        .foregroundColor(cream)
                     
                     Spacer()
                     Button(action: nextWorkout) {
                         Image(systemName: "chevron.right")
                             .font(.title)
-                            .foregroundColor(.black)
+                            .foregroundColor(cream)
                     }
                     Spacer()
                 }
                 .padding(.top, 10)
-                
-                // Exercises in the session
-                List {
-                    ForEach(session.exercises) { exercise in
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Exercise: \(exercise.name)")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding(.bottom, 5)
-                            Divider().background(Color.white)
-                            // Set details within the exercise
-                            ForEach(Array(exercise.sets.enumerated()), id: \.element.id) { index, set in
-                                SetView(workoutSet: set, setNumber: index + 1)
+                .zIndex(1) // Keep the header on top
+        
+                // Exercises in the session using AccordionView
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        AccordionView(expandedIndex: $expandedIndex, sectionCount: session.exercises.count, label: { index in
+                            HStack {
+                                Text("Exercise: \(session.exercises[index].name)")
+                                    .font(.headline)
+                                    .foregroundColor(.black)
+                                Spacer()
+                                Image(systemName: expandedIndex == index ? "chevron.up" : "chevron.down")
+                                    .foregroundColor(.black)
+                            }
+                            .padding()
+                            .background(cream) // Make entire item cream
+                            .cornerRadius(15)
+                        }, content: { index in
+                            VStack(spacing: 0) {
+                                ForEach(session.exercises[index].sets.indices, id: \ .self) { setIndex in
+                                    SetView(workoutSet: session.exercises[index].sets[setIndex], setNumber: setIndex + 1, expandedSetIndex: $expandedSetIndex)
+                                        .padding(.horizontal)
+                                }
+                            }
+                            .padding()
+                            .background(cream)
+                            .cornerRadius(15)
+                        })
+                        .padding(.top, 10)
+                    }
+                    .onChange(of: expandedIndex) { index in
+                        if let index = index {
+                            withAnimation {
+                                proxy.scrollTo(index, anchor: .top)
                             }
                         }
-                        .padding()
-                        .background(Color("DarkBlue").cornerRadius(25))
                     }
-                    .listRowBackground(Color.clear)
-                    .padding(.bottom, 20)
                 }
-                .listStyle(InsetGroupedListStyle())
-                .scrollContentBackground(.hidden) // Remove white scroll box background
+                Spacer()
             }
+            .navigationTitle("Today's Workout")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationTitle("Today's Workout")
-        .navigationBarTitleDisplayMode(.inline) 
     }
-    
+
     // Function to go to the previous workout
     func previousWorkout() {
         if currentIndex > 0 {
@@ -81,7 +126,7 @@ struct WorkoutSessionDetailView: View {
             session = allSessions[currentIndex]
         }
     }
-    
+
     // Function to go to the next workout
     func nextWorkout() {
         if currentIndex < allSessions.count - 1 {
@@ -90,6 +135,7 @@ struct WorkoutSessionDetailView: View {
         }
     }
 }
+
 
 #Preview {
     WorkoutSessionDetailView(session: sampleWorkoutSessions[1])

@@ -65,6 +65,7 @@ struct NavBar: View{
         print(monthlydis)
     }
 }
+
 struct BarChartView: View {
     //let data: [(id:UUID,weight: Double, reps: Int)]
     var workout:String
@@ -138,7 +139,7 @@ struct Sets:Identifiable{
 struct DBSets:Identifiable{
     var id = UUID()
     var sets: [Sets]
-             
+    
     func sum()->Int{
         var sum: Int = 0
         for rep in self.sets{
@@ -167,7 +168,7 @@ extension DBSets: Hashable{
     }
     static func ==(lhs:DBSets,rhs:DBSets)->Bool{
         let areEqual = lhs.id == rhs.id
-            return areEqual
+        return areEqual
     }
     
 }

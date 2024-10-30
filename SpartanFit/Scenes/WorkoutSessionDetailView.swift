@@ -19,7 +19,7 @@ where Label : View, Content : View {
         }, label: {
           label(index)
         })
-        .background(cream)
+        .background(Color("cream"))
         .cornerRadius(15)
         .padding(.vertical, -1) // Adjust padding to make items touch
       }
@@ -44,7 +44,7 @@ struct WorkoutSessionDetailView: View {
                     NavigationLink(destination: WorkoutPlanView(workoutPlan: sampleWorkoutPlan)) {
                         Image(systemName: "list.bullet.rectangle")
                             .font(.title)
-                            .foregroundColor(darkBlue)
+                            .foregroundColor(Color("DarkBlue"))
                             .padding(.trailing, 20)
                     }
                 }
@@ -56,20 +56,20 @@ struct WorkoutSessionDetailView: View {
                     Button(action: previousWorkout) {
                         Image(systemName: "chevron.left")
                             .font(.title)
-                            .foregroundColor(darkBlue)
+                            .foregroundColor(Color("DarkBlue"))
                     }
                     Spacer()
                     
                     Text(session.date, style: .date)
                         .font(.title)
                         .fontWeight(.bold)
-                        .foregroundColor(darkBlue)
+                        .foregroundColor(Color("DarkBlue"))
                     
                     Spacer()
                     Button(action: nextWorkout) {
                         Image(systemName: "chevron.right")
                             .font(.title)
-                            .foregroundColor(darkBlue)
+                            .foregroundColor(Color("DarkBlue"))
                     }
                     Spacer()
                 }
@@ -89,7 +89,7 @@ struct WorkoutSessionDetailView: View {
                                     .foregroundColor(cream)
                             }
                             .padding()
-                            .background(darkBlue) // Make entire item blue
+                            .background(Color("DarkBlue")) // Make entire item blue
                             .cornerRadius(15)
                         }, content: { index in
                             VStack(spacing: 0) {
@@ -99,7 +99,7 @@ struct WorkoutSessionDetailView: View {
                                 }
                             }
                             .padding()
-                            .background(darkBlue)
+                            .background(Color("DarkBlue"))
                             .cornerRadius(15)
                         })
                         .padding(.top, 10)

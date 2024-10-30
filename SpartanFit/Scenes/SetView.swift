@@ -24,25 +24,25 @@ struct SetView: View {
                         VStack(alignment: .leading) {
                             Text("Weight")
                                 .font(.headline)
-                                .foregroundColor(cream)
+                                .foregroundColor(Color("cream"))
                             Text("\(workoutSet.weight, specifier: "%.1f") lbs")
-                                .foregroundColor(cream)
+                                .foregroundColor(Color("cream"))
                         }
                         Spacer()
                         VStack(alignment: .leading) {
                             Text("Goal Reps")
                                 .font(.headline)
-                                .foregroundColor(cream)
+                                .foregroundColor(Color("cream"))
                             Text(workoutSet.repsAssumed.map { String($0) }.joined(separator: ", "))
-                                .foregroundColor(cream)
+                                .foregroundColor(Color("cream"))
                         }
                         Spacer()
                         VStack(alignment: .leading) {
                             Text("Rest")
                                 .font(.headline)
-                                .foregroundColor(cream)
+                                .foregroundColor(Color("cream"))
                             Text("\(workoutSet.restTime) sec")
-                                .foregroundColor(cream)
+                                .foregroundColor(Color("cream"))
                         }
                     }
                     .padding(.bottom, 10)
@@ -52,7 +52,7 @@ struct SetView: View {
                         .padding()
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(5)
-                        .foregroundColor(cream)
+                        .foregroundColor(Color("cream"))
                 }
                 .padding()
             },
@@ -60,12 +60,12 @@ struct SetView: View {
                 HStack {
                     Text("Set \(setNumber) - \(workoutSet.type.description) - \(workoutSet.repsAssumed.first ?? 0) reps - \(workoutSet.weight, specifier: "%.1f") lbs")
                         .font(.headline)
-                        .foregroundColor(cream)
+                        .foregroundColor(Color("cream"))
                     Spacer()
                     Image(systemName: expandedSetIndex == setNumber ? "chevron.up" : "chevron.down")
-                        .foregroundColor(cream)
+                        .foregroundColor(Color("cream"))
                 }
-                .background(darkBlue)
+                .background(Color("DarkBlue"))
                 .cornerRadius(10)
             }
         )

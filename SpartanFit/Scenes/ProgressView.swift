@@ -30,7 +30,7 @@ struct WorkoutProgressList:View{
                             }
                         }.listRowBackground(Color("DarkBlue"))
                     }.scrollContentBackground(.hidden)
-                }.background(Color("Gold"))
+                }.background(Color("cream"))
             }
         
     }

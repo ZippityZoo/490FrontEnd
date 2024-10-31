@@ -60,6 +60,8 @@ struct SetView: View {
                         Spacer()
                     }
                 }
+                .background(Color("Background"))
+                .cornerRadius(10)
             }
             .padding()
             .background(darkBlue)

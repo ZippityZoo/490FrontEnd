@@ -1,117 +1,20 @@
 import SwiftUI
 
-struct AccordionView<Label, Content>: View
-where Label : View, Content : View {
-  @Binding var expandedIndex: Int?
-  let sectionCount: Int
-  @ViewBuilder let label: (Int) -> Label
-  @ViewBuilder let content: (Int) -> Content
-
-  var body: some View {
-    VStack(spacing: 0) {
-        ForEach(0..<sectionCount, id: \ .self) { index in
-        DisclosureGroup(isExpanded: .init(get: {
-          expandedIndex == index
-        }, set: { value in
-          expandedIndex = value ? index : nil
-        }), content: {
-          content(index)
-        }, label: {
-          label(index)
-        })
-        .background(cream)
-        .cornerRadius(15)
-        .padding(.vertical, -1) // Adjust padding to make items touch
-      }
-    }
-  }
-}
 
 struct WorkoutSessionDetailView: View {
     @State var session: WorkoutSession
-    @State private var currentIndex: Int = 0 // Tracks the index for the workout session
-    let allSessions: [WorkoutSession] = sampleWorkoutSessions // Assuming sampleWorkoutSessions holds the list of all sessions
+    @State private var currentIndex: Int = 0
+    let allSessions: [WorkoutSession] = sampleWorkoutSessions
     @State private var expandedIndex: Int? = nil
-    @State private var expandedSetIndex: Int? = nil
 
     var body: some View {
         ZStack {
             cream.ignoresSafeArea()
-            VStack(spacing: 0) { // Remove extra space to anchor to top
-                // Button to go to the workout plan (Top Right)
-                HStack {
-                    Spacer()
-                    NavigationLink(destination: WorkoutPlanView(workoutPlan: sampleWorkoutPlan)) {
-                        Image(systemName: "list.bullet.rectangle")
-                            .font(.title)
-                            .foregroundColor(darkBlue)
-                            .padding(.trailing, 20)
-                    }
-                }
-                .zIndex(1) // Keep the header on top
-                
-                // Header with arrows for navigating between workout dates
-                HStack {
-                    Spacer()
-                    Button(action: previousWorkout) {
-                        Image(systemName: "chevron.left")
-                            .font(.title)
-                            .foregroundColor(darkBlue)
-                    }
-                    Spacer()
-                    
-                    Text(session.date, style: .date)
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(darkBlue)
-                    
-                    Spacer()
-                    Button(action: nextWorkout) {
-                        Image(systemName: "chevron.right")
-                            .font(.title)
-                            .foregroundColor(darkBlue)
-                    }
-                    Spacer()
-                }
-                .padding(.top, 10)
-                .zIndex(1) // Keep the header on top
-        
-                // Exercises in the session using AccordionView
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        AccordionView(expandedIndex: $expandedIndex, sectionCount: session.exercises.count, label: { index in
-                            HStack {
-                                Text("Exercise: \(session.exercises[index].name)")
-                                    .font(.headline)
-                                    .foregroundColor(cream)
-                                Spacer()
-                                Image(systemName: expandedIndex == index ? "chevron.up" : "chevron.down")
-                                    .foregroundColor(cream)
-                            }
-                            .padding()
-                            .background(darkBlue) // Make entire item blue
-                            .cornerRadius(15)
-                        }, content: { index in
-                            VStack(spacing: 0) {
-                                ForEach(session.exercises[index].sets.indices, id: \ .self) { setIndex in
-                                    SetView(workoutSet: session.exercises[index].sets[setIndex], setNumber: setIndex + 1, expandedSetIndex: $expandedSetIndex)
-                                        .padding(.horizontal)
-                                }
-                            }
-                            .padding()
-                            .background(darkBlue)
-                            .cornerRadius(15)
-                        })
-                        .padding(.top, 10)
-                    }
-                    .onChange(of: expandedIndex) { index in
-                        if let index = index {
-                            withAnimation {
-                                proxy.scrollTo(index, anchor: .top)
-                            }
-                        }
-                    }
-                }
+            VStack(spacing: 0) {
+                topNavigation()
+                dateHeader()
+                Spacer()
+                exercisesScrollView()
                 Spacer()
             }
             .navigationTitle("Today's Workout")
@@ -119,16 +22,98 @@ struct WorkoutSessionDetailView: View {
         }
     }
 
-    // Function to go to the previous workout
-    func previousWorkout() {
+    private func topNavigation() -> some View {
+        HStack {
+            Spacer()
+            NavigationLink(destination: WorkoutPlanView(workoutPlan: sampleWorkoutPlan)) {
+                Image(systemName: "list.bullet.rectangle")
+                    .font(.title)
+                    .foregroundColor(darkBlue)
+                    .padding(.trailing, 20)
+            }
+        }
+        .zIndex(1)
+    }
+
+    private func dateHeader() -> some View {
+        HStack {
+            Spacer()
+            Button(action: previousWorkout) {
+                Image(systemName: "chevron.left")
+                    .font(.title)
+                    .foregroundColor(darkBlue)
+            }
+            Spacer()
+            Text(session.date, style: .date)
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundColor(darkBlue)
+            Spacer()
+            Button(action: nextWorkout) {
+                Image(systemName: "chevron.right")
+                    .font(.title)
+                    .foregroundColor(darkBlue)
+            }
+            Spacer()
+        }
+        .padding(.top, 10)
+        .zIndex(1)
+    }
+
+    private func exercisesScrollView() -> some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                AccordionView(expandedIndex: $expandedIndex, sectionCount: session.exercises.count, label: { index in
+                    exerciseLabel(index: index)
+                }, content: { index in
+                    exerciseContent(index: index)
+                })
+            }
+            .onChange(of: expandedIndex) { index in
+                if let index = index {
+                    withAnimation(.easeInOut(duration: 0.7)) {
+                        proxy.scrollTo(index, anchor: .top)
+                    }
+                }
+            }
+        }
+    }
+
+    private func exerciseLabel(index: Int) -> some View {
+        HStack {
+            Text("Exercise: \(session.exercises[index].name)")
+                .font(.title2)
+                .foregroundColor(cream)
+            Spacer()
+        }
+        .padding()
+        .background(darkBlue)
+    }
+
+    private func exerciseContent(index: Int) -> some View {
+        VStack(spacing: 0) {
+            ForEach(session.exercises[index].sets.indices, id: \.self) { setIndex in
+                SetView(
+                    workoutSet: session.exercises[index].sets[setIndex],
+                    setNumber: setIndex + 1
+                )
+                .padding(.horizontal)
+                .padding(.vertical, -1)
+            }
+        }
+        .padding()
+        .background(darkBlue)
+        .transition(.opacity.combined(with: .push(from: .top)))
+    }
+
+    private func previousWorkout() {
         if currentIndex > 0 {
             currentIndex -= 1
             session = allSessions[currentIndex]
         }
     }
 
-    // Function to go to the next workout
-    func nextWorkout() {
+    private func nextWorkout() {
         if currentIndex < allSessions.count - 1 {
             currentIndex += 1
             session = allSessions[currentIndex]
@@ -136,7 +121,47 @@ struct WorkoutSessionDetailView: View {
     }
 }
 
-
 #Preview {
-    WorkoutSessionDetailView(session: sampleWorkoutSessions[1])
+    WorkoutSessionDetailView(session: sampleWorkoutSessions[0])
+}
+
+
+struct AccordionView<Label, Content>: View where Label: View, Content: View {
+    @Binding var expandedIndex: Int?
+    let sectionCount: Int
+    @ViewBuilder let label: (Int) -> Label
+    @ViewBuilder let content: (Int) -> Content
+
+    var body: some View {
+        VStack(spacing: -1) {
+            ForEach(0..<sectionCount, id: \.self) { index in
+                VStack(spacing: -1) {
+                    // Header
+                    HStack {
+                        label(index)
+                            .foregroundColor(cream)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Spacer()
+                        Image(systemName: expandedIndex == index ? "chevron.up" : "chevron.down")
+                            .foregroundColor(cream)
+                    }
+                    .padding()
+                    .background(darkBlue)
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            expandedIndex = expandedIndex == index ? nil : index
+                        }
+                    }
+
+                    // Content that expands with animation
+                    if expandedIndex == index {
+                        content(index)
+                            .background(darkBlue)
+                            .transition(.opacity.combined(with: .push(from: .top)))
+                    }
+                }
+                .background(darkBlue)
+            }
+        }
+    }
 }

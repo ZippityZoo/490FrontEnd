@@ -25,7 +25,7 @@ struct WelcomeView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color("cream").ignoresSafeArea() // Background set to cream
+                Color("Foreground").ignoresSafeArea() // Background set to Color("Foreground")
                 VStack(spacing: 1) {
                    Spacer()
                     // Header
@@ -42,7 +42,7 @@ struct WelcomeView: View {
                     VStack {
                         Text("Today's Workout:")
                             .font(.title2)
-                            .foregroundColor(Color("DarkBlue"))
+                            .foregroundColor(Color("Background"))
                             .padding(.top, 10)
                             .fontWeight(.bold)
                         
@@ -55,7 +55,7 @@ struct WelcomeView: View {
                                 .font(.subheadline)
                                 .foregroundColor(.black)
                                 .padding()
-                                .background(Color("DarkBlue"))
+                                .background(Color("Background"))
                                 .cornerRadius(25)
                         }
                     }
@@ -79,13 +79,13 @@ struct WelcomeView: View {
                     .font(.title)
                     .fontWeight(.heavy)
                     .padding(.bottom, 5)
-                    .foregroundColor(Color("DarkBlue"))
+                    .foregroundColor(Color("Background"))
                 
                 Spacer()
                 NavigationLink(destination: UserProfileView(user: user, userPreference: sampleUserPreference)) {
                     Image(systemName: "person.circle.fill")
                         .font(.title)
-                        .foregroundColor(Color("DarkBlue"))
+                        .foregroundColor(Color("Background"))
                 }
                 .padding(.trailing, 20)
                 Spacer()
@@ -94,32 +94,32 @@ struct WelcomeView: View {
             
             Divider()
                 .padding(1)
-                .background(Color("DarkBlue"), in: RoundedRectangle(cornerRadius: 25))
+                .background(Color("Background"), in: RoundedRectangle(cornerRadius: 25))
             
             Text(date, style: .date)
                 .font(.title)
-                .foregroundColor(Color("DarkBlue"))
+                .foregroundColor(Color("Background"))
             
             Text(date, style: .time)
                 .font(.title2)
-                .foregroundColor(Color("DarkBlue"))
+                .foregroundColor(Color("Background"))
         }
     }
     
     var progressView: some View {
         ZStack {
-            Color(Color("DarkBlue"))
+            Color(Color("Background"))
                 .clipShape(RoundedRectangle(cornerRadius: 25))
                 .padding(5)
             Text("View Progress")
                 .font(.title3)
-                .foregroundColor(cream)
+                .foregroundColor(Color("Foreground"))
         }
     }
     
     func todaysWorkoutView(session: WorkoutSession) -> some View {
         ZStack {
-            Color("DarkBlue").ignoresSafeArea()
+            Color("Background").ignoresSafeArea()
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
@@ -127,14 +127,14 @@ struct WelcomeView: View {
                             HStack {
                                 Text(session.exercises[index].name)
                                     .font(.subheadline)
-                                    .foregroundColor(cream)
+                                    .foregroundColor(Color("Foreground"))
                                 Spacer()
                                 Text("\(session.exercises[index].sets.count) sets")
-                                    .foregroundColor(cream)
+                                    .foregroundColor(Color("Foreground"))
                             }
                             .id(index)
                             .padding(10)
-                            .background(Color("DarkBlue").cornerRadius(25))
+                            .background(Color("Background").cornerRadius(25))
                             
                         }
                     }

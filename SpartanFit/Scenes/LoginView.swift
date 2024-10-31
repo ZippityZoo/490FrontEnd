@@ -17,12 +17,12 @@ struct LoginView: View {
     var body: some View {
         NavigationView{
             ZStack{
-                Color("cream").ignoresSafeArea()
+                Color("Foreground").ignoresSafeArea()
                 
                 VStack{
-                    Text(" SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(Color("DarkBlue"))
+                    Text(" SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(Color("Background"))
                     ZStack{
-                        Color("DarkBlue")//.frame(width:393,height:200,alignment: .center)
+                        Color("Background")//.frame(width:393,height:200,alignment: .center)
                         VStack{
                             
                             HStack{
@@ -39,7 +39,7 @@ struct LoginView: View {
                             HStack{
                                 Spacer()
                                 NavigationLink(destination: { WelcomeView(fromLogin: true, user: user)} ,label:{
-                                    Text("Login").frame(alignment: .bottomTrailing).padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)).background().clipShape(RoundedRectangle(cornerRadius: 15.0)).bold().padding(EdgeInsets(top: 15, leading: 5, bottom: 5, trailing: 10)).foregroundColor(Color("DarkBlue"))
+                                    Text("Login").frame(alignment: .bottomTrailing).padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)).background().clipShape(RoundedRectangle(cornerRadius: 15.0)).bold().padding(EdgeInsets(top: 15, leading: 5, bottom: 5, trailing: 10)).foregroundColor(Color("Background"))
                                 })
                                 /*
                                  Button("Login") {

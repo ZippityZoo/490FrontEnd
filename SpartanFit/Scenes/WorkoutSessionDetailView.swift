@@ -19,7 +19,7 @@ where Label : View, Content : View {
         }, label: {
           label(index)
         })
-        .background(Color("cream"))
+        .background(Color("Foreground"))
         .cornerRadius(15)
         .padding(.vertical, -1) // Adjust padding to make items touch
       }
@@ -36,7 +36,7 @@ struct WorkoutSessionDetailView: View {
 
     var body: some View {
         ZStack {
-            cream.ignoresSafeArea()
+            Color("Foreground").ignoresSafeArea()
             VStack(spacing: 0) { // Remove extra space to anchor to top
                 // Button to go to the workout plan (Top Right)
                 HStack {
@@ -44,7 +44,7 @@ struct WorkoutSessionDetailView: View {
                     NavigationLink(destination: WorkoutPlanView(workoutPlan: sampleWorkoutPlan)) {
                         Image(systemName: "list.bullet.rectangle")
                             .font(.title)
-                            .foregroundColor(Color("DarkBlue"))
+                            .foregroundColor(Color("Background"))
                             .padding(.trailing, 20)
                     }
                 }
@@ -56,20 +56,20 @@ struct WorkoutSessionDetailView: View {
                     Button(action: previousWorkout) {
                         Image(systemName: "chevron.left")
                             .font(.title)
-                            .foregroundColor(Color("DarkBlue"))
+                            .foregroundColor(Color("Background"))
                     }
                     Spacer()
                     
                     Text(session.date, style: .date)
                         .font(.title)
                         .fontWeight(.bold)
-                        .foregroundColor(Color("DarkBlue"))
+                        .foregroundColor(Color("Background"))
                     
                     Spacer()
                     Button(action: nextWorkout) {
                         Image(systemName: "chevron.right")
                             .font(.title)
-                            .foregroundColor(Color("DarkBlue"))
+                            .foregroundColor(Color("Background"))
                     }
                     Spacer()
                 }
@@ -83,13 +83,13 @@ struct WorkoutSessionDetailView: View {
                             HStack {
                                 Text("Exercise: \(session.exercises[index].name)")
                                     .font(.headline)
-                                    .foregroundColor(cream)
+                                    .foregroundColor(Color("Foreground"))
                                 Spacer()
                                 Image(systemName: expandedIndex == index ? "chevron.up" : "chevron.down")
-                                    .foregroundColor(cream)
+                                    .foregroundColor(Color("Foreground"))
                             }
                             .padding()
-                            .background(Color("DarkBlue")) // Make entire item blue
+                            .background(Color("Background")) // Make entire item blue
                             .cornerRadius(15)
                         }, content: { index in
                             VStack(spacing: 0) {
@@ -99,7 +99,7 @@ struct WorkoutSessionDetailView: View {
                                 }
                             }
                             .padding()
-                            .background(Color("DarkBlue"))
+                            .background(Color("Background"))
                             .cornerRadius(15)
                         })
                         .padding(.top, 10)

@@ -90,7 +90,7 @@ import SwiftUI
 //}
 import SwiftUI
 import Charts
-
+/*
 struct ValuePerCategory {
     var category: String
     var value: Double
@@ -115,6 +115,74 @@ struct ContentView: View {
         }
     }
 }
+ */
+import SwiftUI
+
+struct ContentView: View {
+    @State private var username: String = ""
+    @State private var password: String = ""
+    @State private var isActive: Bool = false // State to control navigation
+
+    var body: some View {
+        NavigationView {
+            VStack {
+                // Username Field
+                TextField("Username", text: $username)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+
+                // Password Field
+                SecureField("Password", text: $password)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+
+                // Navigation Button
+                NavigationLink(destination: HomeView(), isActive: $isActive) {
+                    Button(action: {
+                        // Action when the button is tapped (if necessary)
+                        isActive = true // Navigate when the button is pressed
+                    }) {
+                        Text("Login")
+                            .padding()
+                            .background(isEnabled ? Color.blue : Color.gray)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
+                    .disabled(!isEnabled) // Disable button if fields are not filled
+                }
+                .simultaneousGesture(TapGesture().onEnded {
+                    // Prevent navigation if button is disabled
+                    if isEnabled {
+                        isActive = true
+                    }
+                })
+
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Login")
+        }
+    }
+
+    // Computed property to determine if the button should be enabled
+    private var isEnabled: Bool {
+        !username.isEmpty && !password.isEmpty
+    }
+}
+
+struct HomeView: View {
+    var body: some View {
+        Text("Welcome to the Home View!")
+            .font(.largeTitle)
+            .navigationTitle("Home")
+    }
+}
+#Preview {
+        ContentView()
+}
+
+
+
 
 /*so for sets we have to have
  rep number ex:10
@@ -138,9 +206,5 @@ struct ContentView: View {
     }
 }
  */
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+
 

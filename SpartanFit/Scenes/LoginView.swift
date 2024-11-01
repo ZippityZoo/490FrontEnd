@@ -36,11 +36,14 @@ struct LoginView: View {
                                 SecureField("Enter Password",text: $password).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0))
                                 Spacer()
                             }
+                            
                             HStack{
+                                
                                 Spacer()
                                 NavigationLink(destination: { WelcomeView(fromLogin: true, user: user)} ,label:{
                                     Text("Login").frame(alignment: .bottomTrailing).padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)).background().clipShape(RoundedRectangle(cornerRadius: 15.0)).bold().padding(EdgeInsets(top: 15, leading: 5, bottom: 5, trailing: 10)).foregroundColor(Color("Background"))
                                 })
+                                
                                 /*
                                  Button("Login") {
                                  authenticateUser(email: email, password: password)
@@ -48,8 +51,11 @@ struct LoginView: View {
                                  }.frame(alignment: .bottomTrailing).padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)).background().clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)).bold().padding(.trailing, 5)
                                  */
                             }
-                            
-                            
+                            NavigationLink(destination: {
+                                SignUpView()
+                            }, label: {
+                                Text("Sign Up").foregroundStyle(.blue).underline()
+                            })
                             
                             
                             

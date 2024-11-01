@@ -37,25 +37,25 @@ struct WorkoutProgressList:View{
 }
 struct NavBar: View{
     @State var isrecent:Bool = true
-    @State var setData:[DBSets]
+    @Binding var setData:[DBSets]
     var body: some View{
-        ZStack{
-            Color("Foreground")
-            HStack{
-                Spacer()
-                Button(action:recent){
-                    Text("Recent")
+            ZStack{
+                Color("Foreground")
+                HStack{
+                    Spacer()
+                    Button(action:recent){
+                        Text("Recent")
+                    }
+                    Spacer()
+                    Divider()
+                    Spacer()
+                    Button(action:overall){
+                        Text("Overall")
+                    }
+                    Spacer()
                 }
-                Spacer()
-                Divider()
-                Spacer()
-                Button(action:overall){
-                    Text("Overall")
-                }
-                Spacer()
-            }
-        }.frame(height:40)
-            .clipShape(RoundedRectangle(cornerRadius: 10)).padding(4).background(.black).clipShape(RoundedRectangle(cornerRadius: 10))
+            }.frame(height:40)
+                .clipShape(RoundedRectangle(cornerRadius: 10)).padding(4).background(.black).clipShape(RoundedRectangle(cornerRadius: 10))
     }
     func recent(){
         isrecent = true
@@ -78,13 +78,13 @@ struct BarChartView: View {
         ZStack{
             Color("Foreground").ignoresSafeArea()
             VStack{
-                NavBar(setData:setData)
+                NavBar(setData:$setData)
                 VStack{
                     Text(workout).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
                     //Chart(setData){point in
                     Chart(setData){ day in
                         ForEach(day.sets,id: \.id){set in
-                            AreaMark(
+                            BarMark(
                                 x:.value("X",set.date.formatted(date: .numeric, time: .omitted)),
                                 y:.value("Y",set.reps)
                             )
@@ -125,6 +125,7 @@ struct BarChartView: View {
         }
     }
 }
+
 
 //Stuff to simulate DB info
 enum SetNum: String{

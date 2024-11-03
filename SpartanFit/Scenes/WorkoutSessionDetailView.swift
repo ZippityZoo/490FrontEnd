@@ -90,9 +90,10 @@ struct WorkoutSessionDetailView: View {
                     exerciseContent(index: index)
                 })
             }
-            .onChange(of: expandedIndex, initial: false) { newValue, _ in
-                if let index = newValue {
-                    withAnimation(.easeOut(duration: 0.4)) {
+            .onChange(of: expandedIndex) { index in
+                if let index = index {
+                    // Scroll the selected exercise to the top of the view
+                    withAnimation(.easeInOut(duration: 0.4)) {
                         proxy.scrollTo(index, anchor: .top)
                     }
                 }
@@ -107,7 +108,7 @@ struct WorkoutSessionDetailView: View {
                 .foregroundColor(Color("Cream"))
             Spacer()
         }
-        .padding(10)
+        .padding()
         .background(Color("DarkBlue"))
     }
 
@@ -142,11 +143,6 @@ struct WorkoutSessionDetailView: View {
     }
 }
 
-#Preview {
-    WorkoutSessionDetailView(session: sampleWorkoutSessions[0])
-}
-
-/*
 struct AccordionView<Label, Content>: View where Label: View, Content: View {
     @Binding var expandedIndex: Int?
     let sectionCount: Int

@@ -1,10 +1,3 @@
-//
-//  UserProfileView.swift
-//  SpartanFit
-//
-//  Created by Garrett Emerich on 10/21/24.
-//
-
 import SwiftUI
 
 struct UserProfileView: View {
@@ -15,10 +8,10 @@ struct UserProfileView: View {
     var body: some View {
         
         ZStack {
-            cream.ignoresSafeArea()  // cream background
+            Color("Cream").ignoresSafeArea()  // Cream background
             
             VStack(alignment: .leading, spacing: 20) {
-                
+                Spacer()
                 // Header Section with Edit Button
                 HStack {
                     Spacer()
@@ -28,8 +21,8 @@ struct UserProfileView: View {
                         Text(isEditingProfile ? "Save" : "Edit Profile")
                             .bold()
                             .padding(10)
-                            .background(darkBlue)
-                            .foregroundColor(cream)
+                            .background(Color("DarkBlue"))
+                            .foregroundColor(Color("Cream"))
                             .cornerRadius(10)
                     }
                 }
@@ -41,16 +34,31 @@ struct UserProfileView: View {
                     userInfoRow(label: "Last Name", value: user.lname, isEditing: isEditingProfile)
                     userInfoRow(label: "Username", value: user.username, isEditing: isEditingProfile)
                     userInfoRow(label: "Email", value: user.email, isEditing: isEditingProfile)
-                    userInfoRow(label: "Fitness Goal", value: user.fitGoal, isEditing: isEditingProfile)
-                    userInfoRow(label: "Experience Level", value: user.expLevel, isEditing: isEditingProfile)
-                    userInfoRow(label: "Member Since", value: dateFormatter(user.createdAt), isEditing: false)
+                    userInfoRow(label: "Fitness Goal", value: user.fit_goal, isEditing: isEditingProfile)
+                    userInfoRow(label: "Experience Level", value: user.exp_level, isEditing: isEditingProfile)
+                    userInfoRow(label: "Member Since", value: dateFormatter(user.created_at), isEditing: false)
                 }
                 .padding()
-                .background(darkBlue)
+                .background(Color("DarkBlue"))
                 .cornerRadius(15)
                 .padding(.horizontal)
                 
-                Spacer()
+                // Muscle and Injury Info Section
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Muscle and Injury Information")
+                        .font(.headline)
+                        .foregroundColor(Color("DarkBlue"))
+                    
+                    userInfoRow(label: "Muscle ID", value: user.muscle_id?.description ?? "N/A", isEditing: false)
+                    userInfoRow(label: "Muscle Name", value: user.muscle_name ?? "N/A", isEditing: false)
+                    userInfoRow(label: "Muscle Position", value: user.muscle_position ?? "N/A", isEditing: false)
+                    userInfoRow(label: "Injury Intensity", value: user.injury_intensity ?? "N/A", isEditing: false)
+                }
+                .padding()
+                .background(Color("DarkBlue"))
+                .cornerRadius(15)
+                .padding(.horizontal)
+                
                 
                 // Button to view preferences
                 NavigationLink(destination: UserPreferencesView(preference: userPreference)) {
@@ -58,11 +66,12 @@ struct UserProfileView: View {
                         .bold()
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(darkBlue)
-                        .foregroundColor(cream)
+                        .background(Color("DarkBlue"))
+                        .foregroundColor(Color("Cream"))
                         .cornerRadius(10)
                 }
                 .padding(.horizontal)
+                Spacer()
             }
             .navigationTitle("User Profile")
         }
@@ -74,7 +83,7 @@ struct UserProfileView: View {
         HStack {
             Text(label + ":")
                 .fontWeight(.bold)
-                .foregroundColor(cream)
+                .foregroundColor(Color("Cream"))
             Spacer()
             if isEditing {
                 TextField(value, text: Binding(get: { value }, set: { _ in })) // Editable field in edit mode
@@ -83,7 +92,7 @@ struct UserProfileView: View {
                     .frame(width: 150)
             } else {
                 Text(value)
-                    .foregroundColor(cream)
+                    .foregroundColor(Color("Cream"))
             }
         }
         .padding(10)
@@ -92,10 +101,14 @@ struct UserProfileView: View {
     }
     
     // Helper function to format the date
-    func dateFormatter(_ date: Date) -> String {
+    func dateFormatter(_ dateString: String) -> String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        return formatter.string(from: date)
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        if let date = formatter.date(from: dateString) {
+            formatter.dateStyle = .long
+            return formatter.string(from: date)
+        }
+        return dateString
     }
 }
 

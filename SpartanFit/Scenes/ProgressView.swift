@@ -18,7 +18,7 @@ struct WorkoutProgressList:View{
     var body: some View{
         
             ZStack{
-                Color("Foreground")
+                Color("Cream")
                 VStack{
                     Text("Progress").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold()
                     List{
@@ -28,9 +28,9 @@ struct WorkoutProgressList:View{
                                     Text(workout)
                                 }.foregroundStyle(Color.white)
                             }
-                        }.listRowBackground(Color("Background"))
+                        }.listRowBackground(Color("DarkBlue"))
                     }.scrollContentBackground(.hidden)
-                }.background(Color("Foreground"))
+                }.background(Color("Cream"))
             }
         
     }
@@ -40,7 +40,7 @@ struct NavBar: View{
     @State var setData:[DBSets]
     var body: some View{
         ZStack{
-            Color("Foreground")
+            Color("Cream")
             HStack{
                 Spacer()
                 Button(action:recent){
@@ -76,7 +76,7 @@ struct BarChartView: View {
     var body: some View {
         //just for testing
         ZStack{
-            Color("Foreground").ignoresSafeArea()
+            Color("Cream").ignoresSafeArea()
             VStack{
                 NavBar(setData:setData)
                 VStack{
@@ -119,7 +119,7 @@ struct BarChartView: View {
                     
                 }
                 .padding()
-                .background(Color("Background"))
+                .background(Color("DarkBlue"))
                 .cornerRadius(10)
             }
         }

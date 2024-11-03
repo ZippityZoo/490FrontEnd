@@ -23,9 +23,8 @@ struct WorkoutPlan: Identifiable {
 struct WorkoutSession: Identifiable {
     var id: Int
     var date: Date
-    var calories: Int
-    var type: String
     var intensity: String
     var duration: Int 
     var exercises: [Exercise] // Corresponds to exercises for this workout session
 }
+

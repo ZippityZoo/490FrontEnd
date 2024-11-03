@@ -19,6 +19,7 @@
 		2B0AC9132CB86D1E0047022D /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0AC9122CB86D1E0047022D /* SignUpView.swift */; };
 		2B0AC9152CB86D310047022D /* WorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0AC9142CB86D310047022D /* WorkoutView.swift */; };
 		2B0AC9172CB86D3D0047022D /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0AC9162CB86D3D0047022D /* ProgressView.swift */; };
+		AAD6809E2CD6E8CC00528204 /* APIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD6809D2CD6E8C700528204 /* APIModels.swift */; };
 		AAEA79A52CBEEEE10097A0A5 /* WorkoutModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A42CBEEEE10097A0A5 /* WorkoutModels.swift */; };
 		AAEA79A72CBEEF0A0097A0A5 /* WorkoutPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */; };
 		AAEA79A92CBEEF500097A0A5 /* WorkoutSessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */; };
@@ -61,6 +62,7 @@
 		2B0AC9122CB86D1E0047022D /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		2B0AC9142CB86D310047022D /* WorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutView.swift; sourceTree = "<group>"; };
 		2B0AC9162CB86D3D0047022D /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		AAD6809D2CD6E8C700528204 /* APIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModels.swift; sourceTree = "<group>"; };
 		AAEA79A42CBEEEE10097A0A5 /* WorkoutModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutModels.swift; sourceTree = "<group>"; };
 		AAEA79A62CBEEF0A0097A0A5 /* WorkoutPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutPlanView.swift; sourceTree = "<group>"; };
 		AAEA79A82CBEEF500097A0A5 /* WorkoutSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSessionDetailView.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 		2B0AC8E12CB491D30047022D /* SpartanFit */ = {
 			isa = PBXGroup;
 			children = (
+				AAD6809D2CD6E8C700528204 /* APIModels.swift */,
 				2B0AC8E22CB491D30047022D /* SpartanFitApp.swift */,
 				2B0AC8E62CB491D60047022D /* Assets.xcassets */,
 				2B0AC8E82CB491D60047022D /* Preview Content */,
@@ -307,6 +310,7 @@
 				2B0AC90F2CB5AC960047022D /* Exercise.swift in Sources */,
 				AAEA79A92CBEEF500097A0A5 /* WorkoutSessionDetailView.swift in Sources */,
 				AAEA79AF2CC6FCE60097A0A5 /* UserProfileView.swift in Sources */,
+				AAD6809E2CD6E8CC00528204 /* APIModels.swift in Sources */,
 				AAEA79A72CBEEF0A0097A0A5 /* WorkoutPlanView.swift in Sources */,
 				2B0AC9172CB86D3D0047022D /* ProgressView.swift in Sources */,
 				AAEA79A52CBEEEE10097A0A5 /* WorkoutModels.swift in Sources */,

@@ -1,32 +1,5 @@
 import SwiftUI
 
-struct AccordionView<Label, Content>: View
-where Label : View, Content : View {
-  @Binding var expandedIndex: Int?
-  let sectionCount: Int
-  @ViewBuilder let label: (Int) -> Label
-  @ViewBuilder let content: (Int) -> Content
-
-  var body: some View {
-    VStack(spacing: 0) {
-        ForEach(0..<sectionCount, id: \ .self) { index in
-        DisclosureGroup(isExpanded: .init(get: {
-          expandedIndex == index
-        }, set: { value in
-          expandedIndex = value ? index : nil
-        }), content: {
-          content(index)
-        }, label: {
-          label(index)
-        })
-        .background(Color("Foreground"))
-        .cornerRadius(15)
-        .padding(.vertical, -1) // Adjust padding to make items touch
-      }
-    }
-  }
-}
-
 struct WorkoutSessionDetailView: View {
     @State var session: WorkoutSession
     @State private var currentIndex: Int = 0
@@ -35,7 +8,7 @@ struct WorkoutSessionDetailView: View {
 
     var body: some View {
         ZStack {
-            cream.ignoresSafeArea()
+            Color("Cream").ignoresSafeArea()
             VStack(spacing: 0) {
                 topNavigation()
                 dateHeader()
@@ -45,6 +18,28 @@ struct WorkoutSessionDetailView: View {
             }
             .navigationTitle("Today's Workout")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                loadExpandedIndex()
+            }
+            .onDisappear {
+                saveExpandedIndex()
+            }
+        }
+    }
+
+    private func loadExpandedIndex() {
+        // Load the saved expanded index, defaulting to the first exercise (index 0) if not found
+        if let savedIndex = UserDefaults.standard.object(forKey: "expandedIndex") as? Int {
+            expandedIndex = savedIndex
+        } else {
+            expandedIndex = 0 // Set the first exercise as expanded by default
+        }
+    }
+
+    private func saveExpandedIndex() {
+        // Save the currently expanded index
+        if let expandedIndex = expandedIndex {
+            UserDefaults.standard.set(expandedIndex, forKey: "expandedIndex")
         }
     }
 
@@ -54,7 +49,7 @@ struct WorkoutSessionDetailView: View {
             NavigationLink(destination: WorkoutPlanView(workoutPlan: sampleWorkoutPlan)) {
                 Image(systemName: "list.bullet.rectangle")
                     .font(.title)
-                    .foregroundColor(darkBlue)
+                    .foregroundColor(Color("DarkBlue"))
                     .padding(.trailing, 20)
             }
         }
@@ -67,18 +62,18 @@ struct WorkoutSessionDetailView: View {
             Button(action: previousWorkout) {
                 Image(systemName: "chevron.left")
                     .font(.title)
-                    .foregroundColor(darkBlue)
+                    .foregroundColor(Color("DarkBlue"))
             }
             Spacer()
             Text(session.date, style: .date)
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(darkBlue)
+                .foregroundColor(Color("DarkBlue"))
             Spacer()
             Button(action: nextWorkout) {
                 Image(systemName: "chevron.right")
                     .font(.title)
-                    .foregroundColor(darkBlue)
+                    .foregroundColor(Color("DarkBlue"))
             }
             Spacer()
         }
@@ -95,9 +90,9 @@ struct WorkoutSessionDetailView: View {
                     exerciseContent(index: index)
                 })
             }
-            .onChange(of: expandedIndex) { index in
-                if let index = index {
-                    withAnimation(.easeInOut(duration: 0.7)) {
+            .onChange(of: expandedIndex, initial: false) { newValue, _ in
+                if let index = newValue {
+                    withAnimation(.easeOut(duration: 0.4)) {
                         proxy.scrollTo(index, anchor: .top)
                     }
                 }
@@ -107,13 +102,13 @@ struct WorkoutSessionDetailView: View {
 
     private func exerciseLabel(index: Int) -> some View {
         HStack {
-            Text("Exercise: \(session.exercises[index].name)")
+            Text("\(session.exercises[index].name)")
                 .font(.title2)
-                .foregroundColor(cream)
+                .foregroundColor(Color("Cream"))
             Spacer()
         }
-        .padding()
-        .background(darkBlue)
+        .padding(10)
+        .background(Color("DarkBlue"))
     }
 
     private func exerciseContent(index: Int) -> some View {
@@ -128,7 +123,7 @@ struct WorkoutSessionDetailView: View {
             }
         }
         .padding()
-        .background(darkBlue)
+        .background(Color("DarkBlue"))
         .transition(.opacity.combined(with: .push(from: .top)))
     }
 
@@ -147,11 +142,6 @@ struct WorkoutSessionDetailView: View {
     }
 }
 
-#Preview {
-    WorkoutSessionDetailView(session: sampleWorkoutSessions[0])
-}
-
-
 struct AccordionView<Label, Content>: View where Label: View, Content: View {
     @Binding var expandedIndex: Int?
     let sectionCount: Int
@@ -165,16 +155,16 @@ struct AccordionView<Label, Content>: View where Label: View, Content: View {
                     // Header
                     HStack {
                         label(index)
-                            .foregroundColor(cream)
+                            .foregroundColor(Color("Cream"))
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Spacer()
                         Image(systemName: expandedIndex == index ? "chevron.up" : "chevron.down")
-                            .foregroundColor(cream)
+                            .foregroundColor(Color("Cream"))
                     }
                     .padding()
-                    .background(darkBlue)
+                    .background(Color("DarkBlue"))
                     .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.3)) {
+                        withAnimation(.easeInOut(duration: 0.4)) {
                             expandedIndex = expandedIndex == index ? nil : index
                         }
                     }
@@ -182,12 +172,16 @@ struct AccordionView<Label, Content>: View where Label: View, Content: View {
                     // Content that expands with animation
                     if expandedIndex == index {
                         content(index)
-                            .background(darkBlue)
-                            .transition(.opacity.combined(with: .push(from: .top)))
+                            .background(Color("DarkBlue"))
+                            .transition(.opacity)
                     }
                 }
-                .background(darkBlue)
+                .background(Color("DarkBlue"))
             }
         }
     }
+}
+
+#Preview {
+    WorkoutSessionDetailView(session: sampleWorkoutSessions[0])
 }

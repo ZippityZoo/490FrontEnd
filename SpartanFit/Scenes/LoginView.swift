@@ -4,80 +4,88 @@
 //
 //  Created by Collin Harris on 10/7/24.
 //
-
 import SwiftUI
 
 struct LoginView: View {
-    @State private var showingWorkoutScreen = false
-    @State private var showingSignUpScree = false
     @State private var path = NavigationPath()
-        @State var email = ""
-        @State var password = ""
-     var user: User
+    @State private var email = ""
+    @State private var password = ""
+    @State private var user: User?
+    
     var body: some View {
-        NavigationView{
-            ZStack{
-                Color("Foreground").ignoresSafeArea()
+        NavigationStack(path: $path) {
+            ZStack {
+                Color("Cream").ignoresSafeArea()
                 
-                VStack{
-                    Text(" SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(Color("Background"))
-                    ZStack{
-                        Color("Background")//.frame(width:393,height:200,alignment: .center)
-                        VStack{
-                            
-                            HStack{
-                                
-                                Spacer()
-                                TextField("Enter Email",text: $email).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
-                                Spacer()
-                            }
-                            HStack{
-                                Spacer()
-                                SecureField("Enter Password",text: $password).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0))
-                                Spacer()
-                            }
-                            HStack{
-                                Spacer()
-                                NavigationLink(destination: { WelcomeView(fromLogin: true, user: user)} ,label:{
-                                    Text("Login").frame(alignment: .bottomTrailing).padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)).background().clipShape(RoundedRectangle(cornerRadius: 15.0)).bold().padding(EdgeInsets(top: 15, leading: 5, bottom: 5, trailing: 10)).foregroundColor(Color("Background"))
-                                })
-                                /*
-                                 Button("Login") {
-                                 authenticateUser(email: email, password: password)
-                                 
-                                 }.frame(alignment: .bottomTrailing).padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)).background().clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)).bold().padding(.trailing, 5)
-                                 */
-                            }
-                            
-                            
-                            
-                            
-                            
-                        }
+                VStack {
+                    Text("SPARTANFIT")
+                        .font(.largeTitle)
+                        .fontWeight(.heavy)
+                        .foregroundColor(Color("DarkBlue"))
+                    
+                    ZStack {
+                        Color("DarkBlue")
                         
-                    }.padding(.vertical,200).clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
+                        VStack {
+                            TextField("Enter Email", text: $email)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(.bottom, 20)
+                            
+                            SecureField("Enter Password", text: $password)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            
+                            HStack {
+                                Spacer()
+                                Button("Login") {
+                                    authenticateUser(userId: 3601) // Replace with dynamic user_id if needed
+                                }
+                                .padding()
+                                .background(Color("DarkBlue"))
+                                .clipShape(RoundedRectangle(cornerRadius: 15.0))
+                                .foregroundColor(.white)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 200)
+                    .clipShape(RoundedRectangle(cornerRadius: 25.0))
+                }
+            }
+            .navigationDestination(for: User.self) { user in
+                WelcomeView(fromLogin: true, user: user)
+            }
+            .onChange(of: user) { newUser in
+                if let newUser = newUser {
+                    path.append(newUser) // Navigate to WelcomeView with the user
                 }
             }
         }
-          
     }
-    func authenticateUser(email: String,password:String){
-        if(email.lowercased() == ""){
-            if(password == ""){
-                print("valid password")
-                showingWorkoutScreen = true
-            }else{
-                print("invalid password")
-            }
-        }else{
-            print("invalid email")
-        }
+    
+    func authenticateUser(userId: Int) {
+        let urlString = "http://localhost:3000/userprofile/user_id=\(userId)"
+        guard let url = URL(string: urlString) else { return }
         
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let apiResponse = try JSONDecoder().decode(UserProfileResponse.self, from: data)
+                DispatchQueue.main.async {
+                    if let fetchedUser = apiResponse.user.first {
+                        self.user = fetchedUser // This will trigger the navigation in onChange
+                    } else {
+                        print("User not found.")
+                    }
+                }
+            } catch {
+                print("Failed to decode JSON:", error)
+            }
+        }.resume()
     }
 }
 
 
 #Preview {
-    LoginView(user: sampleUser)
+    LoginView()
 }
 

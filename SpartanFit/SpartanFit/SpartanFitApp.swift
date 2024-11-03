@@ -11,7 +11,7 @@ import SwiftUI
 struct SpartanFitApp: App {
     var body: some Scene {
         WindowGroup {
-            LoginView(user: sampleUser)
+            LoginView()
         }
     }
 }

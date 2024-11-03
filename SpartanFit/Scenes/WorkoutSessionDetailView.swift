@@ -142,6 +142,11 @@ struct WorkoutSessionDetailView: View {
     }
 }
 
+#Preview {
+    WorkoutSessionDetailView(session: sampleWorkoutSessions[0])
+}
+
+/*
 struct AccordionView<Label, Content>: View where Label: View, Content: View {
     @Binding var expandedIndex: Int?
     let sectionCount: Int

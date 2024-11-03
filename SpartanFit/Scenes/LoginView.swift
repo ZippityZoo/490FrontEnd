@@ -44,6 +44,14 @@ struct LoginView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 15.0))
                                 .foregroundColor(.white)
                             }
+                            NavigationLink(destination: {
+                                SignUpView()
+                            }, label: {
+                                Text("Sign Up").foregroundStyle(.blue).underline()
+                            })
+                            
+                            
+                            
                         }
                     }
                     .padding(.vertical, 200)

@@ -37,7 +37,7 @@ struct WorkoutProgressList:View{
 }
 struct NavBar: View{
     @State var isrecent:Bool = true
-    @State var setData:[DBSets]
+    @Binding var setData:[DBSets]
     var body: some View{
         ZStack{
             Color("Cream")
@@ -78,13 +78,13 @@ struct BarChartView: View {
         ZStack{
             Color("Cream").ignoresSafeArea()
             VStack{
-                NavBar(setData:setData)
+                NavBar(setData:$setData)
                 VStack{
                     Text(workout).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
                     //Chart(setData){point in
                     Chart(setData){ day in
                         ForEach(day.sets,id: \.id){set in
-                            AreaMark(
+                            BarMark(
                                 x:.value("X",set.date.formatted(date: .numeric, time: .omitted)),
                                 y:.value("Y",set.reps)
                             )
@@ -125,6 +125,7 @@ struct BarChartView: View {
         }
     }
 }
+
 
 //Stuff to simulate DB info
 enum SetNum: String{

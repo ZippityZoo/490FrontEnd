@@ -48,7 +48,6 @@ struct RecommendedPlansResponse: Codable {
     let recommendedPlans: [WorkoutPlan]
 }
 
-// Workout Plan model
 struct WorkoutPlan: Identifiable, Codable {
     let id: Int
     let userId: Int
@@ -57,7 +56,6 @@ struct WorkoutPlan: Identifiable, Codable {
     let active: Int
     let workouts: [Workout]
     
-    // Coding keys to match JSON keys
     enum CodingKeys: String, CodingKey {
         case id = "plan_id"
         case userId = "user_id"
@@ -67,18 +65,14 @@ struct WorkoutPlan: Identifiable, Codable {
     }
 }
 
-// Workout model
 struct Workout: Identifiable, Codable {
     let id: Int
-    let exerciseName: String
     let intensity: String
     let duration: Int
     let exercises: [Exercise]
     
-    // Coding keys to match JSON keys
     enum CodingKeys: String, CodingKey {
         case id = "workout_id"
-        case exerciseName = "exercise_name"
         case intensity, duration, exercises
     }
 }
@@ -90,7 +84,7 @@ let workout1Exercises = [
 ]
 
 let sampleWorkouts = [
-    Workout(id: 1, exerciseName: "", intensity: "Advanced", duration: 60, exercises: workout1Exercises)
+    Workout(id: 1, intensity: "Advanced", duration: 60, exercises: workout1Exercises)
 ]
 
 let sampleWorkoutPlan = WorkoutPlan(

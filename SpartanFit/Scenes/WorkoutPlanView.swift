@@ -61,7 +61,7 @@ struct WorkoutPlanBody: View {
                     .overlay(RoundedRectangle(cornerRadius: 25).stroke(Color.black, lineWidth: 5))
                     
                 } header: {
-                    Text(workout.exerciseName) // Placeholder for the workout title or another identifier
+                    Text("Today's Workout") // Placeholder for the workout title or another identifier
                         .font(.headline)
                         .foregroundColor(Color("DarkBlue"))
                         .padding(.vertical, 5)

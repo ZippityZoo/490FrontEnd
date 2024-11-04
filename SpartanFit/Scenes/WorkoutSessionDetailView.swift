@@ -62,7 +62,7 @@ struct WorkoutSessionDetailView: View {
     private func titleHeader() -> some View {
         HStack {
             Spacer()
-            Text("Workout ID: \(workout.id)")
+            Text("Today's Workout")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(Color("DarkBlue"))

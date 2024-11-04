@@ -71,5 +71,5 @@ struct SetView: View {
 }
 
 #Preview {
-    WorkoutSessionDetailView(session: sampleWorkoutSessions[0])
+    WorkoutSessionDetailView(workout: sampleWorkouts[0])
 }

@@ -1,17 +1,12 @@
-//
-//  ContentView.swift
-//  SpartanFit
-//
-//  Created by Collin Harris on 10/7/24.
-//
 import SwiftUI
 
 struct LoginView: View {
     @State private var path = NavigationPath()
     @State private var email = ""
     @State private var password = ""
-    @State private var user: User?
-    
+    @EnvironmentObject var userData: UserData
+    @EnvironmentObject var workoutPlanData: WorkoutPlanData // WorkoutPlanData as EnvironmentObject
+
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
@@ -37,21 +32,16 @@ struct LoginView: View {
                             HStack {
                                 Spacer()
                                 Button("Login") {
-                                    authenticateUser(userId: 3601) // Replace with dynamic user_id if needed
+                                    authenticateUser(email: email)
                                 }
                                 .padding()
                                 .background(Color("DarkBlue"))
                                 .clipShape(RoundedRectangle(cornerRadius: 15.0))
                                 .foregroundColor(.white)
                             }
-                            NavigationLink(destination: {
-                                SignUpView()
-                            }, label: {
+                            NavigationLink(destination: SignUpView()) {
                                 Text("Sign Up").foregroundStyle(.blue).underline()
-                            })
-                            
-                            
-                            
+                            }
                         }
                     }
                     .padding(.vertical, 200)
@@ -59,28 +49,30 @@ struct LoginView: View {
                 }
             }
             .navigationDestination(for: User.self) { user in
-                WelcomeView(fromLogin: true, user: user)
-            }
-            .onChange(of: user) { newUser in
-                if let newUser = newUser {
-                    path.append(newUser) // Navigate to WelcomeView with the user
-                }
+                WelcomeView()
+                    .environmentObject(WorkoutPlanData(userId: user.id)) // Initialize WorkoutPlanData with userId
             }
         }
     }
     
-    func authenticateUser(userId: Int) {
+    func authenticateUser(email: String) {
+        let userId = email
         let urlString = "http://localhost:3000/userprofile/user_id=\(userId)"
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else { return }
+            guard let data = data, error == nil else {
+                print("Network or URL error:", error ?? "Unknown error")
+                return
+            }
             
             do {
                 let apiResponse = try JSONDecoder().decode(UserProfileResponse.self, from: data)
                 DispatchQueue.main.async {
                     if let fetchedUser = apiResponse.user.first {
-                        self.user = fetchedUser // This will trigger the navigation in onChange
+                        print("User fetched successfully:", fetchedUser)
+                        self.userData.updateUser(fetchedUser)
+                        fetchPreferences(userId: fetchedUser.id) // Fetch preferences after updating user
                     } else {
                         print("User not found.")
                     }
@@ -90,10 +82,36 @@ struct LoginView: View {
             }
         }.resume()
     }
-}
 
+    
+    func fetchPreferences(userId: Int) {
+        let urlString = "http://localhost:3000/preferences/\(userId)"
+        guard let url = URL(string: urlString) else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Network or URL error:", error ?? "Unknown error")
+                return
+            }
+            
+            do {
+                let apiResponse = try JSONDecoder().decode(UserPreferencesResponse.self, from: data)
+                DispatchQueue.main.async {
+                    // Only update preferences
+                    self.userData.updateUserPreference(apiResponse.preferences)
+                    
+                    // Perform navigation if `path` is valid and available
+                    self.path.append(apiResponse.user) // Navigate once preferences are loaded
+                }
+            } catch {
+                print("Failed to decode JSON:", error)
+            }
+        }.resume()
+    }
+}
 
 #Preview {
     LoginView()
+        .environmentObject(UserData())
+        .environmentObject(WorkoutPlanData(workoutPlan: sampleWorkoutPlan))
 }
-

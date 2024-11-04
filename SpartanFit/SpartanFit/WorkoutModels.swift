@@ -8,23 +8,18 @@
 import Foundation
 import SwiftUI
 
-// Updated WorkoutPlan model to align with the backend db
-struct WorkoutPlan: Identifiable {
-    var id: Int
-    var userId: Int
-    var name: String
-    var startDate: Date
-    var endDate: Date
-    var isActive: Bool
-    var sessions: [WorkoutSession]
-}
 
-// Updated WorkoutSession model, mapped to DB
-struct WorkoutSession: Identifiable {
-    var id: Int
-    var date: Date
+struct WorkoutSession: Identifiable, Decodable {
+    var id: Int // Maps to workout_id in the API response
     var intensity: String
-    var duration: Int 
+    var duration: Int
     var exercises: [Exercise] // Corresponds to exercises for this workout session
+
+    enum CodingKeys: String, CodingKey {
+        case id = "workout_id"       // Maps workout_id from API to id
+        case intensity
+        case duration
+        case exercises
+    }
 }
 

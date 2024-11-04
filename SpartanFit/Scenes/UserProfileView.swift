@@ -1,17 +1,16 @@
 import SwiftUI
 
 struct UserProfileView: View {
-    @State var user: User  // The user's data
-    @State var userPreference: UserPreference // The user's preference
+    @EnvironmentObject var userData: UserData // Access global user data
     @State private var isEditingProfile = false // Toggle edit mode for profile
-    
+
     var body: some View {
-        
         ZStack {
             Color("Cream").ignoresSafeArea()  // Cream background
-            
+
             VStack(alignment: .leading, spacing: 20) {
                 Spacer()
+                
                 // Header Section with Edit Button
                 HStack {
                     Spacer()
@@ -29,39 +28,42 @@ struct UserProfileView: View {
                 .padding(.horizontal)
                 
                 // User Info Section
-                VStack(alignment: .leading, spacing: 10) {
-                    userInfoRow(label: "First Name", value: user.fname, isEditing: isEditingProfile)
-                    userInfoRow(label: "Last Name", value: user.lname, isEditing: isEditingProfile)
-                    userInfoRow(label: "Username", value: user.username, isEditing: isEditingProfile)
-                    userInfoRow(label: "Email", value: user.email, isEditing: isEditingProfile)
-                    userInfoRow(label: "Fitness Goal", value: user.fit_goal, isEditing: isEditingProfile)
-                    userInfoRow(label: "Experience Level", value: user.exp_level, isEditing: isEditingProfile)
-                    userInfoRow(label: "Member Since", value: dateFormatter(user.created_at), isEditing: false)
+                if let user = userData.user {
+                    VStack(alignment: .leading, spacing: 10) {
+                        userInfoRow(label: "First Name", value: user.fname, isEditing: isEditingProfile)
+                        userInfoRow(label: "Last Name", value: user.lname, isEditing: isEditingProfile)
+                        userInfoRow(label: "Username", value: user.username, isEditing: isEditingProfile)
+                        userInfoRow(label: "Email", value: user.email, isEditing: isEditingProfile)
+                        userInfoRow(label: "Fitness Goal", value: user.fit_goal, isEditing: isEditingProfile)
+                        userInfoRow(label: "Experience Level", value: user.exp_level, isEditing: isEditingProfile)
+                        userInfoRow(label: "Member Since", value: dateFormatter(user.created_at), isEditing: false)
+                    }
+                    .padding()
+                    .background(Color("DarkBlue"))
+                    .cornerRadius(15)
+                    .padding(.horizontal)
                 }
-                .padding()
-                .background(Color("DarkBlue"))
-                .cornerRadius(15)
-                .padding(.horizontal)
-                
+
                 // Muscle and Injury Info Section
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Muscle and Injury Information")
-                        .font(.headline)
-                        .foregroundColor(Color("DarkBlue"))
-                    
-                    userInfoRow(label: "Muscle ID", value: user.muscle_id?.description ?? "N/A", isEditing: false)
-                    userInfoRow(label: "Muscle Name", value: user.muscle_name ?? "N/A", isEditing: false)
-                    userInfoRow(label: "Muscle Position", value: user.muscle_position ?? "N/A", isEditing: false)
-                    userInfoRow(label: "Injury Intensity", value: user.injury_intensity ?? "N/A", isEditing: false)
+                if let user = userData.user {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Muscle and Injury Information")
+                            .font(.headline)
+                            .foregroundColor(Color("DarkBlue"))
+
+                        userInfoRow(label: "Muscle ID", value: user.muscle_id?.description ?? "N/A", isEditing: false)
+                        userInfoRow(label: "Muscle Name", value: user.muscle_name ?? "N/A", isEditing: false)
+                        userInfoRow(label: "Muscle Position", value: user.muscle_position ?? "N/A", isEditing: false)
+                        userInfoRow(label: "Injury Intensity", value: user.injury_intensity ?? "N/A", isEditing: false)
+                    }
+                    .padding()
+                    .background(Color("DarkBlue"))
+                    .cornerRadius(15)
+                    .padding(.horizontal)
                 }
-                .padding()
-                .background(Color("DarkBlue"))
-                .cornerRadius(15)
-                .padding(.horizontal)
-                
                 
                 // Button to view preferences
-                NavigationLink(destination: UserPreferencesView(preference: userPreference)) {
+                NavigationLink(destination: UserPreferencesView()) {
                     Text("View Preferences")
                         .bold()
                         .padding()
@@ -75,7 +77,6 @@ struct UserProfileView: View {
             }
             .navigationTitle("User Profile")
         }
-        
     }
     
     // Helper function to create a row of user info with text fields in edit mode
@@ -113,5 +114,6 @@ struct UserProfileView: View {
 }
 
 #Preview {
-    UserProfileView(user: sampleUser, userPreference: sampleUserPreference)
+    UserProfileView()
+        .environmentObject(UserData(user: sampleUser))
 }

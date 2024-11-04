@@ -1,14 +1,7 @@
-//
-//  UserPreferenceView.swift
-//  SpartanFit
-//
-//  Created by Garrett Emerich on 10/21/24.
-//
-
 import SwiftUI
 
 struct UserPreferencesView: View {
-    @State var preference: UserPreference
+    @EnvironmentObject var userData: UserData
     @State private var editMode: Bool = false
     
     var body: some View {
@@ -23,16 +16,13 @@ struct UserPreferencesView: View {
                     .foregroundColor(Color("DarkBlue"))
                 
                 if editMode {
-                    // Editable fields
                     preferenceEditor
                 } else {
-                    // Display user preferences
                     userPreferenceDisplay
                 }
                 
                 Spacer()
                 
-                // Edit/Save button
                 Button(action: toggleEditMode) {
                     Text(editMode ? "Save" : "Edit Preferences")
                         .bold()
@@ -50,13 +40,22 @@ struct UserPreferencesView: View {
     // View for editing preferences
     var preferenceEditor: some View {
         VStack(alignment: .leading, spacing: 15) {
-            preferenceField(label: "Preferred Types", value: $preference.preferredTypes)
-            preferenceField(label: "Preferred Intensity", value: $preference.preferredIntensity)
-            preferenceField(label: "Preferred Duration (mins)", value: Binding(
-                get: { preference.preferredDuration.map { String($0) } ?? "" },
-                set: { preference.preferredDuration = Int($0) }
+            preferenceField(label: "Preferred Types", value: Binding(
+                get: { userData.preferences?.preferredTypes ?? "" },
+                set: { userData.preferences?.preferredTypes = $0 }
             ))
-            preferenceField(label: "Preferred Exercise", value: $preference.preferredExercise)
+            preferenceField(label: "Preferred Intensity", value: Binding(
+                get: { userData.preferences?.preferredIntensity ?? "" },
+                set: { userData.preferences?.preferredIntensity = $0 }
+            ))
+            preferenceField(label: "Preferred Duration (mins)", value: Binding(
+                get: { userData.preferences?.preferredDuration.map { String($0) } ?? "" },
+                set: { userData.preferences?.preferredDuration = Int($0) }
+            ))
+            preferenceField(label: "Preferred Exercise", value: Binding(
+                get: { userData.preferences?.preferredExercise ?? "" },
+                set: { userData.preferences?.preferredExercise = $0 }
+            ))
         }
         .padding()
         .background(Color("DarkBlue"))
@@ -66,22 +65,22 @@ struct UserPreferencesView: View {
     // View for displaying preferences
     var userPreferenceDisplay: some View {
         VStack(alignment: .leading, spacing: 15) {
-            preferenceRow(label: "Preferred Types", value: preference.preferredTypes)
-            preferenceRow(label: "Preferred Intensity", value: preference.preferredIntensity)
-            preferenceRow(label: "Preferred Duration", value: "\(preference.preferredDuration ?? 0) mins")
-            preferenceRow(label: "Preferred Exercise", value: preference.preferredExercise)
+            preferenceRow(label: "Preferred Types", value: userData.preferences?.preferredTypes ?? "N/A")
+            preferenceRow(label: "Preferred Intensity", value: userData.preferences?.preferredIntensity ?? "N/A")
+            preferenceRow(label: "Preferred Duration", value: "\(userData.preferences?.preferredDuration ?? 0) mins")
+            preferenceRow(label: "Preferred Exercise", value: userData.preferences?.preferredExercise ?? "N/A")
         }
         .padding()
         .background(Color("DarkBlue"))
         .cornerRadius(15)
     }
     
-    // Helper to toggle edit mode
+    // Toggle edit mode
     func toggleEditMode() {
         editMode.toggle()
         if !editMode {
-            // Code to save the changes to the backend can go here in the future
-            print("Saving preferences: \(preference)")
+            // Add code to save preferences here
+            print("Preferences saved: \(String(describing: userData.preferences))")
         }
     }
     
@@ -116,5 +115,6 @@ struct UserPreferencesView: View {
 }
 
 #Preview {
-    UserPreferencesView(preference: sampleUserPreference)
+    UserPreferencesView()
+        .environmentObject(UserData(user: sampleUser, userPreference: sampleUserPreference))
 }

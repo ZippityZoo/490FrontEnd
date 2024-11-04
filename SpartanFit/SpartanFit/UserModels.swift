@@ -5,20 +5,50 @@
 //  Created by Garrett Emerich on 10/21/24.
 //
 import SwiftUI
+import Foundation
+import Combine
+
+class UserData: ObservableObject {
+    @Published var user: User?
+    @Published var preferences: UserPreference?
+
+    init(user: User? = nil, userPreference: UserPreference? = nil) {
+            self.user = user
+            self.preferences = userPreference
+        }
+    
+    func updateUser(_ user: User) {
+        self.user = user
+    }
+    
+    func updateUserPreference(_ preference: UserPreference) {
+        self.preferences = preference
+    }
+}
+
+struct UserProfileResponse: Codable {
+    let status: String
+    let user: [User]
+}
+
+struct UserPreferencesResponse: Codable {
+    let user: User
+    let preferences: UserPreference
+}
 
 struct User: Identifiable, Codable, Hashable {
-    let id: Int // Use 'id' as Swift's identifier for `Identifiable`
-    let fname: String
-    let lname: String
-    let username: String
-    let email: String
-    let fit_goal: String
-    let exp_level: String
-    let created_at: String
-    let muscle_id: Int?
-    let muscle_name: String?
-    let muscle_position: String?
-    let injury_intensity: String?
+    var id: Int // Use 'id' as Swift's identifier for `Identifiable`
+    var fname: String
+    var lname: String
+    var username: String
+    var email: String
+    var fit_goal: String
+    var exp_level: String
+    var created_at: String
+    var muscle_id: Int?
+    var muscle_name: String?
+    var muscle_position: String?
+    var injury_intensity: String?
     
     enum CodingKeys: String, CodingKey {
         case id = "user_id" // Maps "user_id" in JSON to "id" in Swift
@@ -26,6 +56,7 @@ struct User: Identifiable, Codable, Hashable {
         case muscle_id, muscle_name, muscle_position, injury_intensity
     }
 }
+
 
 let sampleUser = User(
     id: 3601,
@@ -42,13 +73,22 @@ let sampleUser = User(
     injury_intensity: "low"
 )
 
-struct UserPreference {
-    var id: Int          // preference_id
-    var userId: Int      // user_id
+struct UserPreference: Codable {
+    var id: Int
+    var userId: Int
     var preferredTypes: String
     var preferredIntensity: String
     var preferredDuration: Int?
     var preferredExercise: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "preference_id"
+        case userId = "user_id"
+        case preferredTypes = "preferred_types"
+        case preferredIntensity = "preferred_intensity"
+        case preferredDuration = "preferred_duration"
+        case preferredExercise = "preferred_exercise"
+    }
 }
 
 
@@ -60,3 +100,5 @@ let sampleUserPreference = UserPreference(
     preferredDuration: 60,
     preferredExercise: "Bench Press"
 )
+
+

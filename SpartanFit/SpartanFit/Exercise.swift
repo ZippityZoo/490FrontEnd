@@ -1,36 +1,30 @@
 import Foundation
 import SwiftUI
 
-let darkBlue = Color(red: 11/255, green: 11/255, blue: 69/255)
-let cream = Color(red: 243/255, green: 223/255, blue: 201/255)
-let mint = Color(red: 162/255, green: 228/255, blue: 184/255)
-
 // Enum to represent variations in sets
-enum SetVariation {
-    case one
-    case alternate
-    case maxout
-}
-
+//enum SetVariation: Codable {
+//    case one
+//    case alternate
+//    case maxout
+//}
 
 // Enum to represent types of sets
-enum SetType : CustomStringConvertible {
+enum SetType: CustomStringConvertible, Codable {
     case regular
     case warmup
     case max
     
-    var description: String{
-        switch self{
-            case .regular: return "Regular"
-            case .warmup:  return "Warm UP"
-            case .max:     return "Max"
+    var description: String {
+        switch self {
+        case .regular: return "Regular"
+        case .warmup: return "Warm UP"
+        case .max: return "Max"
         }
     }
 }
 
-
 // WorkoutSet class (reflecting the set-level details within an exercise)
-class WorkoutSet: ObservableObject, Identifiable {
+class WorkoutSet: ObservableObject, Identifiable, Codable {
     var id = UUID()
     @Published var type: SetType
     @Published var weight: Double
@@ -45,11 +39,32 @@ class WorkoutSet: ObservableObject, Identifiable {
         self.repsInput = Array(repeating: 0, count: repsAssumed.count)
         self.restTime = restTime
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case type, weight, repsInput, repsAssumed, restTime
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(SetType.self, forKey: .type)
+        weight = try container.decode(Double.self, forKey: .weight)
+        repsInput = try container.decode([Int].self, forKey: .repsInput)
+        repsAssumed = try container.decode([Int].self, forKey: .repsAssumed)
+        restTime = try container.decode(Int.self, forKey: .restTime)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(type, forKey: .type)
+        try container.encode(weight, forKey: .weight)
+        try container.encode(repsInput, forKey: .repsInput)
+        try container.encode(repsAssumed, forKey: .repsAssumed)
+        try container.encode(restTime, forKey: .restTime)
+    }
 }
 
-
-// New Exercise class mapped to DB
-class Exercise: ObservableObject, Identifiable {
+/// Exercise class updated to conform to Codable and mapped to the new JSON structure
+class Exercise: ObservableObject, Identifiable, Codable {
     var id: Int
     @Published var name: String
     @Published var sets: [WorkoutSet]
@@ -58,10 +73,36 @@ class Exercise: ObservableObject, Identifiable {
     @Published var planReps: Int
     @Published var planWeight: Double
     @Published var restTime: Int
-    @Published var setVariation: SetVariation
-    
-    // Sample initializer
-    init(id: Int, name: String, apiId: Int, planSets: Int, planReps: Int, planWeight: Double, restTime: Int, setVariation: SetVariation) {
+
+    enum CodingKeys: String, CodingKey {
+        case id = "exercise_id"
+        case name = "exercise_name"
+        case apiId = "api_id"
+        case planSets = "plan_sets"
+        case planReps = "plan_reps"
+        case planWeight = "plan_weight"
+        case restTime = "rest_time"
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // Decode properties to local variables
+        let id = try container.decode(Int.self, forKey: .id)
+        let name = try container.decode(String.self, forKey: .name)
+        let apiId = try container.decode(Int.self, forKey: .apiId)
+        let planSets = try container.decode(Int.self, forKey: .planSets)
+        let planReps = try container.decode(Int.self, forKey: .planReps)
+        let planWeight = try container.decode(Double.self, forKey: .planWeight)
+        let restTime = try container.decode(Int.self, forKey: .restTime)
+        
+
+        // Initialize sets
+        let initializedSets = (0..<planSets).map { _ in
+            WorkoutSet(type: .regular, weight: planWeight, repsAssumed: [planReps], restTime: restTime)
+        }
+        
+        // Assign all properties to `self` after initialization is complete
         self.id = id
         self.name = name
         self.apiId = apiId
@@ -69,7 +110,29 @@ class Exercise: ObservableObject, Identifiable {
         self.planReps = planReps
         self.planWeight = planWeight
         self.restTime = restTime
-        self.setVariation = setVariation
+        self.sets = initializedSets
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(apiId, forKey: .apiId)
+        try container.encode(planSets, forKey: .planSets)
+        try container.encode(planReps, forKey: .planReps)
+        try container.encode(planWeight, forKey: .planWeight)
+        try container.encode(restTime, forKey: .restTime)
+    }
+    
+    // Initializer for manual creation (e.g., for previews or local data)
+    init(id: Int, name: String, apiId: Int, planSets: Int, planReps: Int, planWeight: Double, restTime: Int) {
+        self.id = id
+        self.name = name
+        self.apiId = apiId
+        self.planSets = planSets
+        self.planReps = planReps
+        self.planWeight = planWeight
+        self.restTime = restTime
         self.sets = []
 
         // Initialize the sets (warmup and regular)
@@ -78,7 +141,7 @@ class Exercise: ObservableObject, Identifiable {
             self.sets.append(workoutSet)
         }
     }
-    
+
     
     // Method to render exercise details in SwiftUI view
     func exercisePage() -> some View {
@@ -89,7 +152,7 @@ class Exercise: ObservableObject, Identifiable {
 
             ForEach(sets) { set in
                 VStack(alignment: .leading) {
-                    Text("Set Type\(set.type == .warmup ? "Warmup" : set.type == .max ? "Maxout" : "Regular")")
+                    Text("Set Type: \(set.type.description)")
                         .font(.subheadline)
                     HStack {
                         Text("Weight: \(set.weight, specifier: "%.2f") lbs")

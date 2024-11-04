@@ -7,15 +7,15 @@
 
 import SwiftUI
 
+//TODO: Insert Into DB
 struct SignUpView: View {
+    @EnvironmentObject var newUser:UserData
     @State var email:String = ""
     @State var username:String = ""
     @State var password:String = ""
     @State var passwordCheck: String = ""
     @State var match: Bool = false
     var body: some View {
-        //remove this
-        NavigationView{
             ZStack{
                 Color("Cream").ignoresSafeArea()
                 VStack{
@@ -71,7 +71,6 @@ struct SignUpView: View {
             }
         }
         
-    }
     
 }
 //Also add password checking
@@ -133,21 +132,73 @@ struct SignUpView2: View{
 }
 
 struct SignUpView3: View{
+    @State var showForm:Bool = false
+    @State var shown:Int = 0
+    @State var listedInjuries:[String] = []
     var body: some View{
         ZStack{
-            Color("Cream")
-            Text("Add Injury")
+            Color("Cream").ignoresSafeArea()
+            VStack{
+                Text("Injuries").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().padding(.top,10)
+                if(shown <= 0){
+                    Text("Please submit you injuries below")
+                    Text("Click on Injury to remove it")
+                }
+                Divider()
+                ForEach(listedInjuries.indices,id:\.self){injury in
+                    Button(action: {
+                        listedInjuries.remove(at: injury)
+                    }, label: {
+                        Text(listedInjuries[injury])
+                            .padding(5)
+                            .background(Color("DarkBlue"))
+                            .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                            .foregroundStyle(.white)
+                    })
+                    
+                }
+                if(!showForm){
+                    Button (action:{
+                        showForm.toggle()
+                        shown += 1
+                    },label:{
+                        Text("Add Injury")
+                    })
+                }
+                else{
+                    InjuryForm(listedInjuries:$listedInjuries,showForm: $showForm)
+                        .scaledToFit()
+                        .animation(.easeInOut)
+                }
+                Spacer()
+                Divider()
+                HStack{
+                    Spacer()
+                    NavigationLink (destination:{ WelcomeView()
+                    }, label: {
+                        Text("Finish").foregroundStyle(.black).bold()
+                    })
+                    .padding(5)
+                    .background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                    .padding(.trailing,10)
+                }
+                Spacer()
+            }
         }
     }
+    
 }
 
 
 
 struct InjuryForm: View{
-    @State var muscleSelection:String = ""
+    @Binding var listedInjuries:[String]
+    @Binding var showForm:Bool
+    @State var muscleSelection:String = "Frontalis"
     @State var muscleIndex:Int = 0
-    @State var intensitySelection:String = ""
-    @State var pos:String = ""
+    @State var intensitySelection:String = "Low"
+    @State var pos:String = "Left"
     var body: some View{
         ZStack{
             VStack{
@@ -194,8 +245,13 @@ struct InjuryForm: View{
                     Button(
                         action:{
                             print("submit")
+                            listedInjuries.append("\(pos + " " + muscleSelection + " " + intensitySelection)")
+                            showForm.toggle()
                         },label: {
                             Text("Submit")
+                                .padding()
+                                .background(Color.gray.opacity(0.2))
+                                .clipShape(RoundedRectangle(cornerRadius: 10.0))
                         }
                     )
                 }.padding()
@@ -203,11 +259,12 @@ struct InjuryForm: View{
         }
         .padding(20)
         .background(Color("DarkBlue"))
+        .clipShape(RoundedRectangle(cornerRadius: 10.0))
     }
 }
 #Preview {
-    //SignUpView3()
-    InjuryForm()
+    SignUpView3()
+    //InjuryForm()
 }
 
 let muscles: [String] = [
@@ -276,3 +333,4 @@ let mposition = [
     "Left",
     "Right"
 ]
+

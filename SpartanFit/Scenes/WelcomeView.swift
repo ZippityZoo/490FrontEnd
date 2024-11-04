@@ -10,6 +10,7 @@ struct WelcomeView: View {
         BarChartView(workout:"Bench Press",setData: DBSets.setsTest2,welcomeView: true)
     ]
     var body: some View {
+        //remove this
         NavigationView{
         ZStack {
             Color("Cream").ignoresSafeArea()

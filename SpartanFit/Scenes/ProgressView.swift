@@ -13,6 +13,7 @@ struct ProgressView: View {
         WorkoutProgressList()
     }
 }
+//TODO: connect to db
 //Will Have a list of workouts for the user to select
 struct WorkoutProgressList:View{
     var body: some View{

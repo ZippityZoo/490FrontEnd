@@ -17,11 +17,11 @@ struct SignUpView: View {
         //remove this
         NavigationView{
             ZStack{
-                Color("Foreground").ignoresSafeArea()
+                Color("Cream").ignoresSafeArea()
                 VStack{
-                    Text(" SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(Color("Background"))
+                    Text(" SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(Color("DarkBlue"))
                     ZStack{
-                        Color("Background").frame(width:390,height:400,alignment: .center)
+                        Color("DarkBlue").frame(width:390,height:400,alignment: .center)
                             .clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
                         VStack{
                             Text(" Sign Up").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(.white)
@@ -49,7 +49,6 @@ struct SignUpView: View {
                             }
                             if(!password.isEmpty || !passwordCheck.isEmpty){
                                 comparePasswords(password: password, passwordCheck: passwordCheck, match: $match)
-                                let _ = print(match)
                                 
                             }
                             HStack{
@@ -63,7 +62,7 @@ struct SignUpView: View {
                                     .background(.white)
                                     .clipShape(RoundedRectangle(cornerRadius: 10.0))
                                     .padding(.trailing,10)
-                                    Color("\((!email.isEmpty && !username.isEmpty ) && (!password.isEmpty && !passwordCheck.isEmpty)&&(password == passwordCheck) ? "":"Background")").scaledToFit()
+                                    Color("\((!email.isEmpty && !username.isEmpty ) && (!password.isEmpty && !passwordCheck.isEmpty)&&(password == passwordCheck) ? "":"DarkBlue")").scaledToFit()
                                 }
                             }
                         }
@@ -75,7 +74,7 @@ struct SignUpView: View {
     }
     
 }
-
+//Also add password checking
 func comparePasswords(password: String,passwordCheck: String,match:Binding<Bool>)->some View{
     while(true){
         if(password == passwordCheck){
@@ -88,17 +87,192 @@ func comparePasswords(password: String,passwordCheck: String,match:Binding<Bool>
     }
 }
 
-
+//Goal Choices
 struct SignUpView2: View{
+    @State var goalSelection:String = "Strength"
+    let choices:[String] = ["Strength","Hypertrophy","Endurance","General Fitness","Weight Loss"]
+    var body: some View{
+        //temp
+        
+        ZStack{
+            Color("Cream").ignoresSafeArea()
+            VStack{
+                Text("Select A Goal").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold()
+                Divider().padding().foregroundStyle(Color("DarkBlue"))
+                ZStack{
+                    VStack{
+                        Picker("Select an option", selection: $goalSelection) {
+                            ForEach(choices, id: \.self) { option in
+                                Text(option).tag(option)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .padding()
+                        .foregroundStyle(.black)
+                        .background(Color.gray.opacity(0.2))
+                        
+                        .cornerRadius(8)
+                        HStack{
+                            Spacer()
+                            NavigationLink (destination:{ SignUpView3()
+                            }, label: {
+                                Text("Next").foregroundStyle(.black).bold()
+                            })
+                            .padding(5)
+                            .background(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                            .padding(.trailing,10)
+                        }
+                    }
+                    
+                }
+            }
+        }
+        
+    }
+}
+
+struct SignUpView3: View{
     var body: some View{
         ZStack{
-            Color("Foreground").ignoresSafeArea()
-            Text("HI")
+            Color("Cream")
+            Text("Add Injury")
         }
     }
 }
 
 
-#Preview {
-    SignUpView()
+
+struct InjuryForm: View{
+    @State var muscleSelection:String = ""
+    @State var muscleIndex:Int = 0
+    @State var intensitySelection:String = ""
+    @State var pos:String = ""
+    var body: some View{
+        ZStack{
+            VStack{
+                HStack{
+                    Text("Muscle:").foregroundStyle(.white).bold().font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                    Picker("Select an option", selection: $muscleSelection) {
+                        ForEach(muscles, id: \.self) { option in
+                            Text(option).tag(option)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .padding()
+                    .foregroundStyle(.black)
+                    .background(Color.gray.opacity(0.2))
+                }
+                HStack{
+                    Text("Position:").foregroundStyle(.white).bold().font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                    Picker("Select an option", selection: $pos) {
+                        ForEach(mposition, id: \.self) { option in
+                            Text(option).tag(option)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .padding()
+                    .foregroundStyle(.black)
+                    .background(Color.gray.opacity(0.2))
+                }
+                HStack{
+                    Text("Injury Intensity:").foregroundStyle(.white).bold().font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                    Picker("Select an option", selection: $intensitySelection) {
+                        ForEach(intensity, id: \.self) { option in
+                            Text(option).tag(option)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .padding()
+                    .foregroundStyle(.black)
+                    .background(Color.gray.opacity(0.2))
+                    
+                }
+                HStack{
+                    Spacer()
+                    //on submit return a view of the injury
+                    Button(
+                        action:{
+                            print("submit")
+                        },label: {
+                            Text("Submit")
+                        }
+                    )
+                }.padding()
+            }
+        }
+        .padding(20)
+        .background(Color("DarkBlue"))
+    }
 }
+#Preview {
+    //SignUpView3()
+    InjuryForm()
+}
+
+let muscles: [String] = [
+    // Head and Neck Muscles
+    "Frontalis",
+    "Temporalis",
+    "Orbicularis Oculi",
+    "Zygomaticus Major",
+    "Orbicularis Oris",
+    "Sternocleidomastoid",
+    
+    // Shoulder and Arm Muscles
+    "Deltoid",
+    "Biceps Brachii",
+    "Triceps Brachii",
+    "Brachialis",
+    "Coracobrachialis",
+    
+    // Chest Muscles
+    "Pectoralis Major",
+    "Pectoralis Minor",
+    
+    // Back Muscles
+    "Trapezius",
+    "Latissimus Dorsi",
+    "Rhomboid Major",
+    "Rhomboid Minor",
+    "Erector Spinae",
+    
+    // Abdomen Muscles
+    "Rectus Abdominis",
+    "External Oblique",
+    "Internal Oblique",
+    "Transverse Abdominis",
+    
+    // Hip and Thigh Muscles
+    "Iliopsoas",
+    "Quadriceps Femoris",
+    "Hamstrings",
+    "Gluteus Maximus",
+    "Gluteus Medius",
+    "Gluteus Minimus",
+    
+    // Leg Muscles
+    "Gastrocnemius",
+    "Soleus",
+    "Tibialis Anterior",
+    
+    // Foot Muscles
+    "Flexor Hallucis Longus",
+    "Extensor Digitorum Longus",
+    
+    // Additional Muscles
+    "Sartorius",
+    "Adductor Longus",
+    "Adductor Magnus",
+    "Pectineus",
+    "Gracilis"
+]
+let intensity = [
+    "Low",
+    "Moderate",
+    "Severe"
+]
+let mposition = [
+    "Left",
+    "Right"
+]

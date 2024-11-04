@@ -116,67 +116,78 @@ struct ContentView: View {
     }
 }
  */
-import SwiftUI
+
+
+struct LChartView: View {
+    var body: some View {
+        Text("Line Chart")
+            .font(.largeTitle)
+            .padding()
+            .background(Color.blue.opacity(0.3))
+            .cornerRadius(12)
+    }
+}
+
+struct BChartView: View {
+    var body: some View {
+        Text("Bar Chart")
+            .font(.largeTitle)
+            .padding()
+            .background(Color.green.opacity(0.3))
+            .cornerRadius(12)
+    }
+}
+
+struct PChartView: View {
+    var body: some View {
+        Text("Pie Chart")
+            .font(.largeTitle)
+            .padding()
+            .background(Color.red.opacity(0.3))
+            .cornerRadius(12)
+    }
+}
 
 struct ContentView: View {
-    @State private var username: String = ""
-    @State private var password: String = ""
-    @State private var isActive: Bool = false // State to control navigation
+    @State private var currentIndex: Int = 0
+    let chartViews: [AnyView] = [
+        AnyView(LChartView()),
+        AnyView(BChartView()),
+        AnyView(PChartView())
+    ]
 
     var body: some View {
-        NavigationView {
-            VStack {
-                // Username Field
-                TextField("Username", text: $username)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
+        VStack {
+            chartViews[currentIndex]
+                .transition(.slide)
+                .animation(.easeInOut)
 
-                // Password Field
-                SecureField("Password", text: $password)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-
-                // Navigation Button
-                NavigationLink(destination: HomeView(), isActive: $isActive) {
-                    Button(action: {
-                        // Action when the button is tapped (if necessary)
-                        isActive = true // Navigate when the button is pressed
-                    }) {
-                        Text("Login")
-                            .padding()
-                            .background(isEnabled ? Color.blue : Color.gray)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+            HStack {
+                Button("Previous") {
+                    withAnimation {
+                        currentIndex = (currentIndex - 1 + chartViews.count) % chartViews.count
                     }
-                    .disabled(!isEnabled) // Disable button if fields are not filled
                 }
-                .simultaneousGesture(TapGesture().onEnded {
-                    // Prevent navigation if button is disabled
-                    if isEnabled {
-                        isActive = true
-                    }
-                })
+                .disabled(currentIndex == 0)
 
                 Spacer()
+
+                Button("Next") {
+                    withAnimation {
+                        currentIndex = (currentIndex + 1) % chartViews.count
+                    }
+                }
+                .disabled(currentIndex == chartViews.count - 1)
             }
             .padding()
-            .navigationTitle("Login")
         }
-    }
-
-    // Computed property to determine if the button should be enabled
-    private var isEnabled: Bool {
-        !username.isEmpty && !password.isEmpty
+        .padding()
     }
 }
 
-struct HomeView: View {
-    var body: some View {
-        Text("Welcome to the Home View!")
-            .font(.largeTitle)
-            .navigationTitle("Home")
-    }
-}
+
+
+
 #Preview {
         ContentView()
 }

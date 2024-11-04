@@ -3,11 +3,17 @@ import SwiftUI
 struct WelcomeView: View {
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
-    
+    @State var currentIndex: Int = 0
+    var progview = [
+        BarChartView(workout:"Squat",setData:
+            DBSets.setsTest3,welcomeView: true),
+        BarChartView(workout:"Bench Press",setData: DBSets.setsTest2,welcomeView: true)
+    ]
     var body: some View {
+        NavigationView{
         ZStack {
             Color("Cream").ignoresSafeArea()
-            
+
             if workoutPlanData.isLoading {
                 SwiftUI.ProgressView("Loading Workout Plan...")
                     .onAppear {
@@ -21,7 +27,7 @@ struct WelcomeView: View {
                     
                     // Header
                     headerView
-                    
+                    Spacer()
                     // Progress View navigation
                     NavigationLink(destination: ProgressView()) {
                         progressView
@@ -54,13 +60,14 @@ struct WelcomeView: View {
                 }
                 .padding()
             }
+            }
         }
         .navigationBarBackButtonHidden(true)
-        
+
     }
-    
+
     // MARK: - Subviews
-    
+
     var headerView: some View {
         VStack {
             HStack {
@@ -70,7 +77,7 @@ struct WelcomeView: View {
                     .fontWeight(.heavy)
                     .padding(.bottom, 5)
                     .foregroundColor(Color("DarkBlue"))
-                
+
                 Spacer()
                 NavigationLink(destination: UserProfileView()) {
                     Image(systemName: "person.circle.fill")
@@ -81,32 +88,51 @@ struct WelcomeView: View {
                 Spacer()
             }
             .padding(.top, 20)
-            
+
             Divider()
                 .padding(1)
                 .background(Color("DarkBlue"), in: RoundedRectangle(cornerRadius: 25))
-            
+
             Text(Date(), style: .date)
                 .font(.title)
                 .foregroundColor(Color("DarkBlue"))
-            
+
             Text(Date(), style: .time)
                 .font(.title2)
                 .foregroundColor(Color("DarkBlue"))
         }
     }
-    
+
     var progressView: some View {
-        ZStack {
-            Color("DarkBlue")
-                .clipShape(RoundedRectangle(cornerRadius: 25))
-                .padding(5)
-            Text("View Progress")
-                .font(.title3)
-                .foregroundColor(Color("Cream"))
+            ZStack {
+                //.clipShape(RoundedRectangle(cornerRadius: 25))
+                //.padding(5)
+                progview[Int.random(in: 0...progview.count-1)]
+                    .transition(.slide)
+                    .animation(.easeInOut, value: 10)
+                    .onAppear {
+                        //if we got time
+                        /*
+                        Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
+                            withAnimation {
+                                currentIndex = (currentIndex + 1) % progview.count
+                            }
+                         }
+                         
+                         */
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
+                //NavigationLink(destination: ProgressView()) {
+                  //  Color.clear
+                //}
+                //Text("View Progress")
+                //.font(.title3)
+                //.foregroundColor(Color("Cream"))
+
         }
     }
-    
+
+
     func workoutSummaryView(workout: Workout) -> some View {
         ZStack {
             Color("DarkBlue").ignoresSafeArea()
@@ -116,7 +142,7 @@ struct WelcomeView: View {
                         .font(.title3)
                         .foregroundColor(Color("Cream"))
                         .padding(.bottom, 5)
-                    
+
                     ForEach(workout.exercises.indices, id: \.self) { index in
                         HStack {
                             Text(workout.exercises[index].name)

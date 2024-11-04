@@ -154,7 +154,7 @@ struct FeedbackView: View {
 
 // Simple confetti animation view
 struct ConfettiView: View {
-    @State private var confettiPositions: [CGSize] = Array(repeating: .zero, count: 20)
+    @State private var confettiPositions: [CGSize] = Array(repeating: .zero, count: 40)
 
     var body: some View {
         ZStack {
@@ -164,9 +164,9 @@ struct ConfettiView: View {
                     .frame(width: 10, height: 10)
                     .offset(confettiPositions[index])
                     .onAppear {
-                        withAnimation(.linear(duration: Double.random(in: 1.5...3)).repeatForever(autoreverses: false)) {
+                        withAnimation(.linear(duration: Double.random(in: 1.0...2.0))) {
                             confettiPositions[index] = CGSize(
-                                width: CGFloat.random(in: -150...150),
+                                width: CGFloat.random(in: -250...250),
                                 height: index % 2 == 0 ? CGFloat.random(in: -500 ... -300) : CGFloat.random(in: 300 ... 500)
                             )
                         }

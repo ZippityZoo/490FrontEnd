@@ -9,7 +9,7 @@ import SwiftUI
 
 //TODO: Insert Into DB
 struct SignUpView: View {
-    @EnvironmentObject var newUser:UserData
+    @EnvironmentObject var newUser:UserData//integrate this 
     @State var email:String = ""
     @State var username:String = ""
     @State var password:String = ""

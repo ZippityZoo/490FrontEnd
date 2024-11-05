@@ -76,6 +76,11 @@ struct Workout: Identifiable, Codable {
         case intensity, duration, exercises
     }
 }
+//TODO: finish this for the progress view
+/*
+struct WorkoutHistory:Identifiable, Codable{
+    
+}*/
 
 // Sample data for preview
 let workout1Exercises = [

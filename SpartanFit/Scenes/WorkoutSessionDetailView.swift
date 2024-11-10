@@ -4,10 +4,11 @@ struct WorkoutSessionDetailView: View {
     var workout: Workout // Pass the workout directly as a Workout object
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
     @EnvironmentObject var userData: UserData
-
+    
     @State private var expandedIndex: Int? = nil
     @State private var isShowingFeedbackView = false
-
+    @State private var completedSets: Double = 0
+    
     var body: some View {
         ZStack {
             Color("Cream").ignoresSafeArea()
@@ -31,7 +32,7 @@ struct WorkoutSessionDetailView: View {
             }
         }
     }
-
+    
     private func loadExpandedIndex() {
         if let savedIndex = UserDefaults.standard.object(forKey: "expandedIndex") as? Int {
             expandedIndex = savedIndex
@@ -39,13 +40,13 @@ struct WorkoutSessionDetailView: View {
             expandedIndex = 0
         }
     }
-
+    
     private func saveExpandedIndex() {
         if let expandedIndex = expandedIndex {
             UserDefaults.standard.set(expandedIndex, forKey: "expandedIndex")
         }
     }
-
+    
     private func topNavigation() -> some View {
         HStack {
             Spacer()
@@ -58,7 +59,7 @@ struct WorkoutSessionDetailView: View {
         }
         .zIndex(1)
     }
-
+    
     private func titleHeader() -> some View {
         HStack {
             Spacer()
@@ -71,7 +72,7 @@ struct WorkoutSessionDetailView: View {
         .padding(.top, 10)
         .zIndex(1)
     }
-
+    
     private func exercisesScrollView() -> some View {
         ScrollViewReader { proxy in
             ScrollView {
@@ -90,8 +91,8 @@ struct WorkoutSessionDetailView: View {
             }
         }
     }
-
-    private func feedbackView() -> some View{
+    
+    private func feedbackView() -> some View {
         Button(action: {
             isShowingFeedbackView.toggle()
         }) {
@@ -110,6 +111,7 @@ struct WorkoutSessionDetailView: View {
                 .environmentObject(workoutPlanData)
         }
     }
+    
     private func exerciseLabel(index: Int) -> some View {
         HStack {
             Text(workout.exercises[index].name)
@@ -117,26 +119,102 @@ struct WorkoutSessionDetailView: View {
                 .foregroundColor(Color("Cream"))
             Spacer()
         }
-        .padding(10)
+        .padding(5)
         .background(Color("DarkBlue"))
     }
-
+    
     private func exerciseContent(index: Int) -> some View {
-        VStack(spacing: 0) {
-            ForEach(workout.exercises[index].sets.indices, id: \.self) { setIndex in
-                SetView(
-                    workoutSet: workout.exercises[index].sets[setIndex],
-                    setNumber: setIndex + 1
-                )
-                .padding(.horizontal)
-                .padding(.vertical, -1)
+        VStack(alignment: .leading, spacing: 10) {
+            let exercise = workout.exercises[index]
+            let totalSets = exercise.planSets
+            
+            HStack {
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("Weight")
+                        .font(.headline)
+                        .foregroundColor(Color("Cream"))
+                    Text("\(exercise.planWeight, specifier: "%.1f") lbs")
+                        .foregroundColor(Color("Cream"))
+                        .font(.subheadline)
+                }
+                Spacer()
+                
+                VStack(alignment: .leading) {
+                    Text("Reps")
+                        .font(.headline)
+                        .foregroundColor(Color("Cream"))
+                    Text("\(exercise.planReps)")
+                        .foregroundColor(Color("Cream"))
+                        .font(.subheadline)
+                }
+                Spacer()
+                
+                VStack(alignment: .leading) {
+                    Text("Rest")
+                        .font(.headline)
+                        .foregroundColor(Color("Cream"))
+                    Text("\(exercise.restTime)s")
+                        .foregroundColor(Color("Cream"))
+                        .font(.subheadline)
+                }
+                Spacer()
+                
             }
+            .padding(.bottom, 10)
+            
+            HStack {
+                Spacer()
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("Completed Sets")
+                            .font(.headline)
+                            .foregroundColor(Color("Cream"))
+                        
+                        Text("\(Int(completedSets)) / \(totalSets)")
+                            .foregroundColor(Color("Cream"))
+                            .font(.subheadline)
+                    }
+                }
+                Spacer()
+            }
+            
+            HStack {
+                Text("0")
+                    .foregroundColor(Color("Cream"))
+                Slider(value: $completedSets, in: 0...Double(totalSets), step: 1)
+                    .accentColor(Color("DarkBlue"))
+                    .cornerRadius(5)
+                    .frame(height: 20)
+                    .padding(.horizontal)
+                    .tint(Color("Cream"))
+                    .foregroundColor(Color("Cream"))
+                    .onAppear {
+                        if let thumbImage = UIImage(systemName: "circle.fill")?
+                            .withTintColor(UIColor(named: "Cream") ?? .white, renderingMode: .alwaysOriginal)
+                        {
+                            UISlider.appearance().setThumbImage(thumbImage, for: .normal)
+                        }
+                    }
+                Text("\(totalSets)")
+                    .foregroundColor(Color("Cream"))
+            }
+            
+            Spacer()
         }
         .padding()
         .background(Color("DarkBlue"))
-        .transition(.opacity.combined(with: .push(from: .top)))
+        .cornerRadius(10)
+        .padding(.horizontal)
     }
 }
+
+#Preview {
+    WorkoutSessionDetailView(workout: sampleWorkouts[0])
+        .environmentObject(WorkoutPlanData(workoutPlan: sampleWorkoutPlan))
+        .environmentObject(UserData(user: sampleUser))
+}
+
 
 // Updated AccordionView to match the structure
 struct AccordionView<Label, Content>: View where Label: View, Content: View {
@@ -144,7 +222,7 @@ struct AccordionView<Label, Content>: View where Label: View, Content: View {
     let sectionCount: Int
     @ViewBuilder let label: (Int) -> Label
     @ViewBuilder let content: (Int) -> Content
-
+    
     var body: some View {
         VStack(spacing: -1) {
             ForEach(0..<sectionCount, id: \.self) { index in
@@ -165,7 +243,7 @@ struct AccordionView<Label, Content>: View where Label: View, Content: View {
                             expandedIndex = expandedIndex == index ? nil : index
                         }
                     }
-
+                    
                     // Content that expands with animation
                     if expandedIndex == index {
                         content(index)
@@ -177,10 +255,4 @@ struct AccordionView<Label, Content>: View where Label: View, Content: View {
             }
         }
     }
-}
-
-
-
-#Preview {
-    WorkoutSessionDetailView(workout: sampleWorkouts[0])
 }

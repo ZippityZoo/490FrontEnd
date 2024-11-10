@@ -41,6 +41,7 @@ struct User: Identifiable, Codable, Hashable {
     var fname: String
     var lname: String
     var username: String
+    var password: String
     var email: String
     var fit_goal: String
     var exp_level: String
@@ -52,7 +53,7 @@ struct User: Identifiable, Codable, Hashable {
     
     enum CodingKeys: String, CodingKey {
         case id = "user_id" // Maps "user_id" in JSON to "id" in Swift
-        case fname, lname, username, email, fit_goal, exp_level, created_at
+        case fname, lname, username, password, email, fit_goal, exp_level, created_at
         case muscle_id, muscle_name, muscle_position, injury_intensity
     }
 }
@@ -63,6 +64,7 @@ let sampleUser = User(
     fname: "Garrett",
     lname: "Emerich",
     username: "SpartanMaster",
+    password: "SuperStrongPassword",
     email: "garrett@example.com",
     fit_goal: "Strength",
     exp_level: "Advanced",

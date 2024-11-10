@@ -17,11 +17,11 @@ struct WorkoutPlanView: View {
                     }
             } else if let workoutPlan = workoutPlanData.workoutPlan {
                 VStack {
-                    Text("Your Workout Plan") // Workout plan title
+                    Text("Upcoming Workouts") // Workout plan title
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(Color("DarkBlue"))
-                        .padding(.top, 50)
+                        .padding(.top, 20)
                     
                     WorkoutPlanBody(workoutPlan: workoutPlan)
                 }
@@ -38,7 +38,7 @@ struct WorkoutPlanBody: View {
     
     var body: some View {
         List {
-            ForEach(workoutPlan.workouts, id: \.id) { workout in
+            ForEach(Array(workoutPlan.workouts.enumerated()), id: \.element.id) { index, workout in
                 Section {
                     VStack(alignment: .leading, spacing: 10) {
                         ForEach(workout.exercises, id: \.id) { exercise in
@@ -58,10 +58,10 @@ struct WorkoutPlanBody: View {
                     }
                     .padding()
                     .background(Color("DarkBlue").cornerRadius(25))
-                    .overlay(RoundedRectangle(cornerRadius: 25).stroke(Color.black, lineWidth: 5))
+                    //.overlay(RoundedRectangle(cornerRadius: 25).stroke(Color.black, lineWidth: 5))
                     
                 } header: {
-                    Text("Today's Workout") // Placeholder for the workout title or another identifier
+                    Text("\(ordinalWorkoutText(for: index)) Workout")
                         .font(.headline)
                         .foregroundColor(Color("DarkBlue"))
                         .padding(.vertical, 5)
@@ -70,7 +70,18 @@ struct WorkoutPlanBody: View {
             }
         }
         .listStyle(InsetGroupedListStyle())
-        .scrollContentBackground(.hidden) // Remove the white scroll box background
+        .scrollContentBackground(.hidden)
+    }
+    
+    private func ordinalWorkoutText(for index: Int) -> String {
+        switch index {
+        case 0: return "First"
+        case 1: return "Second"
+        case 2: return "Third"
+        case 3: return "Fourth"
+        case 4: return "Fifth"
+        default: return "\(index + 1)th"
+        }
     }
 }
 

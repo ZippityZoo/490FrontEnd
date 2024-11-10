@@ -131,6 +131,11 @@ struct FeedbackView: View {
                         showConfirmation = true
                         showConfetti = true
                         
+                        //refresh workoutPlan
+                        if let userId = userData.user?.id {
+                            workoutPlanData.fetchWorkoutPlan(userId: userId)
+                        }
+                        
                         // Automatically dismiss confirmation and feedback view
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             withAnimation {

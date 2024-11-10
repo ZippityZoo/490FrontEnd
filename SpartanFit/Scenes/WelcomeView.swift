@@ -11,7 +11,6 @@ struct WelcomeView: View {
         NavigationView{
             ZStack {
                 Color("Cream").ignoresSafeArea()
-                
                 if workoutPlanData.isLoading {
                     SwiftUI.ProgressView("Loading Workout Plan...")
                         .onAppear {
@@ -97,15 +96,13 @@ struct WelcomeView: View {
                 ))
                 .animation(.easeInOut(duration: 0.8), value: currentIndex)
                 .onAppear {
-                    Timer.scheduledTimer(withTimeInterval: 9, repeats: true) { _ in
-                        withAnimation {
-                            currentIndex = (currentIndex + 1) % progview.count
-                        }
-                    }
+                    // Set a random chart whenever the view appears
+                    currentIndex = Int.random(in: 0..<progview.count)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 25))
         }
     }
+
     
     func workoutPreviewView() -> some View {
         VStack {

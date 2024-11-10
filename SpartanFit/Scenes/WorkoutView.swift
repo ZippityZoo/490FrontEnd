@@ -116,6 +116,7 @@ struct ContentView: View {
     }
 }
  */
+//let workoutNamesTest:AllWorkoutNames = sampleWorkoutNames
 
 
 struct LChartView: View {
@@ -147,7 +148,7 @@ struct PChartView: View {
             .cornerRadius(12)
     }
 }
-
+/*
 struct ContentView: View {
     @State private var currentIndex: Int = 0
     let chartViews: [AnyView] = [
@@ -185,12 +186,10 @@ struct ContentView: View {
     }
 }
 
+*/
 
 
 
-#Preview {
-        ContentView()
-}
 
 
 

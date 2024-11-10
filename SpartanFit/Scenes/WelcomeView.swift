@@ -51,9 +51,14 @@ struct WelcomeView: View {
     
     var progview: [AnyView] {
         [
+            /*
             AnyView(BarChartView(workout: "Squat", setData: DBSets.setsTest3, welcomeView: true).id(UUID())),
             AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
             AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
+             */
+            AnyView(EmptyView()),
+            AnyView(EmptyView()),
+            AnyView(EmptyView())
         ]
     }
     

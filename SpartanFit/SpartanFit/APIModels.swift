@@ -40,7 +40,36 @@ class WorkoutPlanData: ObservableObject {
             }
         }.resume()
     }
+
 }
+
+class WorkoutHistoryData: ObservableObject{
+    @Published var performance:[WorkoutHistory]?
+
+    init(userId: Int){
+        fetchWorkoutHistory(userId: userId)
+    }
+    func fetchWorkoutHistory(userId: Int){
+        //getting the right json info time to use it huh
+        let urlString = "http://localhost:3000/userworkouthistory/user_id=\(userId)"
+        //"http://localhost:3000/userworkouthistory/user_id=\(userId)"
+        guard let url = URL(string: urlString) else { return }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else { return }
+            do {
+                let apiResponse = try JSONDecoder().decode(PerformanceData.self, from: data)
+                DispatchQueue.main.async {
+                    //idk if this will work, good news
+                    self.performance = apiResponse.performance
+                }
+            } catch {
+                print("Failed to decode JSON:", error)
+
+            }
+        }.resume()
+    }
+}
+
 
 struct RecommendedPlansResponse: Codable {
     let status: String
@@ -80,6 +109,38 @@ struct Workout: Identifiable, Codable {
         case intensity, duration, exercises
     }
 }
+//TODO: finish this for the progress view
+
+struct WorkoutHistory:Identifiable, Codable{
+    let userId: Int
+    let firstName: String
+    let lastName: String
+    let id: Int
+    let exerciseName: String
+    let setPerf:Int
+    let repPerf:Int
+    let weightPerf:Double
+    let dateCompleted:String
+
+    enum CodingKeys:String, CodingKey {
+        case userId = "user_id"
+        case firstName = "fname"
+        case lastName = "lname"
+        case id = "perf_id"
+        case exerciseName = "exercise_name"
+        case setPerf = "actual_sets"
+        case repPerf = "actual_reps"
+        case weightPerf = "actual_weight"
+        case dateCompleted = "perf_date"
+    }
+
+
+}
+struct PerformanceData: Codable {
+    let performance: [WorkoutHistory]
+}
+
+
 
 let workout1Exercises = [
     Exercise(id: 1, name: "Bench Press", apiId: 101, planSets: 4, planReps: 12, planWeight: 135.0, restTime: 60),
@@ -123,3 +184,5 @@ let sampleWorkoutPlan = WorkoutPlan(
 let sampleWorkoutPlanData = WorkoutPlanData(workoutPlan: sampleWorkoutPlan)
 
 let apiBaseUrl = "http://172.16.2.143:3000"
+//Sample workouthistorydata
+let sampleWorkoutHistory = WorkoutHistoryData(userId: 7572)

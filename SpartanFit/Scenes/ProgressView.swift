@@ -9,73 +9,12 @@ import SwiftUI
 import Charts
 
 struct ProgressView: View {
-    var body: some View {
-        WorkoutProgressList()
-    }
-}
-//TODO: connect to db
-//Will Have a list of workouts for the user to select
-struct WorkoutProgressList:View{
-    var body: some View{
-        
-        ZStack{
-            Color("Cream")
-            VStack{
-                Text("Progress").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold()
-                List{
-                    ForEach(workoutNames,id:\.self){ workout in
-                        HStack{
-                            NavigationLink(destination: BarChartView(workout: workout)){
-                                Text(workout)
-                            }.foregroundStyle(Color.white)
-                        }
-                    }.listRowBackground(Color("DarkBlue"))
-                }.scrollContentBackground(.hidden)
-            }.background(Color("Cream"))
-        }
-        
-    }
-}
-struct NavBar: View{
-    @State var isrecent:Bool = true
-    @Binding var setData:[DBSets]
-    var body: some View{
-        ZStack{
-            Color("Cream")
-            HStack{
-                Spacer()
-                Button(action:recent){
-                    Text("Recent")
-                }
-                Spacer()
-                Divider()
-                Spacer()
-                Button(action:overall){
-                    Text("Overall")
-                }
-                Spacer()
-            }
-        }.frame(height:40)
-            .clipShape(RoundedRectangle(cornerRadius: 10)).padding(4).background(.black).clipShape(RoundedRectangle(cornerRadius: 10))
-    }
-    func recent(){
-        isrecent = true
-        setData = DBSets.setsTest
-        print(isrecent)
-    }
-    func overall(){
-        isrecent = false
-        setData = DBSets.setsTest2
-        print(isrecent)
-    }
-}
-
-struct BarChartView: View {
-    var workout: String
+    @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
+    //@State var setofexercises: Set<String> = []
+    @State var workout: String = "Default"
     @State var setData = DBSets.setsTest2
     @State var welcomeView: Bool = false
-    
-    // Define color mapping for each set name
+    @State var isrecent:Bool = true
     let colorMapping: [String: Color] = [
         "Set1": Color("Set1"),
         "Set2": Color("Set2"),
@@ -86,120 +25,120 @@ struct BarChartView: View {
     ]
     
     var body: some View {
-        ZStack {
-            Color("Cream").ignoresSafeArea()
-            VStack {
-                if welcomeView {
-                    EmptyView()
-                } else {
-                    NavBar(setData: $setData)
-                }
-                VStack {
-                    Text(workout)
-                        .font(.title)
-                        .foregroundStyle(Color("Cream"))
-                    
-                    // Chart setup
-                    Chart(setData) { day in
-                        ForEach(day.sets, id: \.id) { set in
-                            BarMark(
-                                x: .value("X", set.date.formatted(date: .numeric, time: .omitted)),
-                                y: .value("Y", set.reps)
-                            )
-                            .foregroundStyle(colorMapping[set.setNumber.rawValue] ?? Color.gray) // Assign colors using dictionary
-                            .annotation(position: .overlay) {
-                                Text(set.weight.formatted())
-                                    .font(.caption.bold())
-                            }
-                        }
-                    }
-                    .frame(height: 300)
-                    .chartXAxis {
-                        AxisMarks {
-                            AxisValueLabel().foregroundStyle(Color("Cream"))
-                        }
-                    }
-                    .chartYAxis {
-                        AxisMarks {
-                            AxisValueLabel().foregroundStyle(Color("Cream"))
-                        }
-                    }
-                    
-                    // Custom Legend
-                    HStack(spacing: 10) {
-                        ForEach(colorMapping.keys.sorted(), id: \.self) { setName in
-                            HStack(spacing: 5) {
-                                Circle()
-                                    .fill(colorMapping[setName] ?? Color.gray)
-                                    .frame(width: 10, height: 10)
-                                Text(setName)
-                                    .font(.caption)
-                                    .foregroundColor(Color("Cream"))
-                            }
-                        }
-                    }
-                    .padding(.top, 10)
-                }
-                .padding()
-                .background(Color("DarkBlue"))
-                .cornerRadius(10)
-            }
+        //temp
+        NavigationView{
+            WorkoutProgressList
         }
     }
-}
+    var WorkoutProgressList: some View{
+            ZStack{
+                Color("Cream")
+                VStack{
+                    Text("Progress").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold()
+                    List{
+                        //not correct need less
+                        
+                        ForEach(countuniqeIds().sorted(),id: \.self){workoutname in
+                                
+                                HStack{
+                                    NavigationLink(destination: BarChartView){
+                                        Text("\(workoutname)")
+                                    }.foregroundStyle(Color.white)
+                                        .onAppear{
+                                            self.workout = workoutname
+                                        }
+                                }
+                        }.listRowBackground(Color("DarkBlue"))
+                    }.scrollContentBackground(.hidden)
+                }.background(Color("Cream"))
+            }
+            
+        }
+    var NavBar: some View{
+            ZStack{
+                Color("Cream")
+                HStack{
+                    Spacer()
+                    Button(action:recent){
+                        Text("Recent")
+                    }
+                    Spacer()
+                    Divider()
+                    Spacer()
+                    Button(action:overall){
+                        Text("Overall")
+                    }
+                    Spacer()
+                }
+            }.frame(height:40)
+                .clipShape(RoundedRectangle(cornerRadius: 10)).padding(4).background(.black).clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+        func recent(){
+            isrecent = true
+            setData = DBSets.setsTest
+            print(isrecent)
+        }
+        func overall(){
+            isrecent = false
+            setData = DBSets.setsTest2
+            print(isrecent)
+        }
+        //
+    func countuniqeIds() -> Set<String>{
+            if let performance = workoutHistoryData.performance{
+               let setofexercises =  Set(performance.map { $0.exerciseName })
+                return setofexercises
+            }
+        return []
+        }
 
-struct LineChartView: View {
-    //let data: [(id:UUID,weight: Double, reps: Int)]
-    var workout:String
-    @State var setData = DBSets.setsTest2
-    @State var welcomeView:Bool = false
-    var body: some View {
-        //just for testing
+    var BarChartView:some View {
+        
         ZStack{
             Color("Cream").ignoresSafeArea()
             VStack{
                 if(welcomeView){
                     EmptyView()
                 }else{
-                    NavBar(setData:$setData)
+                    EmptyView()
+                    //NavBar(setData:$setData)
                 }
                 VStack{
                     Text(workout).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
-                    //Chart(setData){point in
-                    Chart(setData){ day in
-                        ForEach(day.sets,id: \.id){set in
-                            AreaMark(
-                                x:.value("X",set.date.formatted(date: .numeric, time: .omitted)),
-                                y:.value("Y",set.reps)
-                            )
-                            .foregroundStyle(by:.value("Set",set.setNumber.rawValue))
-                            /* .annotation(position: .overlay){Text(set.weight.formatted()).font(.caption.bold())
-                             
-                             }
-                             */
-                        }
-                    }.frame(height: 300)
-//                        .chartForegroundStyleScale([
-//                            "SetOne": Color("Set1"), "SetTwo": Color("Set2"), "SetThree": Color("Set3"), "SetFour": Color("Set4"),
-//                            "SetFive": Color("Set5"),
-//                            "SetSix": Color("SetOne")
-//                        ])
+                    var setcount = 1
+                    if let performance = workoutHistoryData.performance{
                     
-                        .chartXAxis {
-                            AxisMarks {
-                                AxisValueLabel()
-                                    .foregroundStyle(.white)
-                            }
-                            
-                        }
-                        .chartYAxis {
-                            AxisMarks {
-                                AxisValueLabel()
-                                    .foregroundStyle(.white)
-                        }
-                            
-                    }
-                    HStack(spacing: 10) {
+                    Chart(performance){day in
+                        let date = convertStringtoDate(datestr: day.dateCompleted)
+                        BarMark(
+                            x:.value("X",date.formatted(date:.numeric,time:.omitted)),
+                            y:.value("Y", day.repPerf)
+                        )
+                        .foregroundStyle(by:.value("Set",String(setcount)))
+                        .annotation(position:.overlay){Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())}
+                            let _ = setcount += 1
+                                if (day.setPerf < setcount){
+                                    let _ = setcount = 1
+                                }
+                    }.chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
+                     }
+                     /*
+                     .chartXAxis {
+                     AxisMarks {
+                     AxisValueLabel()
+                     .foregroundStyle(.white)
+                     }
+                     
+                     }
+                     .chartYAxis {
+                     AxisMarks {
+                     AxisValueLabel()
+                     .foregroundStyle(.white)
+                     }
+                     
+                     }
+                     */
+                    /*HStack(spacing: 10) {
                         ForEach(["Set1", "Set2", "Set3", "Set4", "Set5", "Set6"], id: \.self) { setName in
                             HStack(spacing: 5) {
                                 Circle()
@@ -212,14 +151,27 @@ struct LineChartView: View {
                         }
                     }
                     .padding(.top, 10)
+                     */
                 }
                 .padding()
                 .background(Color("DarkBlue"))
                 .cornerRadius(10)
             }
         }
+        
+    }
+    func convertStringtoDate(datestr:String)->Date{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy'-'mm'-'dd' 'HH':'mm':'ss'"
+        if let date = dateFormatter.date(from: datestr){
+            return date
+        }
+        return Date.now
     }
 }
+//TODO: connect to db
+//Will Have a list of workouts for the user to select
+
 
 //Stuff to simulate DB info
 enum SetNum: String {
@@ -229,6 +181,24 @@ enum SetNum: String {
     case SetFour = "Set4"
     case SetFive = "Set5"
     case SetSix = "Set6"
+}
+func convert(setNum:Int) ->SetNum{
+    switch(setNum){
+        case 1:
+            return SetNum.SetOne
+        case 2:
+            return SetNum.SetTwo
+        case 3:
+            return SetNum.SetThree
+        case 4:
+            return SetNum.SetFour
+        case 5:
+            return SetNum.SetFive
+        case 6:
+            return SetNum.SetSix
+        default:
+            return SetNum.SetSix
+    }
 }
 
 struct Sets:Identifiable{
@@ -290,8 +260,9 @@ let workoutNames = ["Bench Press","Squat","Deadlift","OverHead Press","Pull-Up",
 
 #Preview {
     //NavBar()
-    //ProgressView()
-    //WorkoutProgressList()
-    BarChartView(workout:"Default",welcomeView: true)
+    ProgressView().environmentObject(sampleWorkoutHistory)
+    //WorkoutProgressList
+    //LineChartView()
+    //EmptyView()
 }
 

@@ -6,6 +6,7 @@ struct LoginView: View {
     @State private var password = ""
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var workoutPlanData: WorkoutPlanData // WorkoutPlanData as EnvironmentObject
+    @State var isAuthenticated:Bool  = false
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -39,8 +40,14 @@ struct LoginView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 15.0))
                                 .foregroundColor(.white)
                             }
-                            NavigationLink(destination: SignUpView()) {
-                                Text("Sign Up").foregroundStyle(.blue).underline()
+                                NavigationLink(destination: SignUpView()) {
+                                    Text("Sign Up").foregroundStyle(.blue).underline()
+                                }
+                            
+                   
+                        }.navigationDestination(for: String.self) { view in
+                            if view == "WelcomeView" {
+                                WelcomeView()
                             }
                         }
                     }
@@ -72,8 +79,11 @@ struct LoginView: View {
                     if let fetchedUser = apiResponse.user.first {
                         print("User fetched successfully:", fetchedUser)
                         self.userData.updateUser(fetchedUser)
+                        self.isAuthenticated = true
+                        self.path.append("WelcomeView")
                         fetchPreferences(userId: fetchedUser.id) // Fetch preferences after updating user
                     } else {
+                        self.isAuthenticated = false
                         print("User not found.")
                     }
                 }
@@ -89,6 +99,16 @@ struct LoginView: View {
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
+            //for debugging
+            /*
+            if let jsondata = data {
+                if let jsonString = String(data: jsondata, encoding: .utf8) {
+                    print(jsonString) // This will help you see the exact JSON structure
+                }
+            }
+             */
+            //print(url) no json here
+            
             guard let data = data, error == nil else {
                 print("Network or URL error:", error ?? "Unknown error")
                 return

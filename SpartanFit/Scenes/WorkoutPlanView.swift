@@ -11,9 +11,7 @@ struct WorkoutPlanView: View {
             if workoutPlanData.isLoading {
                 SwiftUI.ProgressView("Loading Workout Plan...")
                     .onAppear {
-                        if let userId = userData.user?.id {
-                            workoutPlanData.fetchWorkoutPlan(userId: userId)
-                        }
+                        refreshWorkoutData()
                     }
             } else if let workoutPlan = workoutPlanData.workoutPlan {
                 VStack {
@@ -28,7 +26,20 @@ struct WorkoutPlanView: View {
             } else {
                 Text("No workout plan available.")
                     .foregroundColor(Color("DarkBlue"))
+                    .onAppear {
+                        refreshWorkoutData()
+                    }
             }
+        }
+        .onAppear {
+            refreshWorkoutData()
+        }
+    }
+    
+    private func refreshWorkoutData() {
+        if let userId = userData.user?.id {
+            workoutPlanData.isLoading = true
+            workoutPlanData.fetchWorkoutPlan(userId: userId)
         }
     }
 }
@@ -42,7 +53,7 @@ struct WorkoutPlanBody: View {
                 Section {
                     VStack(alignment: .leading, spacing: 10) {
                         ForEach(workout.exercises, id: \.id) { exercise in
-                            NavigationLink(destination: WorkoutSessionDetailView(workout: workout)) {
+                            NavigationLink(destination: WorkoutSessionDetailView()) {
                                 HStack {
                                     Text(exercise.name)
                                         .font(.subheadline)
@@ -58,7 +69,6 @@ struct WorkoutPlanBody: View {
                     }
                     .padding()
                     .background(Color("DarkBlue").cornerRadius(25))
-                    //.overlay(RoundedRectangle(cornerRadius: 25).stroke(Color.black, lineWidth: 5))
                     
                 } header: {
                     Text("\(ordinalWorkoutText(for: index)) Workout")

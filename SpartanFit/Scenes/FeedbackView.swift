@@ -110,7 +110,7 @@ struct FeedbackView: View {
             "totalCaloriesBurned": calories
         ]
 
-        let urlString = "http://localhost:3000/feedback"
+        let urlString = "\(apiBaseUrl)/feedback"
         guard let url = URL(string: urlString) else { return }
 
         var request = URLRequest(url: url)

@@ -23,7 +23,7 @@ class WorkoutPlanData: ObservableObject {
     }
 
     func fetchWorkoutPlan(userId: Int) {
-        let urlString = "http://localhost:3000/recommendations?user_id=\(userId)"
+        let urlString = "\(apiBaseUrl)/recommendations?user_id=\(userId)"
         guard let url = URL(string: urlString) else { return }
 
         URLSession.shared.dataTask(with: url) { data, response, error in
@@ -121,3 +121,5 @@ let sampleWorkoutPlan = WorkoutPlan(
 
 // Creating an instance of WorkoutPlanData with sample data
 let sampleWorkoutPlanData = WorkoutPlanData(workoutPlan: sampleWorkoutPlan)
+
+let apiBaseUrl = "http://172.16.2.143:3000"

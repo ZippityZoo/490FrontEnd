@@ -44,7 +44,7 @@ struct LoginView: View {
                             }
                         }
                     }
-                    .padding(.vertical, 200)
+                    .padding(.vertical, 30)
                     .clipShape(RoundedRectangle(cornerRadius: 25.0))
                 }
             }
@@ -57,7 +57,7 @@ struct LoginView: View {
     
     func authenticateUser(email: String) {
         let userId = email
-        let urlString = "http://localhost:3000/userprofile/user_id=\(userId)"
+        let urlString = "\(apiBaseUrl)/userprofile/user_id=\(userId)"
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
@@ -85,7 +85,7 @@ struct LoginView: View {
 
     
     func fetchPreferences(userId: Int) {
-        let urlString = "http://localhost:3000/preferences/\(userId)"
+        let urlString = "\(apiBaseUrl)/preferences/\(userId)"
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in

@@ -119,7 +119,7 @@ struct EditProfileView: View {
     }
 
     private func updateUserProfile(_ user: User) {
-        guard let url = URL(string: "http://localhost:3000/users/update/\(user.id)") else { return }
+        guard let url = URL(string: "\(apiBaseUrl)/users/update/\(user.id)") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

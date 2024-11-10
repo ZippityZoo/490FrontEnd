@@ -160,7 +160,7 @@ struct EditPreferencesView: View {
             preferredExercise: preferredExercise
         )
         
-        guard let url = URL(string: "http://localhost:3000/preferences/update/\(userId)") else { return }
+        guard let url = URL(string: "\(apiBaseUrl)/preferences/update/\(userId)") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

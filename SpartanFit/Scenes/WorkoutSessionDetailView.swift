@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct WorkoutSessionDetailView: View {
-    var workout: Workout // Pass the workout directly as a Workout object
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
     @EnvironmentObject var userData: UserData
     
@@ -26,9 +25,19 @@ struct WorkoutSessionDetailView: View {
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 loadExpandedIndex()
+                if let userId = userData.user?.id {
+                    workoutPlanData.fetchWorkoutPlan(userId: userId)  // Refresh data on load
+                }
             }
             .onDisappear {
                 saveExpandedIndex()
+            }
+            .onChange(of: isShowingFeedbackView) {
+                if !isShowingFeedbackView {  // When feedback view is dismissed
+                    if let userId = userData.user?.id {
+                        workoutPlanData.fetchWorkoutPlan(userId: userId) // Reload data
+                    }
+                }
             }
         }
     }
@@ -74,23 +83,31 @@ struct WorkoutSessionDetailView: View {
     }
     
     private func exercisesScrollView() -> some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                AccordionView(expandedIndex: $expandedIndex, sectionCount: workout.exercises.count, label: { index in
-                    exerciseLabel(index: index)
-                }, content: { index in
-                    exerciseContent(index: index)
-                })
-            }
-            .onChange(of: expandedIndex, initial: false) { newValue, _ in
-                if let index = newValue {
-                    withAnimation(.easeOut(duration: 0.4)) {
-                        proxy.scrollTo(index, anchor: .top)
+        Group {
+            if let workout = workoutPlanData.workoutPlan?.workouts.first {
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        AccordionView(expandedIndex: $expandedIndex, sectionCount: workout.exercises.count, label: { index in
+                            exerciseLabel(workout.exercises[index].name)
+                        }, content: { index in
+                            exerciseContent(workout.exercises[index])
+                        })
+                    }
+                    .onChange(of: expandedIndex, initial: false) { newValue, _ in
+                        if let index = newValue {
+                            withAnimation(.easeOut(duration: 0.4)) {
+                                proxy.scrollTo(index, anchor: .top)
+                            }
+                        }
                     }
                 }
+            } else {
+                Text("No workout available")
+                    .foregroundColor(Color("DarkBlue"))
             }
         }
     }
+
     
     private func feedbackView() -> some View {
         Button(action: {
@@ -112,9 +129,9 @@ struct WorkoutSessionDetailView: View {
         }
     }
     
-    private func exerciseLabel(index: Int) -> some View {
+    private func exerciseLabel(_ name: String) -> some View {
         HStack {
-            Text(workout.exercises[index].name)
+            Text(name)
                 .font(.title2)
                 .foregroundColor(Color("Cream"))
             Spacer()
@@ -123,9 +140,8 @@ struct WorkoutSessionDetailView: View {
         .background(Color("DarkBlue"))
     }
     
-    private func exerciseContent(index: Int) -> some View {
+    private func exerciseContent(_ exercise: Exercise) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            let exercise = workout.exercises[index]
             let totalSets = exercise.planSets
             
             HStack {
@@ -210,11 +226,10 @@ struct WorkoutSessionDetailView: View {
 }
 
 #Preview {
-    WorkoutSessionDetailView(workout: sampleWorkouts[0])
+    WorkoutSessionDetailView()
         .environmentObject(WorkoutPlanData(workoutPlan: sampleWorkoutPlan))
         .environmentObject(UserData(user: sampleUser))
 }
-
 
 // Updated AccordionView to match the structure
 struct AccordionView<Label, Content>: View where Label: View, Content: View {

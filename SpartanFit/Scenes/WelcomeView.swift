@@ -5,44 +5,48 @@ struct WelcomeView: View {
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
     @State var currentIndex: Int = 0
     
-    
     var body: some View {
-        //remove this
-        NavigationView{
+        NavigationView {
             ZStack {
                 Color("Cream").ignoresSafeArea()
+                
                 if workoutPlanData.isLoading {
                     SwiftUI.ProgressView("Loading Workout Plan...")
                         .onAppear {
-                            if let userId = userData.user?.id {
-                                workoutPlanData.fetchWorkoutPlan(userId: userId)
-                            }
+                            refreshWorkoutData()
                         }
-                }
-                else
-                {
+                } else {
                     VStack(spacing: 20) {
-                        // Header
+                        Spacer()
                         headerView
-                            .padding(.bottom, 40)
-                            .padding(.top, 20)
+                        Spacer()
                         
-                        // Progress View navigation
                         NavigationLink(destination: ProgressView()) {
                             progressView
                                 .frame(height: 275)
                         }
-                        .padding(.bottom, 40)
+                        .padding(.bottom, 30)
                         .padding()
+                        
                         workoutPreviewView()
                             .padding(.bottom, 10)
-                        
                     }
                     .padding()
                 }
             }
+            .onAppear {
+                refreshWorkoutData()
+            }
         }
         .navigationBarBackButtonHidden(true)
+    }
+    
+    // Function to refresh workout data whenever WelcomeView appears
+    private func refreshWorkoutData() {
+        if let userId = userData.user?.id {
+            workoutPlanData.isLoading = true
+            workoutPlanData.fetchWorkoutPlan(userId: userId)
+        }
     }
     
     var progview: [AnyView] {
@@ -52,6 +56,7 @@ struct WelcomeView: View {
             AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
         ]
     }
+    
     // MARK: - Subviews
     
     var headerView: some View {
@@ -96,7 +101,6 @@ struct WelcomeView: View {
                 ))
                 .animation(.easeInOut(duration: 0.8), value: currentIndex)
                 .onAppear {
-                    // Set a random chart whenever the view appears
                     currentIndex = Int.random(in: 0..<progview.count)
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 25))
@@ -106,9 +110,9 @@ struct WelcomeView: View {
     
     func workoutPreviewView() -> some View {
         VStack {
-            if let workout = workoutPlanData.workoutPlan?.workouts.first {
-                NavigationLink(destination: WorkoutSessionDetailView(workout: workout)) {
-                    workoutSummaryView(workout: workout)
+            if let workoutPlan = workoutPlanData.workoutPlan, !workoutPlan.workouts.isEmpty {
+                NavigationLink(destination: WorkoutSessionDetailView()) {
+                    workoutSummaryView()
                 }
             } else {
                 Text("No workout available.")
@@ -122,8 +126,7 @@ struct WelcomeView: View {
         .frame(height: 300)
     }
     
-    
-    func workoutSummaryView(workout: Workout) -> some View {
+    func workoutSummaryView() -> some View {
         ZStack {
             Color("DarkBlue").ignoresSafeArea()
             ScrollView {
@@ -133,17 +136,19 @@ struct WelcomeView: View {
                         .foregroundColor(Color("Cream"))
                         .padding(.bottom, 5)
                     
-                    ForEach(workout.exercises.indices, id: \.self) { index in
-                        HStack {
-                            Text(workout.exercises[index].name)
-                                .font(.subheadline)
-                                .foregroundColor(Color("Cream"))
-                            Spacer()
-                            Text("\(workout.exercises[index].planSets) sets")
-                                .foregroundColor(Color("Cream"))
+                    if let workoutPlan = workoutPlanData.workoutPlan {
+                        ForEach(workoutPlan.workouts.first?.exercises ?? [], id: \.id) { exercise in
+                            HStack {
+                                Text(exercise.name)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color("Cream"))
+                                Spacer()
+                                Text("\(exercise.planSets) sets")
+                                    .foregroundColor(Color("Cream"))
+                            }
+                            .padding(10)
+                            .background(Color("DarkBlue").cornerRadius(25))
                         }
-                        .padding(10)
-                        .background(Color("DarkBlue").cornerRadius(25))
                     }
                 }
                 .padding()

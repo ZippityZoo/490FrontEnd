@@ -41,7 +41,7 @@ struct ProgressView: View {
                         ForEach(countuniqeIds().sorted(),id: \.self){workoutname in
                                 
                                 HStack{
-                                    NavigationLink(destination: BarChartView){
+                                    NavigationLink(destination: BarChartSubView(workoutHistoryData: _workoutHistoryData, exname: workoutname)){
                                         Text("\(workoutname)")
                                     }.foregroundStyle(Color.white)
                                         .onAppear{

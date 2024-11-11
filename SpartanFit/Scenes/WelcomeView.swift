@@ -4,7 +4,7 @@ struct WelcomeView: View {
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
     @State var currentIndex: Int = 0
-    
+    //var barViews: ProgressView().BarChartView
     var body: some View {
         NavigationView {
             ZStack {
@@ -21,7 +21,7 @@ struct WelcomeView: View {
                         headerView
                         Spacer()
                         
-                        NavigationLink(destination: ProgressView()) {
+                        NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
                             progressView
                                 .frame(height: 275)
                         }
@@ -56,9 +56,8 @@ struct WelcomeView: View {
             AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
             AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
              */
-            AnyView(EmptyView()),
-            AnyView(EmptyView()),
-            AnyView(EmptyView())
+            AnyView(BarChartSubView(exname:"Bench Press").environmentObject(sampleWorkoutHistory)),
+            AnyView(BarChartSubView(exname:"Squat").environmentObject(sampleWorkoutHistory))
         ]
     }
     

@@ -187,8 +187,30 @@ struct ContentView: View {
 }
 
 */
+struct ContentView : View {
+    //var head:ProgressView = ProgressView()
+    /*
+    var progview:[AnyView] = [
+        AnyView(BarChartSubView().environmentObject(sampleWorkoutHistory)),
+        AnyView(BarChartSubView().environmentObject(sampleWorkoutHistory)),
+        AnyView(BarChartSubView().environmentObject(sampleWorkoutHistory))
+    ]
+     */
+    var body: some View{
+        
+        VStack{
+            //progview[0]
+            //BarChartSubView().environmentObject(sampleWorkoutHistory)
+            Text("OHHHHH NOOOOOO")
+        }
+        //BarChartSubView().environmentObject(sampleWorkoutHistory)
+    }
+    
+}
 
-
+#Preview{
+    ContentView()
+}
 
 
 

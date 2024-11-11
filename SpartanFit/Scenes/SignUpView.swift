@@ -10,6 +10,8 @@ import SwiftUI
 //TODO: Insert Into DB
 struct SignUpView: View {
     @EnvironmentObject var newUser:UserData//integrate this 
+    @State var fname:String = ""
+    @State var lname:String = ""
     @State var email:String = ""
     @State var username:String = ""
     @State var password:String = ""
@@ -38,6 +40,12 @@ struct SignUpView: View {
                             }
                             HStack{
                                 Spacer()
+                                TextField("First Name",text: $fname).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
+                                TextField("Last Name",text: $lname).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
+                                Spacer()
+                            }
+                            HStack{
+                                Spacer()
                                 SecureField("Enter Password",text: $password).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
                                 Spacer()
                             }
@@ -61,16 +69,18 @@ struct SignUpView: View {
                                     .padding(5)
                                     .background(.white)
                                     .clipShape(RoundedRectangle(cornerRadius: 10.0))
-                                    .padding(.trailing,10)
-                                    Color("\((!email.isEmpty && !username.isEmpty ) && (!password.isEmpty && !passwordCheck.isEmpty)&&(password == passwordCheck) ? "":"DarkBlue")").scaledToFit()
+                                    .padding(10)
+                                    Color("\((!email.isEmpty && !username.isEmpty ) && (!password.isEmpty && !passwordCheck.isEmpty)&&(password == passwordCheck) ? "":"DarkBlue")").frame(width: 100,height:30)
                                 }
                             }
                         }
-                    }.padding(.vertical,165).clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
+                    }.padding(.vertical,175).clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
                 }
             }
         }
-        
+    func inputIntoUser(){
+        newUser.user?.fname = fname
+    }
     
 }
 //Also add password checking
@@ -263,7 +273,7 @@ struct InjuryForm: View{
     }
 }
 #Preview {
-    SignUpView3()
+    SignUpView()
     //InjuryForm()
 }
 

@@ -101,7 +101,7 @@ struct ProgressView: View {
                     EmptyView()
                 }else{
                     EmptyView()
-                    //NavBar(setData:$setData)
+                    NavBar
                 }
                 VStack{
                     Text(workout).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
@@ -168,6 +168,119 @@ struct ProgressView: View {
         }
         return Date.now
     }
+}
+struct BarChartSubView: View {
+    //make this a specific exercise id
+    @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
+    var exname:String
+    
+    //@State var randi:Int
+    //var setCount:[Int] = []
+    @State var workout:String = "Default"
+    @State var welcomeView:Bool = false
+    var body: some View{
+    ZStack{
+        Color("Cream").ignoresSafeArea()
+        VStack{
+            if(welcomeView){
+                EmptyView()
+            }else{
+                EmptyView()
+                //NavBar(setData:$setData)
+            }
+            VStack{
+                Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
+                
+                if let performance = workoutHistoryData.performance{
+                    let thisWorkout = copy(performance:performance,id:exname)
+                    var setcount = 1
+                    Chart(thisWorkout){day in
+                        let date = convertStringtoDate(datestr: day.dateCompleted)
+                     
+                            BarMark(
+                                x:.value("X",date.formatted(date:.numeric,time:.omitted)),
+                                y:.value("Y", day.repPerf)
+                            )
+                            .foregroundStyle(by:.value("Set",String(setcount)))
+                            .annotation(position:.overlay){Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())}
+                        
+                        let _ = setcount += 1
+                        if (day.setPerf < setcount){
+                            let _ = setcount = 1
+                        }
+                    
+                    }.chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
+                }
+                /*
+                 .chartXAxis {
+                 AxisMarks {
+                 AxisValueLabel()
+                 .foregroundStyle(.white)
+                 }
+                 
+                 }
+                 .chartYAxis {
+                 AxisMarks {
+                 AxisValueLabel()
+                 .foregroundStyle(.white)
+                 }
+                 
+                 }
+                 */
+                /*HStack(spacing: 10) {
+                 ForEach(["Set1", "Set2", "Set3", "Set4", "Set5", "Set6"], id: \.self) { setName in
+                 HStack(spacing: 5) {
+                 Circle()
+                 .fill(Color(setName))
+                 .frame(width: 10, height: 10)
+                 Text(setName)
+                 .font(.caption)
+                 .foregroundColor(.white)
+                 }
+                 }
+                 }
+                 .padding(.top, 10)
+                 */
+            }
+            .padding()
+            .background(Color("DarkBlue"))
+            .cornerRadius(10)
+        }
+        }
+    }
+    func convertStringtoDate(datestr:String)->Date{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy'-'mm'-'dd' 'HH':'mm':'ss'"
+        if let date = dateFormatter.date(from: datestr){
+            return date
+        }
+        return Date.now
+    }
+    func copyOnlyRel(){
+        //uhhh
+    }
+    func copy(performance:[WorkoutHistory],id:String)->[WorkoutHistory]{
+        var thisWorkout:[WorkoutHistory] = []
+        for  day in performance {
+            if(id == day.exerciseName){
+                thisWorkout.append(day)
+            }
+        }
+        return thisWorkout
+    }
+    func setArray(thisWorkout:[WorkoutHistory])-> [Int]{
+        var setCount:[Int] = []
+        var n:Int = 1
+        for day in thisWorkout{
+            if(n > day.setPerf){
+               n = 1
+            }
+            setCount.append(n)
+            n += 1
+        }
+        return setCount
+    }
+    
 }
 //TODO: connect to db
 //Will Have a list of workouts for the user to select
@@ -262,7 +375,8 @@ let workoutNames = ["Bench Press","Squat","Deadlift","OverHead Press","Pull-Up",
     //NavBar()
     ProgressView().environmentObject(sampleWorkoutHistory)
     //WorkoutProgressList
-    //LineChartView()
+    //workout this later
+    //BarChartSubView(exname:"Bench Press").environmentObject(sampleWorkoutHistory)
     //EmptyView()
 }
 

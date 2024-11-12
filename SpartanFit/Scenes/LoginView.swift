@@ -5,9 +5,7 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var userData: UserData
-    @EnvironmentObject var workoutPlanData: WorkoutPlanData
-    @EnvironmentObject var workoutHistoryData: WorkoutHistoryData
-    
+    @EnvironmentObject var workoutPlanData: WorkoutPlanData // WorkoutPlanData as EnvironmentObject
     @State var isAuthenticated:Bool  = false
 
     var body: some View {
@@ -64,8 +62,7 @@ struct LoginView: View {
             }
             .navigationDestination(for: User.self) { user in
                 WelcomeView()
-                    .environmentObject(WorkoutPlanData(userId: user.id))
-                    .environmentObject(WorkoutHistoryData(userId: user.id))
+                    .environmentObject(WorkoutPlanData(userId: user.id)) // Initialize WorkoutPlanData with userId
             }
         }
     }

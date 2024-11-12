@@ -3,15 +3,12 @@ import SwiftUI
 struct WelcomeView: View {
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
-    @EnvironmentObject var workoutHistoryData: WorkoutHistoryData
-    
     @State var currentIndex: Int = 0
     //var barViews: ProgressView().BarChartView
     var body: some View {
         NavigationView {
             ZStack {
                 Color("Cream").ignoresSafeArea()
-<<<<<<< Updated upstream
 
 //                if workoutPlanData.isLoading {
 //                    SwiftUI.ProgressView("Loading Workout Plan...")
@@ -19,26 +16,12 @@ struct WelcomeView: View {
 //                            refreshWorkoutData()
 //                        }
 //                } else {
-=======
-                
-                if workoutPlanData.isLoading {
-                    SwiftUI.ProgressView("Loading Workout Plan...")
-                        .onAppear {
-                            refreshWorkoutData()
-                        }
-                } else {
->>>>>>> Stashed changes
                     VStack(spacing: 20) {
                         Spacer()
                         headerView
                         //Spacer()
-<<<<<<< Updated upstream
 
                         NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
-=======
-                        
-                        NavigationLink(destination: ProgressView().environmentObject(workoutHistoryData)) {
->>>>>>> Stashed changes
                             progressView
                                 .scaledToFill()
                                 .frame(height: 275)
@@ -51,7 +34,7 @@ struct WelcomeView: View {
                             .padding(.bottom, 10)
                     }
                     .padding()
-                }
+                //}
             }
             .onAppear {
                 refreshWorkoutData()
@@ -65,7 +48,6 @@ struct WelcomeView: View {
         if let userId = userData.user?.id {
             workoutPlanData.isLoading = true
             workoutPlanData.fetchWorkoutPlan(userId: userId)
-            workoutHistoryData.fetchWorkoutHistory(userId: userId)
         }
     }
 
@@ -76,8 +58,8 @@ struct WelcomeView: View {
             AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
             AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
              */
-            AnyView(BarChartSubView(exname:"Bench Press").environmentObject(workoutHistoryData)),
-            AnyView(BarChartSubView(exname:"Squat").environmentObject(workoutHistoryData))
+            AnyView(BarChartSubView(exname:"Bench Press").environmentObject(sampleWorkoutHistory)),
+            AnyView(BarChartSubView(exname:"Squat").environmentObject(sampleWorkoutHistory))
         ]
     }
 

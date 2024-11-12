@@ -10,12 +10,12 @@ struct WelcomeView: View {
             ZStack {
                 Color("Cream").ignoresSafeArea()
                 
-                if workoutPlanData.isLoading {
-                    SwiftUI.ProgressView("Loading Workout Plan...")
-                        .onAppear {
-                            refreshWorkoutData()
-                        }
-                } else {
+//                if workoutPlanData.isLoading {
+//                    SwiftUI.ProgressView("Loading Workout Plan...")
+//                        .onAppear {
+//                            refreshWorkoutData()
+//                        }
+//                } else {
                     VStack(spacing: 20) {
                         Spacer()
                         headerView
@@ -23,7 +23,9 @@ struct WelcomeView: View {
                         
                         NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
                             progressView
+                                .scaledToFill()
                                 .frame(height: 275)
+                                
                         }
                         .padding(.bottom, 30)
                         .padding()
@@ -33,7 +35,7 @@ struct WelcomeView: View {
                     }
                     .padding()
                 }
-            }
+            //}
             .onAppear {
                 refreshWorkoutData()
             }

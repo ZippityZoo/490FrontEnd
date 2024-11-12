@@ -23,7 +23,7 @@ struct SignUpView: View {
                 VStack{
                     Text(" SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(Color("DarkBlue"))
                     ZStack{
-                        Color("DarkBlue").frame(width:390,height:400,alignment: .center)
+                        Color("DarkBlue").frame(width:390,height:435,alignment: .center)
                             .clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
                         VStack{
                             Text(" Sign Up").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(.white)
@@ -70,16 +70,31 @@ struct SignUpView: View {
                                     .background(.white)
                                     .clipShape(RoundedRectangle(cornerRadius: 10.0))
                                     .padding(10)
-                                    Color("\((!email.isEmpty && !username.isEmpty ) && (!password.isEmpty && !passwordCheck.isEmpty)&&(password == passwordCheck) ? "":"DarkBlue")").frame(width: 100,height:30)
+                                    
+                                    Color("\(ifAllAreTrue() ? "":"DarkBlue")")
+                                        .padding(5)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10.0))
                                 }
                             }
                         }
-                    }.padding(.vertical,175).clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
+                    }.padding(.vertical,145).clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
                 }
             }
         }
     func inputIntoUser(){
         newUser.user?.fname = fname
+    }
+    func ifAllAreTrue() -> Bool{
+        if(!email.isEmpty && !username.isEmpty){
+            if(!username.isEmpty && !password.isEmpty){
+                if(!fname.isEmpty && !lname.isEmpty){
+                    if(password == passwordCheck){
+                        return true
+                    }
+                }
+            }
+        }
+        return false
     }
     
 }
@@ -145,6 +160,7 @@ struct SignUpView3: View{
     @State var showForm:Bool = false
     @State var shown:Int = 0
     @State var listedInjuries:[String] = []
+    @State var muscleImages:[Image] = []
     var body: some View{
         ZStack{
             Color("Cream").ignoresSafeArea()
@@ -179,6 +195,7 @@ struct SignUpView3: View{
                     InjuryForm(listedInjuries:$listedInjuries,showForm: $showForm)
                         .scaledToFit()
                         .animation(.easeInOut)
+                       
                 }
                 Spacer()
                 Divider()
@@ -194,10 +211,18 @@ struct SignUpView3: View{
                     .padding(.trailing,10)
                 }
                 Spacer()
+                ZStack{
+                    Image("Base Body").resizable(capInsets: EdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 0.0), resizingMode: .stretch).cornerRadius(10).aspectRatio(contentMode:.fit)
+                        .onHover(perform: { hovering in
+                            let _ = print("on body")
+                        })
+                }
             }
         }
     }
-    
+    func displayMuscle(){
+        
+    }
 }
 
 
@@ -273,7 +298,7 @@ struct InjuryForm: View{
     }
 }
 #Preview {
-    SignUpView()
+    SignUpView3()
     //InjuryForm()
 }
 
@@ -292,6 +317,8 @@ let muscles: [String] = [
     "Triceps Brachii",
     "Brachialis",
     "Coracobrachialis",
+    "Pronator Teres",
+    "Pronator Quadratus",
     
     // Chest Muscles
     "Pectoralis Major",

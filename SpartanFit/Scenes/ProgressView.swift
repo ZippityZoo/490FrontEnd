@@ -41,7 +41,7 @@ struct ProgressView: View {
                         ForEach(countuniqeIds().sorted(),id: \.self){workoutname in
                                 
                                 HStack{
-                                    NavigationLink(destination: BarChartSubView(workoutHistoryData: _workoutHistoryData, exname: workoutname)){
+                                    NavigationLink(destination: BarChartSubView(exname: workoutname).environmentObject(sampleWorkoutHistory)){
                                         Text("\(workoutname)")
                                     }.foregroundStyle(Color.white)
                                         .onAppear{
@@ -173,9 +173,10 @@ struct BarChartSubView: View {
     //make this a specific exercise id
     @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
     var exname:String
-    
     //@State var randi:Int
     //var setCount:[Int] = []
+    @State var lastDate:Date = Date.now
+    @State var earliestDate:Date = Date.now
     @State var workout:String = "Default"
     @State var welcomeView:Bool = false
     var body: some View{
@@ -190,26 +191,42 @@ struct BarChartSubView: View {
             }
             VStack{
                 Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
-                
-                if let performance = workoutHistoryData.performance{
-                    let thisWorkout = copy(performance:performance,id:exname)
-                    var setcount = 1
-                    Chart(thisWorkout){day in
-                        let date = convertStringtoDate(datestr: day.dateCompleted)
-                     
+                    
+                    if let performance = workoutHistoryData.performance{
+                        let ld = getLastDate(thisWorkout: performance)
+                        let thisWorkout = copy(performance:performance,id:exname)
+                        var setcount = 1
+                        Chart(thisWorkout){day in
+                            let date = convertStringtoDate(datestr: day.dateCompleted)
+                            //let _  =  print(date)
                             BarMark(
-                                x:.value("X",date.formatted(date:.numeric,time:.omitted)),
-                                y:.value("Y", day.repPerf)
+                                //x:.value("X",date.formatted(date:.numeric,time:.omitted)),
+                                x:.value("Date",date),
+                                y:.value("Reps (units)", day.repPerf)
                             )
                             .foregroundStyle(by:.value("Set",String(setcount)))
-                            .annotation(position:.overlay){Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())}
+                            .annotation(position:.overlay){
+                                Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())
+                                    .layoutPriority(1)
+                            }
+                            
+                            let _ = setcount += 1
+                            if (day.setPerf < setcount){
+                                let _ = setcount = 1
+                            }
+                            
+                        }.chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
                         
-                        let _ = setcount += 1
-                        if (day.setPerf < setcount){
-                            let _ = setcount = 1
-                        }
+                            .chartXScale(
+                                domain: earliestDate...lastDate,
+                                range: .plotDimension(startPadding: 10, endPadding: 10)
+                            )
+                         
+                         
+                        //let _ = print("\(weekAgo)")
+                        
+                        
                     
-                    }.chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
                 }
                 /*
                  .chartXAxis {
@@ -279,6 +296,19 @@ struct BarChartSubView: View {
             n += 1
         }
         return setCount
+    }
+    func getLastDate(thisWorkout:[WorkoutHistory]){
+        var date:Date = Date.now
+        if let datecompleted = thisWorkout.last{
+            date = convertStringtoDate(datestr: datecompleted.dateCompleted)
+        }
+        lastDate = date
+        /*
+        if let datecompleted2 = thisWorkout.first{
+            date = convertStringtoDate(datestr: datecompleted2.dateCompleted)
+        }
+         */
+        earliestDate = date.addingTimeInterval(86400 * -7)
     }
     
 }

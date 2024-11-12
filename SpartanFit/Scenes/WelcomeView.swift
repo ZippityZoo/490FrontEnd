@@ -9,7 +9,7 @@ struct WelcomeView: View {
         NavigationView {
             ZStack {
                 Color("Cream").ignoresSafeArea()
-                
+
 //                if workoutPlanData.isLoading {
 //                    SwiftUI.ProgressView("Loading Workout Plan...")
 //                        .onAppear {
@@ -19,30 +19,30 @@ struct WelcomeView: View {
                     VStack(spacing: 20) {
                         Spacer()
                         headerView
-                        Spacer()
-                        
+                        //Spacer()
+
                         NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
                             progressView
                                 .scaledToFill()
                                 .frame(height: 275)
-                                
+
                         }
-                        .padding(.bottom, 30)
+                        .padding(.bottom, 10)
                         .padding()
-                        
+
                         workoutPreviewView()
                             .padding(.bottom, 10)
                     }
                     .padding()
-                }
-            //}
+                //}
+            }
             .onAppear {
                 refreshWorkoutData()
             }
         }
         .navigationBarBackButtonHidden(true)
     }
-    
+
     // Function to refresh workout data whenever WelcomeView appears
     private func refreshWorkoutData() {
         if let userId = userData.user?.id {
@@ -50,7 +50,7 @@ struct WelcomeView: View {
             workoutPlanData.fetchWorkoutPlan(userId: userId)
         }
     }
-    
+
     var progview: [AnyView] {
         [
             /*
@@ -62,9 +62,9 @@ struct WelcomeView: View {
             AnyView(BarChartSubView(exname:"Squat").environmentObject(sampleWorkoutHistory))
         ]
     }
-    
+
     // MARK: - Subviews
-    
+
     var headerView: some View {
         VStack {
             HStack {
@@ -74,7 +74,7 @@ struct WelcomeView: View {
                     .fontWeight(.heavy)
                     .padding(.bottom, 5)
                     .foregroundColor(Color("DarkBlue"))
-                
+
                 Spacer()
                 NavigationLink(destination: UserProfileView()) {
                     Image(systemName: "person.circle.fill")
@@ -85,18 +85,18 @@ struct WelcomeView: View {
                 Spacer()
             }
             .padding(.top, 20)
-            
+
             Divider()
                 .padding(1)
                 .background(Color("DarkBlue"), in: RoundedRectangle(cornerRadius: 25))
-            
+
             Text(Date(), style: .date)
                 .font(.title)
                 .foregroundColor(Color("DarkBlue"))
             Spacer()
         }
     }
-    
+
     var progressView: some View {
         ZStack {
             progview[currentIndex]
@@ -113,7 +113,7 @@ struct WelcomeView: View {
         }
     }
 
-    
+
     func workoutPreviewView() -> some View {
         VStack {
             if let workoutPlan = workoutPlanData.workoutPlan, !workoutPlan.workouts.isEmpty {
@@ -131,7 +131,7 @@ struct WelcomeView: View {
         }
         .frame(height: 300)
     }
-    
+
     func workoutSummaryView() -> some View {
         ZStack {
             Color("DarkBlue").ignoresSafeArea()
@@ -141,7 +141,7 @@ struct WelcomeView: View {
                         .font(.title3)
                         .foregroundColor(Color("Cream"))
                         .padding(.bottom, 5)
-                    
+
                     if let workoutPlan = workoutPlanData.workoutPlan {
                         ForEach(workoutPlan.workouts.first?.exercises ?? [], id: \.id) { exercise in
                             HStack {
@@ -166,7 +166,10 @@ struct WelcomeView: View {
 }
 
 #Preview {
-    WelcomeView()
-        .environmentObject(UserData(user: sampleUser, userPreference: sampleUserPreference))
-        .environmentObject(sampleWorkoutPlanData)
+    let previewWorkoutPlanData = sampleWorkoutPlanData
+        previewWorkoutPlanData.isLoading = false
+
+        return WelcomeView()
+            .environmentObject(UserData(user: sampleUser, userPreference: sampleUserPreference))
+            .environmentObject(previewWorkoutPlanData)
 }

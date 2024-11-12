@@ -26,9 +26,9 @@ struct ProgressView: View {
     
     var body: some View {
         //temp
-        NavigationView{
+        //NavigationView{
             WorkoutProgressList
-        }
+        //}
     }
     var WorkoutProgressList: some View{
             ZStack{

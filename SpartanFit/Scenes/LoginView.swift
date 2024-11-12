@@ -14,15 +14,20 @@ struct LoginView: View {
                 Color("Cream").ignoresSafeArea()
                 
                 VStack {
-                    Text("SPARTANFIT")
-                        .font(.largeTitle)
-                        .fontWeight(.heavy)
-                        .foregroundColor(Color("DarkBlue"))
+                    
                     
                     ZStack {
                         Color("DarkBlue")
                         
+                        
                         VStack {
+                            Spacer()
+                            Image("LOGO")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 350, height: 350)
+                                .padding(.bottom, 20)
+                        
                             TextField("Enter Email", text: $email)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .padding(.bottom, 20)
@@ -44,7 +49,7 @@ struct LoginView: View {
                                     Text("Sign Up").foregroundStyle(.blue).underline()
                                 }
                             
-                   
+                            Spacer()
                         }.navigationDestination(for: String.self) { view in
                             if view == "WelcomeView" {
                                 WelcomeView()

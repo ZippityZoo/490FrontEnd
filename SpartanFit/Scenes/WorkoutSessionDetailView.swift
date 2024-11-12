@@ -6,7 +6,9 @@ struct WorkoutSessionDetailView: View {
     
     @State private var expandedIndex: Int? = nil
     @State private var isShowingFeedbackView = false
-    @State private var completedSets: Double = 0
+    
+    
+    @State private var completedSets: [Int: Double] = [:]
     
     var body: some View {
         ZStack {
@@ -90,7 +92,7 @@ struct WorkoutSessionDetailView: View {
                         AccordionView(expandedIndex: $expandedIndex, sectionCount: workout.exercises.count, label: { index in
                             exerciseLabel(workout.exercises[index].name)
                         }, content: { index in
-                            exerciseContent(workout.exercises[index])
+                            exerciseContent(workout.exercises[index], index: index)
                         })
                     }
                     .onChange(of: expandedIndex, initial: false) { newValue, _ in
@@ -140,7 +142,7 @@ struct WorkoutSessionDetailView: View {
         .background(Color("DarkBlue"))
     }
     
-    private func exerciseContent(_ exercise: Exercise) -> some View {
+    private func exerciseContent(_ exercise: Exercise, index: Int) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             let totalSets = exercise.planSets
             
@@ -175,7 +177,6 @@ struct WorkoutSessionDetailView: View {
                         .font(.subheadline)
                 }
                 Spacer()
-                
             }
             .padding(.bottom, 10)
             
@@ -187,7 +188,7 @@ struct WorkoutSessionDetailView: View {
                             .font(.headline)
                             .foregroundColor(Color("Cream"))
                         
-                        Text("\(Int(completedSets)) / \(totalSets)")
+                        Text("\(Int(completedSets[index] ?? 0)) / \(totalSets)")
                             .foregroundColor(Color("Cream"))
                             .font(.subheadline)
                     }
@@ -198,20 +199,26 @@ struct WorkoutSessionDetailView: View {
             HStack {
                 Text("0")
                     .foregroundColor(Color("Cream"))
-                Slider(value: $completedSets, in: 0...Double(totalSets), step: 1)
-                    .accentColor(Color("DarkBlue"))
-                    .cornerRadius(5)
-                    .frame(height: 20)
-                    .padding(.horizontal)
-                    .tint(Color("Cream"))
-                    .foregroundColor(Color("Cream"))
-                    .onAppear {
-                        if let thumbImage = UIImage(systemName: "circle.fill")?
-                            .withTintColor(UIColor(named: "Cream") ?? .white, renderingMode: .alwaysOriginal)
-                        {
-                            UISlider.appearance().setThumbImage(thumbImage, for: .normal)
-                        }
+                Slider(value: Binding(
+                    get: { completedSets[index] ?? 0 },
+                    set: { completedSets[index] = $0 }
+                ), in: 0...Double(totalSets), step: 1)
+                .accentColor(Color("DarkBlue"))
+                .cornerRadius(5)
+                .frame(height: 20)
+                .padding(.horizontal)
+                .tint(Color("Cream"))
+                .foregroundColor(Color("Cream"))
+                .onAppear {
+                    if completedSets[index] == nil {
+                        completedSets[index] = 0
                     }
+                    if let thumbImage = UIImage(systemName: "circle.fill")?
+                        .withTintColor(UIColor(named: "Cream") ?? .white, renderingMode: .alwaysOriginal)
+                    {
+                        UISlider.appearance().setThumbImage(thumbImage, for: .normal)
+                    }
+                }
                 Text("\(totalSets)")
                     .foregroundColor(Color("Cream"))
             }
@@ -223,6 +230,7 @@ struct WorkoutSessionDetailView: View {
         .cornerRadius(10)
         .padding(.horizontal)
     }
+
 }
 
 #Preview {

@@ -10,29 +10,29 @@ struct WelcomeView: View {
             ZStack {
                 Color("Cream").ignoresSafeArea()
                 
-                if workoutPlanData.isLoading {
-                    SwiftUI.ProgressView("Loading Workout Plan...")
-                        .onAppear {
-                            refreshWorkoutData()
-                        }
-                } else {
+//                if workoutPlanData.isLoading {
+//                    SwiftUI.ProgressView("Loading Workout Plan...")
+//                        .onAppear {
+//                            refreshWorkoutData()
+//                        }
+//                } else {
                     VStack(spacing: 20) {
                         Spacer()
                         headerView
-                        Spacer()
+                        //Spacer()
                         
                         NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
                             progressView
                                 .frame(height: 275)
                         }
-                        .padding(.bottom, 30)
+                        .padding(.bottom, 10)
                         .padding()
                         
                         workoutPreviewView()
                             .padding(.bottom, 10)
                     }
                     .padding()
-                }
+                //}
             }
             .onAppear {
                 refreshWorkoutData()
@@ -164,7 +164,10 @@ struct WelcomeView: View {
 }
 
 #Preview {
-    WelcomeView()
-        .environmentObject(UserData(user: sampleUser, userPreference: sampleUserPreference))
-        .environmentObject(sampleWorkoutPlanData)
+    let previewWorkoutPlanData = sampleWorkoutPlanData
+        previewWorkoutPlanData.isLoading = false
+        
+        return WelcomeView()
+            .environmentObject(UserData(user: sampleUser, userPreference: sampleUserPreference))
+            .environmentObject(previewWorkoutPlanData)
 }

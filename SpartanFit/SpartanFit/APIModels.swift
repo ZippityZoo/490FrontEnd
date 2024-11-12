@@ -183,6 +183,6 @@ let sampleWorkoutPlan = WorkoutPlan(
 // Creating an instance of WorkoutPlanData with sample data
 let sampleWorkoutPlanData = WorkoutPlanData(workoutPlan: sampleWorkoutPlan)
 
-let apiBaseUrl = "http://172.16.2.143:3000"
+let apiBaseUrl = "http://localhost:3000"
 //Sample workouthistorydata
 let sampleWorkoutHistory = WorkoutHistoryData(userId: 7572)

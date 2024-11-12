@@ -10,6 +10,7 @@ import Charts
 
 struct ProgressView: View {
     @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
+    
     //@State var setofexercises: Set<String> = []
     @State var workout: String = "Default"
     @State var setData = DBSets.setsTest2

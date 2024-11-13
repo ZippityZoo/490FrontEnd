@@ -3,15 +3,12 @@ import SwiftUI
 struct WelcomeView: View {
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
-    @EnvironmentObject var workoutHistoryData: WorkoutHistoryData
-    
     @State var currentIndex: Int = 0
     //var barViews: ProgressView().BarChartView
     var body: some View {
         NavigationView {
             ZStack {
                 Color("Cream").ignoresSafeArea()
-
 
 //                if workoutPlanData.isLoading {
 //                    SwiftUI.ProgressView("Loading Workout Plan...")
@@ -20,7 +17,7 @@ struct WelcomeView: View {
 //                        }
 //                } else {
 
-                
+
                 if workoutPlanData.isLoading {
                     SwiftUI.ProgressView("Loading Workout Plan...")
                         .onAppear {
@@ -33,9 +30,7 @@ struct WelcomeView: View {
                         headerView
                         //Spacer()
 
-
-                        
-                        NavigationLink(destination: ProgressView().environmentObject(workoutHistoryData)) {
+                        NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
                             progressView
                                 .scaledToFill()
                                 .frame(height: 275)
@@ -48,7 +43,7 @@ struct WelcomeView: View {
                             .padding(.bottom, 10)
                     }
                     .padding()
-                }
+                //}
             }
             .onAppear {
                 refreshWorkoutData()
@@ -62,7 +57,6 @@ struct WelcomeView: View {
         if let userId = userData.user?.id {
             workoutPlanData.isLoading = true
             workoutPlanData.fetchWorkoutPlan(userId: userId)
-            workoutHistoryData.fetchWorkoutHistory(userId: userId)
         }
     }
 
@@ -73,8 +67,8 @@ struct WelcomeView: View {
             AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
             AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
              */
-            AnyView(BarChartSubView(exname:"Bench Press").environmentObject(workoutHistoryData)),
-            AnyView(BarChartSubView(exname:"Squat").environmentObject(workoutHistoryData))
+            AnyView(BarChartSubView(exname:"Bench Press").environmentObject(sampleWorkoutHistory)),
+            AnyView(BarChartSubView(exname:"Squat").environmentObject(sampleWorkoutHistory))
         ]
     }
 

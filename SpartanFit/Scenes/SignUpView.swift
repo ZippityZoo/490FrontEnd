@@ -160,11 +160,42 @@ struct SignUpView3: View{
     @State var showForm:Bool = false
     @State var shown:Int = 0
     @State var listedInjuries:[String] = []
-    @State var muscleImages:[Image] = []
+    @State var muscleImages:[String] = [
+        "Biceps Brachii-Left",
+        "Biceps Brachii-Right",
+        "Brachioradialis-Left",
+        "Brachioradialis-Right",
+        "Extensor Carpi Ulnaris-Left",
+        "Extensor Carpi Ulnaris-Right",
+        "Front Deltoid-Left",
+        "Front Deltoid-Right",
+        "Gastrocnemius-Left",
+        "Gastrocnemius-Right",
+        "Gluteus Maximus-Left",
+        "Gluteus Maximus-Right",
+        "Hamstrings-Left",
+        "Hamstrings-Right",
+        "Latissimus Dorsi-Left",
+        "Latissimus Dorsi-Right",
+        "Pectoralis Major-Left",
+        "Pectoralis Major-Right",
+        "Quadriceps Femoris-Left",
+        "Quadriceps Femoris-Right",
+        "Rear Deltoid-Left",
+        "Rear Deltoid-Right",
+        "Rectus Abdominis",
+        "Tibialis Anterior-Left",
+        "Tibialis Anterior-Right",
+        "Trapezius-Left",
+        "Trapezius-Right",
+        "Triceps Brachii-Left",
+        "Triceps Brachii-Right"
+    ]
     var body: some View{
         ZStack{
             Color("Cream").ignoresSafeArea()
             VStack{
+                let _ = displayMuscle()
                 Text("Injuries").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().padding(.top,10)
                 if(shown <= 0){
                     Text("Please submit you injuries below")
@@ -194,7 +225,7 @@ struct SignUpView3: View{
                 else{
                     InjuryForm(listedInjuries:$listedInjuries,showForm: $showForm)
                         .scaledToFit()
-                        .animation(.easeInOut)
+                        //.animation(.easeInOut)
                        
                 }
                 Spacer()
@@ -212,16 +243,30 @@ struct SignUpView3: View{
                 }
                 Spacer()
                 ZStack{
-                    Image("Base Body").resizable(capInsets: EdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 0.0), resizingMode: .stretch).cornerRadius(10).aspectRatio(contentMode:.fit)
+                    Image("0BASE").resizable(capInsets: EdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 0.0), resizingMode: .stretch).cornerRadius(10).aspectRatio(contentMode:.fit)
                         .onHover(perform: { hovering in
                             let _ = print("on body")
-                        })
+                        }).onTapGesture(perform:{_ in
+                            print("hi")
+                        }
+                        )
+                    ForEach(muscleImages,id:\.self){ name in
+                        Image(name).resizable(capInsets: EdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 0.0), resizingMode: .stretch).cornerRadius(10).aspectRatio(contentMode:.fit)
+                            .onTapGesture(perform:{_ in
+                                print(name)
+                            })
+                    }
+                   
                 }
             }
         }
     }
     func displayMuscle(){
-        
+        for listedInjury in listedInjuries {
+            if let filename = listedInjury.firstIndex(of: "("){
+                print(filename)
+            }
+        }
     }
 }
 
@@ -230,7 +275,7 @@ struct SignUpView3: View{
 struct InjuryForm: View{
     @Binding var listedInjuries:[String]
     @Binding var showForm:Bool
-    @State var muscleSelection:String = "Frontalis"
+    @State var muscleSelection:String = "Front Deltoid"
     @State var muscleIndex:Int = 0
     @State var intensitySelection:String = "Low"
     @State var pos:String = "Left"
@@ -280,7 +325,7 @@ struct InjuryForm: View{
                     Button(
                         action:{
                             print("submit")
-                            listedInjuries.append("\(pos + " " + muscleSelection + " " + intensitySelection)")
+                            listedInjuries.append("\(muscleSelection + "-" + pos + " (" +  intensitySelection))")
                             showForm.toggle()
                         },label: {
                             Text("Submit")
@@ -303,63 +348,27 @@ struct InjuryForm: View{
 }
 
 let muscles: [String] = [
-    // Head and Neck Muscles
-    "Frontalis",
-    "Temporalis",
-    "Orbicularis Oculi",
-    "Zygomaticus Major",
-    "Orbicularis Oris",
-    "Sternocleidomastoid",
-    
     // Shoulder and Arm Muscles
-    "Deltoid",
+    "Front Deltoid",//front shoulder and back?
+    "Rear Deltoid",
     "Biceps Brachii",
     "Triceps Brachii",
-    "Brachialis",
-    "Coracobrachialis",
-    "Pronator Teres",
-    "Pronator Quadratus",
-    
+    "Brachioradialis",//forearm
+    "Extensor Carpi Ulnaris",//back of forearm
     // Chest Muscles
-    "Pectoralis Major",
-    "Pectoralis Minor",
-    
+    "Pectoralis Major",//pec
     // Back Muscles
     "Trapezius",
     "Latissimus Dorsi",
-    "Rhomboid Major",
-    "Rhomboid Minor",
-    "Erector Spinae",
-    
     // Abdomen Muscles
     "Rectus Abdominis",
-    "External Oblique",
-    "Internal Oblique",
-    "Transverse Abdominis",
-    
     // Hip and Thigh Muscles
-    "Iliopsoas",
     "Quadriceps Femoris",
     "Hamstrings",
     "Gluteus Maximus",
-    "Gluteus Medius",
-    "Gluteus Minimus",
-    
     // Leg Muscles
-    "Gastrocnemius",
-    "Soleus",
-    "Tibialis Anterior",
-    
-    // Foot Muscles
-    "Flexor Hallucis Longus",
-    "Extensor Digitorum Longus",
-    
-    // Additional Muscles
-    "Sartorius",
-    "Adductor Longus",
-    "Adductor Magnus",
-    "Pectineus",
-    "Gracilis"
+    "Gastrocnemius",//calf
+    "Tibialis Anterior"//shin area
 ]
 let intensity = [
     "Low",

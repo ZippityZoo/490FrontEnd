@@ -87,17 +87,15 @@ struct LoginView: View {
         }
     }
     
-    func refreshWorkoutData() {
+    private func refreshWorkoutData() {
         if let userId = userData.user?.id {
             workoutPlanData.isLoading = true
             workoutPlanData.fetchWorkoutPlan(userId: userId)
-            workoutPlanData.isLoading = false // Reset isLoading after fetching
-            
         }
     }
     
     func authenticateUser(email: String) {
-        let userId = 3601
+        let userId = email
         let urlString = "\(apiBaseUrl)/userprofile/user_id=\(userId)"
         guard let url = URL(string: urlString) else { return }
         

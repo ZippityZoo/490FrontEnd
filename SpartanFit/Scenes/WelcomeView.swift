@@ -10,13 +10,6 @@ struct WelcomeView: View {
             ZStack {
                 Color("Cream").ignoresSafeArea()
                 
-                //                if workoutPlanData.isLoading {
-                //                    SwiftUI.ProgressView("Loading Workout Plan...")
-                //                        .onAppear {
-                //                            refreshWorkoutData()
-                //                        }
-                //                } else {
-                
                 
 //                if workoutPlanData.isLoading {
 //                    SwiftUI.ProgressView("Loading Workout Plan...")
@@ -43,11 +36,11 @@ struct WelcomeView: View {
                     }
                     .padding()
                     .onAppear {
-                            refreshWorkoutData()
-                        }
-                    //}
-                //}
-            }
+                        refreshWorkoutData()
+                    }
+                    .navigationBarBackButtonHidden(true)
+                }
+            //}
             .navigationBarBackButtonHidden(true)
         }
     }
@@ -58,21 +51,21 @@ struct WelcomeView: View {
             workoutPlanData.fetchWorkoutPlan(userId: userId)
         }
     }
-
+    
     var progview: [AnyView] {
         [
             /*
-            AnyView(BarChartView(workout: "Squat", setData: DBSets.setsTest3, welcomeView: true).id(UUID())),
-            AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
-            AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
+             AnyView(BarChartView(workout: "Squat", setData: DBSets.setsTest3, welcomeView: true).id(UUID())),
+             AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
+             AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
              */
             AnyView(BarChartSubView(exname:"Bench Press",welcomeView: true).environmentObject(sampleWorkoutHistory)),
             AnyView(BarChartSubView(exname:"Squat",welcomeView: true).environmentObject(sampleWorkoutHistory))
         ]
     }
-
+    
     // MARK: - Subviews
-
+    
     var headerView: some View {
         VStack {
             HStack {
@@ -82,7 +75,7 @@ struct WelcomeView: View {
                     .fontWeight(.heavy)
                     .padding(.bottom, 5)
                     .foregroundColor(Color("DarkBlue"))
-
+                
                 Spacer()
                 NavigationLink(destination: UserProfileView()) {
                     Image(systemName: "person.circle.fill")
@@ -93,18 +86,18 @@ struct WelcomeView: View {
                 Spacer()
             }
             .padding(.top, 20)
-
+            
             Divider()
                 .padding(1)
                 .background(Color("DarkBlue"), in: RoundedRectangle(cornerRadius: 25))
-
+            
             Text(Date(), style: .date)
                 .font(.title)
                 .foregroundColor(Color("DarkBlue"))
             Spacer()
         }
     }
-
+    
     var progressView: some View {
         ZStack {
             progview[currentIndex]
@@ -120,8 +113,8 @@ struct WelcomeView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 25))
         }
     }
-
-
+    
+    
     func workoutPreviewView() -> some View {
         VStack {
             if let workoutPlan = workoutPlanData.workoutPlan, !workoutPlan.workouts.isEmpty {
@@ -139,7 +132,7 @@ struct WelcomeView: View {
         }
         .frame(height: 300)
     }
-
+    
     func workoutSummaryView() -> some View {
         ZStack {
             Color("DarkBlue").ignoresSafeArea()
@@ -149,7 +142,7 @@ struct WelcomeView: View {
                         .font(.title3)
                         .foregroundColor(Color("Cream"))
                         .padding(.bottom, 5)
-
+                    
                     if let workoutPlan = workoutPlanData.workoutPlan {
                         ForEach(workoutPlan.workouts.first?.exercises ?? [], id: \.id) { exercise in
                             HStack {
@@ -175,10 +168,10 @@ struct WelcomeView: View {
 
 #Preview {
     let previewWorkoutPlanData = sampleWorkoutPlanData
-        previewWorkoutPlanData.isLoading = false
-
-        return WelcomeView()
-            .environmentObject(UserData(user: sampleUser, userPreference: sampleUserPreference))
-            .environmentObject(previewWorkoutPlanData)
-            .environmentObject(sampleWorkoutHistory)
+    previewWorkoutPlanData.isLoading = false
+    
+    return WelcomeView()
+        .environmentObject(UserData(user: sampleUser, userPreference: sampleUserPreference))
+        .environmentObject(previewWorkoutPlanData)
+        .environmentObject(sampleWorkoutHistory)
 }

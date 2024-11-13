@@ -33,13 +33,6 @@ struct WorkoutSessionDetailView: View {
             .onDisappear {
                 saveExpandedIndex()
             }
-            .onChange(of: isShowingFeedbackView) {
-                if !isShowingFeedbackView {  // When feedback view is dismissed
-                    if let userId = userData.user?.id {
-                        workoutPlanData.fetchWorkoutPlan(userId: userId) // Reload data
-                    }
-                }
-            }
             .onChange(of: workoutPlanData.workoutPlan) {
                 resetCompletionData()
             }
@@ -99,7 +92,7 @@ struct WorkoutSessionDetailView: View {
                         AccordionView(expandedIndex: $expandedIndex, sectionCount: workout.exercises.count, label: { index in
                             exerciseLabel(workout.exercises[index].name)
                         }, content: { index in
-                            exerciseContent(workout.exercises[index], index: index)
+                            exerciseContent(workout.exercises[index], index: index, proxy: proxy)
                         })
                     }
                     .onChange(of: expandedIndex, initial: false) { newValue, _ in
@@ -148,7 +141,7 @@ struct WorkoutSessionDetailView: View {
         .background(Color("DarkBlue"))
     }
     
-    private func exerciseContent(_ exercise: Exercise, index: Int) -> some View {
+    private func exerciseContent(_ exercise: Exercise, index: Int, proxy: ScrollViewProxy) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             let totalSets = exercise.planSets
             
@@ -199,6 +192,7 @@ struct WorkoutSessionDetailView: View {
                         allSetsCompleted[index] = newValue
                         if newValue {
                             completedSets[index] = Double(totalSets)
+                            advanceToNextExercise(from: index, proxy: proxy)
                         }
                     }
                 ))
@@ -234,7 +228,17 @@ struct WorkoutSessionDetailView: View {
         .cornerRadius(10)
         .padding(.horizontal)
     }
-
+    
+    private func advanceToNextExercise(from index: Int, proxy: ScrollViewProxy) {
+        // Advance to the next exercise if available
+        let nextIndex = index + 1
+        if nextIndex < (workoutPlanData.workoutPlan?.workouts.first?.exercises.count ?? 0) {
+            withAnimation(.easeInOut(duration: 0.4)) {
+                expandedIndex = nextIndex
+                proxy.scrollTo(nextIndex, anchor: .top)
+            }
+        }
+    }
 }
 
 

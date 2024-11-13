@@ -12,7 +12,7 @@ struct ProgressView: View {
     @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
     //@State var setofexercises: Set<String> = []
     @State var workout: String = "Default"
-    @State var setData = DBSets.setsTest2
+    //@State var setData = DBSets.setsTest2
     @State var welcomeView: Bool = false
     @State var isrecent:Bool = true
     let colorMapping: [String: Color] = [
@@ -26,9 +26,9 @@ struct ProgressView: View {
     
     var body: some View {
         //temp
-        NavigationView{
+        //NavigationView{
             WorkoutProgressList
-        }
+        //}
     }
     var WorkoutProgressList: some View{
             ZStack{
@@ -159,24 +159,19 @@ struct BarChartSubView: View {
                 NavBar
             }
             VStack{
-                //let _ = printPerfomance()
                 Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
                     if let performance = workoutHistoryData.performance{
                         
                         let thisWorkout = copy(performance:performance,id:exname)
                         let latestDate = getLatestDate(thisWorkout: thisWorkout)
-                        //let earliestDate = getEarliestDate(thisWorkout: thisWorkout)
                         let start = retRecentOrOverall(thisWorkout: thisWorkout)
-                        //let setC = setCo
                         var setcount = 1
                         Chart(thisWorkout){day in
                             let date = convertStringtoDate(datestr: day.dateCompleted)
-                            //let _  =  print(date)
                             BarMark(
-                                //x:.value("X",date.formatted(date:.numeric,time:.omitted)),
                                 
                                 x:.value("Date",date),
-                                y:.value("Reps (units)", day.repPerf)
+                                y:.value("Reps (units)", day.repPerf),width: 50
                                 
                             )
                             
@@ -186,57 +181,29 @@ struct BarChartSubView: View {
                                     .layoutPriority(1)
                                     
                             }
-                            
+                                                    
                             let _ = setcount += 1
                             if (day.setPerf < setcount){
                                 let _ = setcount = 1
                             }
-                            //let _ = print("\(date)")
+                         
                         }
+                        
                         .chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
+                         
                         .chartXScale(
                                 domain: start...latestDate,
-                                range: .plotDimension(startPadding: 20, endPadding: 20)
+                                range: .plotDimension(startPadding: 40, endPadding: 40)
                                 
                             )
-                        
+                        //.chartScrollableAxes(.horizontal)
                          
                          
-                        //let _ = print("\(earliestDate)")
-                        //let _ = print("\(latestDate)")
+                        let _ = print("\(start)")
+                        let _ = print("\(latestDate)")
                         
                     
                 }
-                /*
-                 .chartXAxis {
-                 AxisMarks {
-                 AxisValueLabel()
-                 .foregroundStyle(.white)
-                 }
-                 
-                 }
-                 .chartYAxis {
-                 AxisMarks {
-                 AxisValueLabel()
-                 .foregroundStyle(.white)
-                 }
-                 
-                 }
-                 */
-                /*HStack(spacing: 10) {
-                 ForEach(["Set1", "Set2", "Set3", "Set4", "Set5", "Set6"], id: \.self) { setName in
-                 HStack(spacing: 5) {
-                 Circle()
-                 .fill(Color(setName))
-                 .frame(width: 10, height: 10)
-                 Text(setName)
-                 .font(.caption)
-                 .foregroundColor(.white)
-                 }
-                 }
-                 }
-                 .padding(.top, 10)
-                 */
             }
             .padding()
             .background(Color("DarkBlue"))
@@ -284,24 +251,32 @@ struct BarChartSubView: View {
             var date:Date = getLatestDate(thisWorkout: thisWorkout)
             if(isrecent){
                 return date.addingTimeInterval(86400 * -7)
-            }else{
-                date = getEarliestDate(thisWorkout: thisWorkout)
-                return date
             }
+            date = getEarliestDate(thisWorkout: thisWorkout)
+            return date
             
         }
     func convertStringtoDate(datestr:String)->Date{
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy'-'MM'-'dd' 'HH':'mm':'ss'"
         if let date = dateFormatter.date(from: datestr){
-            return date
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let datereduced = dateFormatter.string(from: date)
+            if let finalDate = dateFormatter.date(from: datereduced){
+                print(finalDate)
+                return finalDate
+            }
         }
         return Date.now
     }
     //temp perfomance is all good
-    func printPerfomance(){
-        if let performance = workoutHistoryData.performance {
-            print(performance)
+    func printThisWorkout(thisWorkout:[WorkoutHistory]){
+        let c = setArray(thisWorkout: thisWorkout)
+        var n:Int = 0
+        for day in thisWorkout {
+            print(day)
+            print(c[n])
+            n += 1
         }
     }
     func copy(performance:[WorkoutHistory],id:String)->[WorkoutHistory]{
@@ -320,6 +295,7 @@ struct BarChartSubView: View {
             if(n > day.setPerf){
                n = 1
             }
+            //let _  = print(setCount)
             setCount.append(n)
             n += 1
         }
@@ -329,7 +305,7 @@ struct BarChartSubView: View {
         var date:Date = Date.now
         if let datecompleted = thisWorkout.last{
             date = convertStringtoDate(datestr: datecompleted.dateCompleted)
-            let _ = print("Latest Date \(date)")
+            //let _ = print("Latest Date \(date)")
         }
         return date
         
@@ -338,14 +314,11 @@ struct BarChartSubView: View {
         var date:Date = Date.now
         if let datecompleted = thisWorkout.first{
             date = convertStringtoDate(datestr: datecompleted.dateCompleted)
-            let _ = print("Earliest Date \(date)")
+            //let _ = print("Earliest Date \(date)")
         }
         return date
     }
     //temp
-    func updatetoday(){
-        today = convertStringtoDate(datestr: "2024-01-16 12:01:07")
-    }
     
 }
 //TODO: connect to db
@@ -361,6 +334,7 @@ enum SetNum: String {
     case SetFive = "Set5"
     case SetSix = "Set6"
 }
+/*
 func convert(setNum:Int) ->SetNum{
     switch(setNum){
         case 1:
@@ -436,7 +410,7 @@ extension DBSets: Hashable{
     
 }
 let workoutNames = ["Bench Press","Squat","Deadlift","OverHead Press","Pull-Up","Barbell Row"]
-
+*/
 #Preview {
     //NavBar()
     //ProgressView().environmentObject(sampleWorkoutHistory)

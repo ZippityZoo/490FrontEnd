@@ -32,7 +32,6 @@ struct WelcomeView: View {
                         
                         NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
                             progressView
-                                .scaledToFill()
                                 .frame(height: 275)
                             
                         }

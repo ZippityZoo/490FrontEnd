@@ -62,7 +62,7 @@ struct ProgressView: View {
             }
         return []
         }
-
+/*
     var BarChartView:some View {
         
         ZStack{
@@ -129,8 +129,8 @@ struct ProgressView: View {
                 .cornerRadius(10)
             }
         }
-        
     }
+*/
     func convertStringtoDate(datestr:String)->Date{
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy'-'mm'-'dd' 'HH':'mm':'ss'"
@@ -143,10 +143,11 @@ struct ProgressView: View {
 struct BarChartSubView: View {
     @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
     var exname:String
+    @State var width:MarkDimension = 45
     @State private var isPortrait = UIDevice.current.orientation.isPortrait
     @State var isrecent:Bool = true
     @State var today:Date = Date.now
-    @State var workout:String = "Default"
+    //@State var workout:String = "Default"
     @State var welcomeView:Bool = false
     var body: some View{
     ZStack{
@@ -165,28 +166,42 @@ struct BarChartSubView: View {
                         let thisWorkout = copy(performance:performance,id:exname)
                         let latestDate = getLatestDate(thisWorkout: thisWorkout)
                         let start = retRecentOrOverall(thisWorkout: thisWorkout)
+                        let trend = trendline(thisWorkout: thisWorkout)
+                        let _ = getMonthlys(thisWorkout: thisWorkout)
                         var setcount = 1
-                        Chart(thisWorkout){day in
-                            let date = convertStringtoDate(datestr: day.dateCompleted)
-                            BarMark(
-                                
-                                x:.value("Date",date),
-                                y:.value("Reps (units)", day.repPerf),width: 50
-                                
-                            )
+                        Chart(){
                             
-                            .foregroundStyle(by:.value("Set",String(setcount)))
-                            .annotation(position:.overlay){
-                                Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())
-                                    .layoutPriority(1)
+                            ForEach(thisWorkout){day in
+                                let date = convertStringtoDate(datestr: day.dateCompleted)
+                                BarMark(
                                     
+                                    x:.value("Date",date),
+                                    y:.value("Reps (units)", day.repPerf),width: width
+                                    
+                                )
+                                
+                                .foregroundStyle(by:.value("Set",String(setcount)))
+                                .annotation(position:.overlay){
+                                    Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())
+                                        .layoutPriority(1)
+                                    
+                                }
+                                
+                                let _ = setcount += 1
+                                if (day.setPerf < setcount){
+                                    let _ = setcount = 1
+                                }
                             }
-                                                    
-                            let _ = setcount += 1
-                            if (day.setPerf < setcount){
-                                let _ = setcount = 1
+                            /*
+                            if(!isrecent){
+                                ForEach(trend){point in
+                                    LineMark(
+                                        x:.value("Date", point.date),
+                                        y:.value("Index",point.val)
+                                    )
+                                }
                             }
-                         
+                             */
                         }
                         
                         .chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
@@ -196,12 +211,15 @@ struct BarChartSubView: View {
                                 range: .plotDimension(startPadding: 40, endPadding: 40)
                                 
                             )
+                        .chartXAxis {
+                                    AxisMarks(preset: .aligned) // Ensures the x-axis marks are aligned and evenly spaced
+                                }
                         //.chartScrollableAxes(.horizontal)
                          
-                         
+                         /*
                         let _ = print("\(start)")
                         let _ = print("\(latestDate)")
-                        
+                        */
                     
                 }
             }
@@ -241,10 +259,12 @@ struct BarChartSubView: View {
         }
         func recent(){
             isrecent = true
+            width = 45
             print(isrecent)
         }
         func overall(){
             isrecent = false
+            width = 5
             print(isrecent)
         }
         func retRecentOrOverall(thisWorkout:[WorkoutHistory]) -> Date{
@@ -263,7 +283,7 @@ struct BarChartSubView: View {
             dateFormatter.dateFormat = "yyyy-MM-dd"
             let datereduced = dateFormatter.string(from: date)
             if let finalDate = dateFormatter.date(from: datereduced){
-                print(finalDate)
+                //print(finalDate)
                 return finalDate
             }
         }
@@ -318,8 +338,42 @@ struct BarChartSubView: View {
         }
         return date
     }
+    //trendline stuff
+    func trendline(thisWorkout:[WorkoutHistory]) -> [Point]{
+        var progressIndex:[Point] = []
+        let q1 = q1(thisWorkout: thisWorkout)
+        let q3 = q3(thisWorkout: thisWorkout)
+        for workout in thisWorkout{
+            let progin = ((workout.weightPerf - q1) * Double(workout.repPerf)) + q3
+            let date = convertStringtoDate(datestr: workout.dateCompleted)
+            progressIndex.append(.init(date:date, val:progin/10))
+        }
+        //print(progressIndex)
+        return progressIndex
+    }
+    func q1(thisWorkout:[WorkoutHistory]) -> Double{
+        let  n = thisWorkout.count/4
+        return thisWorkout[n+1].weightPerf
+    }
+    func q3(thisWorkout:[WorkoutHistory]) -> Double{
+        let  n = (thisWorkout.count/4) * 3
+        return thisWorkout[n+1].weightPerf
+    }
     //temp
-    
+    func getMonthlys(thisWorkout:[WorkoutHistory]){
+        let c = setArray(thisWorkout: thisWorkout)
+        var n:Int = 0
+        for day in thisWorkout {
+            print(day)
+            print(c[n])
+            n += 1
+        }
+    }
+}
+struct Point: Identifiable{
+    var id = UUID()
+    var date:Date
+    var val:Double
 }
 //TODO: connect to db
 //Will Have a list of workouts for the user to select

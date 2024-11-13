@@ -11,7 +11,7 @@ struct WelcomeView: View {
         NavigationView {
             ZStack {
                 Color("Cream").ignoresSafeArea()
-<<<<<<< Updated upstream
+
 
 //                if workoutPlanData.isLoading {
 //                    SwiftUI.ProgressView("Loading Workout Plan...")
@@ -19,7 +19,7 @@ struct WelcomeView: View {
 //                            refreshWorkoutData()
 //                        }
 //                } else {
-=======
+
                 
                 if workoutPlanData.isLoading {
                     SwiftUI.ProgressView("Loading Workout Plan...")
@@ -27,18 +27,15 @@ struct WelcomeView: View {
                             refreshWorkoutData()
                         }
                 } else {
->>>>>>> Stashed changes
+
                     VStack(spacing: 20) {
                         Spacer()
                         headerView
                         //Spacer()
-<<<<<<< Updated upstream
 
-                        NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
-=======
+
                         
                         NavigationLink(destination: ProgressView().environmentObject(workoutHistoryData)) {
->>>>>>> Stashed changes
                             progressView
                                 .scaledToFill()
                                 .frame(height: 275)
@@ -190,4 +187,5 @@ struct WelcomeView: View {
         return WelcomeView()
             .environmentObject(UserData(user: sampleUser, userPreference: sampleUserPreference))
             .environmentObject(previewWorkoutPlanData)
+            .environmentObject(sampleWorkoutHistory)
 }

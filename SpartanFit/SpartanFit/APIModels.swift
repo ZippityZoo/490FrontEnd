@@ -60,6 +60,7 @@ class WorkoutHistoryData: ObservableObject{
                 let apiResponse = try JSONDecoder().decode(PerformanceData.self, from: data)
                 DispatchQueue.main.async {
                     //idk if this will work, good news
+                    
                     self.performance = apiResponse.performance
                 }
             } catch {

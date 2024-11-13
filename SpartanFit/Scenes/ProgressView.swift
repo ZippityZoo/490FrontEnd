@@ -10,7 +10,6 @@ import Charts
 
 struct ProgressView: View {
     @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
-    
     //@State var setofexercises: Set<String> = []
     @State var workout: String = "Default"
     @State var setData = DBSets.setsTest2
@@ -27,9 +26,9 @@ struct ProgressView: View {
     
     var body: some View {
         //temp
-        //NavigationView{
+        NavigationView{
             WorkoutProgressList
-        //}
+        }
     }
     var WorkoutProgressList: some View{
             ZStack{
@@ -55,35 +54,6 @@ struct ProgressView: View {
             }
             
         }
-    var NavBar: some View{
-            ZStack{
-                Color("Cream")
-                HStack{
-                    Spacer()
-                    Button(action:recent){
-                        Text("Recent")
-                    }
-                    Spacer()
-                    Divider()
-                    Spacer()
-                    Button(action:overall){
-                        Text("Overall")
-                    }
-                    Spacer()
-                }
-            }.frame(height:40)
-                .clipShape(RoundedRectangle(cornerRadius: 10)).padding(4).background(.black).clipShape(RoundedRectangle(cornerRadius: 10))
-        }
-        func recent(){
-            isrecent = true
-            setData = DBSets.setsTest
-            print(isrecent)
-        }
-        func overall(){
-            isrecent = false
-            setData = DBSets.setsTest2
-            print(isrecent)
-        }
         //
     func countuniqeIds() -> Set<String>{
             if let performance = workoutHistoryData.performance{
@@ -102,7 +72,7 @@ struct ProgressView: View {
                     EmptyView()
                 }else{
                     EmptyView()
-                    NavBar
+                    //NavBar
                 }
                 VStack{
                     Text(workout).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
@@ -171,13 +141,11 @@ struct ProgressView: View {
     }
 }
 struct BarChartSubView: View {
-    //make this a specific exercise id
     @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
     var exname:String
-    //@State var randi:Int
-    //var setCount:[Int] = []
-    @State var lastDate:Date = Date.now
-    @State var earliestDate:Date = Date.now
+    @State private var isPortrait = UIDevice.current.orientation.isPortrait
+    @State var isrecent:Bool = true
+    @State var today:Date = Date.now
     @State var workout:String = "Default"
     @State var welcomeView:Bool = false
     var body: some View{
@@ -188,44 +156,54 @@ struct BarChartSubView: View {
                 EmptyView()
             }else{
                 EmptyView()
-                //NavBar(setData:$setData)
+                NavBar
             }
             VStack{
+                //let _ = printPerfomance()
                 Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
-                    
                     if let performance = workoutHistoryData.performance{
-                        let ld = getLastDate(thisWorkout: performance)
+                        
                         let thisWorkout = copy(performance:performance,id:exname)
+                        let latestDate = getLatestDate(thisWorkout: thisWorkout)
+                        //let earliestDate = getEarliestDate(thisWorkout: thisWorkout)
+                        let start = retRecentOrOverall(thisWorkout: thisWorkout)
+                        //let setC = setCo
                         var setcount = 1
                         Chart(thisWorkout){day in
                             let date = convertStringtoDate(datestr: day.dateCompleted)
                             //let _  =  print(date)
                             BarMark(
                                 //x:.value("X",date.formatted(date:.numeric,time:.omitted)),
+                                
                                 x:.value("Date",date),
                                 y:.value("Reps (units)", day.repPerf)
+                                
                             )
+                            
                             .foregroundStyle(by:.value("Set",String(setcount)))
                             .annotation(position:.overlay){
                                 Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())
                                     .layoutPriority(1)
+                                    
                             }
                             
                             let _ = setcount += 1
                             if (day.setPerf < setcount){
                                 let _ = setcount = 1
                             }
-                            
-                        }.chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
-                        
-                            .chartXScale(
-                                domain: earliestDate...lastDate,
-                                range: .plotDimension(startPadding: 10, endPadding: 10)
+                            //let _ = print("\(date)")
+                        }
+                        .chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
+                        .chartXScale(
+                                domain: start...latestDate,
+                                range: .plotDimension(startPadding: 20, endPadding: 20)
+                                
                             )
-                         
-                         
-                        //let _ = print("\(weekAgo)")
                         
+                         
+                         
+                        //let _ = print("\(earliestDate)")
+                        //let _ = print("\(latestDate)")
                         
                     
                 }
@@ -264,18 +242,67 @@ struct BarChartSubView: View {
             .background(Color("DarkBlue"))
             .cornerRadius(10)
         }
-        }
+    }.onAppear{
+        /*NotificationCenter.default.addObserver(
+                        forName: UIDevice.orientationDidChangeNotification,
+                        object: nil,
+                        queue: .main
+                    ) { _ in
+                        self.isPortrait = UIDevice.current.orientation.isPortrait
+                    }
+         */
     }
+    }
+    var NavBar: some View{
+            ZStack{
+                Color("Cream")
+                HStack{
+                    Spacer()
+                    Button(action:recent){
+                        Text("Recent")
+                    }
+                    Spacer()
+                    Divider()
+                    Spacer()
+                    Button(action:overall){
+                        Text("Overall")
+                    }
+                    Spacer()
+                }
+            }.frame(height:40)
+                .clipShape(RoundedRectangle(cornerRadius: 10)).padding(4).background(.black).clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+        func recent(){
+            isrecent = true
+            print(isrecent)
+        }
+        func overall(){
+            isrecent = false
+            print(isrecent)
+        }
+        func retRecentOrOverall(thisWorkout:[WorkoutHistory]) -> Date{
+            var date:Date = getLatestDate(thisWorkout: thisWorkout)
+            if(isrecent){
+                return date.addingTimeInterval(86400 * -7)
+            }else{
+                date = getEarliestDate(thisWorkout: thisWorkout)
+                return date
+            }
+            
+        }
     func convertStringtoDate(datestr:String)->Date{
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy'-'mm'-'dd' 'HH':'mm':'ss'"
+        dateFormatter.dateFormat = "yyyy'-'MM'-'dd' 'HH':'mm':'ss'"
         if let date = dateFormatter.date(from: datestr){
             return date
         }
         return Date.now
     }
-    func copyOnlyRel(){
-        //uhhh
+    //temp perfomance is all good
+    func printPerfomance(){
+        if let performance = workoutHistoryData.performance {
+            print(performance)
+        }
     }
     func copy(performance:[WorkoutHistory],id:String)->[WorkoutHistory]{
         var thisWorkout:[WorkoutHistory] = []
@@ -298,18 +325,26 @@ struct BarChartSubView: View {
         }
         return setCount
     }
-    func getLastDate(thisWorkout:[WorkoutHistory]){
+    func getLatestDate(thisWorkout:[WorkoutHistory]) -> Date{
         var date:Date = Date.now
         if let datecompleted = thisWorkout.last{
             date = convertStringtoDate(datestr: datecompleted.dateCompleted)
+            let _ = print("Latest Date \(date)")
         }
-        lastDate = date
-        /*
-        if let datecompleted2 = thisWorkout.first{
-            date = convertStringtoDate(datestr: datecompleted2.dateCompleted)
+        return date
+        
+    }
+    func getEarliestDate(thisWorkout:[WorkoutHistory]) -> Date{
+        var date:Date = Date.now
+        if let datecompleted = thisWorkout.first{
+            date = convertStringtoDate(datestr: datecompleted.dateCompleted)
+            let _ = print("Earliest Date \(date)")
         }
-         */
-        earliestDate = date.addingTimeInterval(86400 * -7)
+        return date
+    }
+    //temp
+    func updatetoday(){
+        today = convertStringtoDate(datestr: "2024-01-16 12:01:07")
     }
     
 }
@@ -404,10 +439,10 @@ let workoutNames = ["Bench Press","Squat","Deadlift","OverHead Press","Pull-Up",
 
 #Preview {
     //NavBar()
-    ProgressView().environmentObject(sampleWorkoutHistory)
+    //ProgressView().environmentObject(sampleWorkoutHistory)
     //WorkoutProgressList
     //workout this later
-    //BarChartSubView(exname:"Bench Press").environmentObject(sampleWorkoutHistory)
+    BarChartSubView(exname:"Bench Press").environmentObject(sampleWorkoutHistory)
     //EmptyView()
 }
 

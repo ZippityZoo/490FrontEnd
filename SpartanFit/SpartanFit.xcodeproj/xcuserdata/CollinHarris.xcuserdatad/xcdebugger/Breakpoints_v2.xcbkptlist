@@ -40,7 +40,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "1149A160-7B9C-4C11-BFA9-ACAD401CA0D7"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Scenes/LoginView.swift"
@@ -50,6 +50,38 @@
             endingLineNumber = "118"
             landmarkName = "fetchPreferences(userId:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "1149A160-7B9C-4C11-BFA9-ACAD401CA0D7 - 9296ee5a4914ae6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in SpartanFit.LoginView.fetchPreferences(userId: Swift.Int) -&gt; ()"
+                  moduleName = "SpartanFit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/CollinHarris/Documents/GitHub/490FrontEnd/SpartanFit/Scenes/LoginView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "120"
+                  endingLineNumber = "120"
+                  offsetFromSymbolStart = "360">
+               </Location>
+               <Location
+                  uuid = "1149A160-7B9C-4C11-BFA9-ACAD401CA0D7 - 9296ee5a4914ae6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in SpartanFit.LoginView.fetchPreferences(userId: Swift.Int) -&gt; ()"
+                  moduleName = "SpartanFit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/CollinHarris/Documents/GitHub/490FrontEnd/SpartanFit/Scenes/LoginView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "120"
+                  endingLineNumber = "120"
+                  offsetFromSymbolStart = "448">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

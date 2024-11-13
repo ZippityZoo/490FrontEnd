@@ -64,7 +64,7 @@
 		2B0AC9122CB86D1E0047022D /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		2B0AC9142CB86D310047022D /* WorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutView.swift; sourceTree = "<group>"; };
 		2B0AC9162CB86D3D0047022D /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
-		AACAB6142CE2AEA200626D2E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2B833DBD2CE2AEE900E97D89 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AAD6809D2CD6E8C700528204 /* APIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModels.swift; sourceTree = "<group>"; };
 		AAD6809F2CD85EA000528204 /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
 		AAD680A12CE133B500528204 /* EditUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditUserView.swift; sourceTree = "<group>"; };
@@ -126,7 +126,7 @@
 		2B0AC8E12CB491D30047022D /* SpartanFit */ = {
 			isa = PBXGroup;
 			children = (
-				AACAB6142CE2AEA200626D2E /* Info.plist */,
+				2B833DBD2CE2AEE900E97D89 /* Info.plist */,
 				AAD6809D2CD6E8C700528204 /* APIModels.swift */,
 				2B0AC8E22CB491D30047022D /* SpartanFitApp.swift */,
 				2B0AC8E62CB491D60047022D /* Assets.xcassets */,

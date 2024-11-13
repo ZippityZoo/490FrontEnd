@@ -84,7 +84,6 @@ struct LoginView: View {
             .onAppear {
                 refreshWorkoutData()
             }
-            .navigationBarBackButtonHidden(true)
         }
     }
     

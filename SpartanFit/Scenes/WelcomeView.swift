@@ -6,43 +6,42 @@ struct WelcomeView: View {
     @State var currentIndex: Int = 0
     //var barViews: ProgressView().BarChartView
     var body: some View {
-        NavigationView {
+        //NavigationView {
             ZStack {
                 Color("Cream").ignoresSafeArea()
                 
                 
-//                if workoutPlanData.isLoading {
-//                    SwiftUI.ProgressView("Loading Workout Plan...")
-//                        .onAppear {
-//                            refreshWorkoutData()
-//                        }
-//                } else {
+                //                if workoutPlanData.isLoading {
+                //                    SwiftUI.ProgressView("Loading Workout Plan...")
+                //                        .onAppear {
+                //                            refreshWorkoutData()
+                //                        }
+                //                } else {
+                
+                VStack(spacing: 20) {
+                    Spacer()
+                    headerView
+                    //Spacer()
                     
-                    VStack(spacing: 20) {
-                        Spacer()
-                        headerView
-                        //Spacer()
+                    NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
+                        progressView
+                            .frame(height: 275)
                         
-                        NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
-                            progressView
-                                .frame(height: 275)
-                            
-                        }
-                        .padding(.bottom, 10)
-                        .padding()
-                        
-                        workoutPreviewView()
-                            .padding(.bottom, 10)
                     }
+                    .padding(.bottom, 10)
                     .padding()
-                    .onAppear {
-                        refreshWorkoutData()
-                    }
-                    .navigationBarBackButtonHidden(true)
+                    
+                    workoutPreviewView()
+                        .padding(.bottom, 10)
                 }
+                .padding()
+                .onAppear {
+                    refreshWorkoutData()
+                }
+                .navigationBarBackButtonHidden(true)
+            }
             //}
-            .navigationBarBackButtonHidden(true)
-        }
+        //}
     }
     // Function to refresh workout data whenever WelcomeView appears
     private func refreshWorkoutData() {

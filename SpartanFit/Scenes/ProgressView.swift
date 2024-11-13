@@ -160,7 +160,7 @@ struct BarChartSubView: View {
                 NavBar
             }
             VStack{
-                Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(.white)
+                Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(Color("Cream"))
                     if let performance = workoutHistoryData.performance{
                         
                         let thisWorkout = copy(performance:performance,id:exname)
@@ -205,6 +205,7 @@ struct BarChartSubView: View {
                         }
                         
                         .chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
+                        .foregroundStyle(.white)
                          
                         .chartXScale(
                                 domain: start...latestDate,
@@ -212,8 +213,15 @@ struct BarChartSubView: View {
                                 
                             )
                         .chartXAxis {
-                                    AxisMarks(preset: .aligned) // Ensures the x-axis marks are aligned and evenly spaced
-                                }
+                        AxisMarks(preset: .aligned){
+                                            AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
+                                        }
+                                    }
+                                    .chartYAxis {
+                                        AxisMarks {
+                                            AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
+                                        }
+                                    }
                         //.chartScrollableAxes(.horizontal)
                          
                          /*

@@ -95,7 +95,7 @@ struct LoginView: View {
     }
     
     func authenticateUser(email: String) {
-        let userId = email
+        let userId = 3601
         let urlString = "\(apiBaseUrl)/userprofile/user_id=\(userId)"
         guard let url = URL(string: urlString) else { return }
         

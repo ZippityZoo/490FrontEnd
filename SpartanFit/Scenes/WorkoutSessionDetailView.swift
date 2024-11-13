@@ -74,7 +74,7 @@ struct WorkoutSessionDetailView: View {
     private func titleHeader() -> some View {
         HStack {
             Spacer()
-            Text(workoutPlanData.workoutPlan?.id == 4 ? "Today's Workout" : "Upcoming Workout")
+            Text(workoutPlanData.workoutPlan?.id == 6 ? "Today's Workout" : "Upcoming Workout")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(Color("DarkBlue"))
@@ -162,6 +162,16 @@ struct WorkoutSessionDetailView: View {
                         .font(.headline)
                         .foregroundColor(Color("Cream"))
                     Text("\(exercise.planReps)")
+                        .foregroundColor(Color("Cream"))
+                        .font(.callout)
+                }
+                Spacer()
+                
+                VStack(alignment: .leading) {
+                    Text("Sets")
+                        .font(.headline)
+                        .foregroundColor(Color("Cream"))
+                    Text("\(exercise.planSets)")
                         .foregroundColor(Color("Cream"))
                         .font(.callout)
                 }

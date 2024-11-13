@@ -48,7 +48,7 @@ struct WorkoutPlanBody: View {
     let workoutPlan: WorkoutPlan
     
     var body: some View {
-        let startDate = Calendar.current.startOfDay(for: Date()).addingTimeInterval(workoutPlan.id == 4 ? 0 : 86400) // Today if id is 4, tomorrow otherwise
+        let startDate = Calendar.current.startOfDay(for: Date()).addingTimeInterval(workoutPlan.id == 6 ? 0 : 86400) // Today if id is 4, tomorrow otherwise
         
         List {
             ForEach(Array(workoutPlan.workouts.enumerated()), id: \.element.id) { index, workout in

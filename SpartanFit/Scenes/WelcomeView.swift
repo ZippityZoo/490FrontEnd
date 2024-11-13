@@ -9,49 +9,49 @@ struct WelcomeView: View {
         NavigationView {
             ZStack {
                 Color("Cream").ignoresSafeArea()
-
+                
+                //                if workoutPlanData.isLoading {
+                //                    SwiftUI.ProgressView("Loading Workout Plan...")
+                //                        .onAppear {
+                //                            refreshWorkoutData()
+                //                        }
+                //                } else {
+                
+                
 //                if workoutPlanData.isLoading {
 //                    SwiftUI.ProgressView("Loading Workout Plan...")
 //                        .onAppear {
 //                            refreshWorkoutData()
 //                        }
 //                } else {
-
-
-                if workoutPlanData.isLoading {
-                    SwiftUI.ProgressView("Loading Workout Plan...")
-                        .onAppear {
-                            refreshWorkoutData()
-                        }
-                } else {
-
+                    
                     VStack(spacing: 20) {
                         Spacer()
                         headerView
                         //Spacer()
-
+                        
                         NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
                             progressView
                                 .scaledToFill()
                                 .frame(height: 275)
-
+                            
                         }
                         .padding(.bottom, 10)
                         .padding()
-
+                        
                         workoutPreviewView()
                             .padding(.bottom, 10)
                     }
                     .padding()
+                    .onAppear {
+                            refreshWorkoutData()
+                        }
+                    //}
                 //}
             }
-            .onAppear {
-                refreshWorkoutData()
-            }
+            .navigationBarBackButtonHidden(true)
         }
-        .navigationBarBackButtonHidden(true)
     }
-
     // Function to refresh workout data whenever WelcomeView appears
     private func refreshWorkoutData() {
         if let userId = userData.user?.id {
@@ -67,8 +67,8 @@ struct WelcomeView: View {
             AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
             AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
              */
-            AnyView(BarChartSubView(exname:"Bench Press").environmentObject(sampleWorkoutHistory)),
-            AnyView(BarChartSubView(exname:"Squat").environmentObject(sampleWorkoutHistory))
+            AnyView(BarChartSubView(exname:"Bench Press",welcomeView: true).environmentObject(sampleWorkoutHistory)),
+            AnyView(BarChartSubView(exname:"Squat",welcomeView: true).environmentObject(sampleWorkoutHistory))
         ]
     }
 

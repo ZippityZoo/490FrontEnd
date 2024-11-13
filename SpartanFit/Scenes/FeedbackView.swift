@@ -5,10 +5,10 @@ struct FeedbackView: View {
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
     
     @Binding var isPresented: Bool
-    @State private var rating: Double = 0
-    @State private var caloriesBurned: String = ""
-    @State private var showConfirmation = false // State variable for showing confirmation
-    @State private var showConfetti = false     // State variable for confetti animation
+    @State private var rating: Int = 0
+    @State private var intensity: Int = 0      
+    @State private var showConfirmation = false
+    @State private var showConfetti = false
 
     var body: some View {
         ZStack {
@@ -27,30 +27,39 @@ struct FeedbackView: View {
                     Spacer()
                     Text("Rate Your Workout")
                         .font(.title2)
-                        .fontWeight(.bold)
+                        .fontWeight(.semibold)
                         .foregroundColor(Color("DarkBlue"))
 
-                    // Star rating system with half-star support
+                    // Star rating system
                     HStack {
                         ForEach(1...5, id: \.self) { star in
-                            Image(systemName: rating >= Double(star) - 0.5 ? "star.fill" : "star")
-                                .foregroundColor(rating >= Double(star) - 0.5 ? Color("DarkBlue") : .gray)
+                            Image(systemName: rating >= star ? "star.fill" : "star")
+                                .foregroundColor(rating >= star ? Color("DarkBlue") : .gray)
                                 .onTapGesture {
-                                    rating = Double(star)
+                                    rating = star
                                 }
                                 .font(.largeTitle)
                         }
                     }
-
-                    // Calories burned input
-                    VStack(alignment: .leading) {
-                        Text("Estimated Calories Burned")
+                    .padding(.bottom, 40)
+                    // Intensity rating system with dumbbell icons
+                    VStack {
+                        Text("Rate Workout Intensity")
+                            .font(.title2)
                             .fontWeight(.semibold)
-
-                        TextField("Enter calories", text: $caloriesBurned)
-                            .keyboardType(.numberPad)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.vertical, 10)
+                            .foregroundColor(Color("DarkBlue"))
+                            .padding(.bottom, 20)
+                        
+                        HStack {
+                            ForEach(1...5, id: \.self) { level in
+                                Image(systemName: intensity >= level ? "dumbbell.fill" : "dumbbell")
+                                    .foregroundColor(intensity >= level ? Color("DarkBlue") : .gray)
+                                    .onTapGesture {
+                                        intensity = level
+                                    }
+                                    .font(.largeTitle)
+                            }
+                        }
                     }
 
                     // Submit button
@@ -99,15 +108,17 @@ struct FeedbackView: View {
     private func submitFeedback() {
         guard
             let userId = userData.user?.id,
-            let planId = workoutPlanData.workoutPlan?.id,
-            let calories = Double(caloriesBurned)
+            let planId = workoutPlanData.workoutPlan?.id
         else { return }
 
+        // Convert intensity to estimated calories burned
+        let caloriesBurned = calculateCaloriesBurned(intensity: intensity)
+        
         let feedbackData: [String: Any] = [
             "userId": userId,
             "planId": planId,
             "rating": rating,
-            "totalCaloriesBurned": calories
+            "totalCaloriesBurned": caloriesBurned
         ]
 
         let urlString = "\(apiBaseUrl)/feedback"
@@ -131,7 +142,7 @@ struct FeedbackView: View {
                         showConfirmation = true
                         showConfetti = true
                         
-                        //refresh workoutPlan
+                        // Refresh workoutPlan
                         if let userId = userData.user?.id {
                             workoutPlanData.fetchWorkoutPlan(userId: userId)
                         }
@@ -155,7 +166,14 @@ struct FeedbackView: View {
             print("Failed to encode feedback data:", error)
         }
     }
+
+    // Helper function to estimate calories based on intensity level
+    private func calculateCaloriesBurned(intensity: Int) -> Double {
+        let multiplier = 100   
+        return Double(multiplier * intensity)
+    }
 }
+
 
 // Simple confetti animation view
 struct ConfettiView: View {
@@ -184,4 +202,11 @@ struct ConfettiView: View {
         let colors: [Color] = [.red, .blue, .green, .yellow, .pink, .purple, .orange]
         return colors.randomElement() ?? .gray
     }
+}
+
+
+#Preview {
+    FeedbackView(isPresented: .constant(true))
+        .environmentObject(WorkoutPlanData(workoutPlan: sampleWorkoutPlan))
+        .environmentObject(UserData(user: sampleUser))
 }

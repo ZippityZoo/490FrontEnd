@@ -12,60 +12,96 @@ import Combine
 class WorkoutPlanData: ObservableObject {
     @Published var workoutPlan: WorkoutPlan?
     @Published var isLoading = true
-
+    
     init(userId: Int) {
         fetchWorkoutPlan(userId: userId)
     }
-
+    
     init(workoutPlan: WorkoutPlan) {
         self.workoutPlan = workoutPlan
         self.isLoading = false
     }
-
-    func fetchWorkoutPlan(userId: Int) {
+    
+    func fetchWorkoutPlan(userId: Int, completion: (() -> Void)? = nil) {
         let urlString = "\(apiBaseUrl)/recommendations?user_id=\(userId)"
-        guard let url = URL(string: urlString) else { return }
-
+        guard let url = URL(string: urlString) else {
+            DispatchQueue.main.async {
+                self.isLoading = false // Set to false if URL is invalid
+                completion?()
+            }
+            return
+        }
+        
+        self.isLoading = true // Start loading
+        
         URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else { return }
-
-            do {
-                let apiResponse = try JSONDecoder().decode(RecommendedPlansResponse.self, from: data)
-                DispatchQueue.main.async {
-                    self.workoutPlan = apiResponse.recommendedPlans.first?.workoutPlans.first
+            DispatchQueue.main.async {
+                defer { completion?() } // Ensure completion handler is called at the end
+                
+                if let error = error {
+                    print("Error fetching workout plan:", error)
                     self.isLoading = false
+                    return
                 }
-            } catch {
-                print("Failed to decode JSON:", error)
+                
+                guard let data = data else {
+                    print("No data received")
+                    self.isLoading = false
+                    return
+                }
+                
+                do {
+                    let apiResponse = try JSONDecoder().decode(RecommendedPlansResponse.self, from: data)
+                    self.workoutPlan = apiResponse.recommendedPlans.first?.workoutPlans.first
+                } catch {
+                    print("Failed to decode JSON:", error)
+                }
+                
+                self.isLoading = false // Loading complete
             }
         }.resume()
     }
-
 }
 
-class WorkoutHistoryData: ObservableObject{
-    @Published var performance:[WorkoutHistory]?
-
-    init(userId: Int){
+class WorkoutHistoryData: ObservableObject {
+    @Published var performance: [WorkoutHistory] = []
+    @Published var isLoading = true
+    
+    init(userId: Int) {
         fetchWorkoutHistory(userId: userId)
     }
-    func fetchWorkoutHistory(userId: Int){
-        //getting the right json info time to use it huh
+    
+    func fetchWorkoutHistory(userId: Int) {
         let urlString = "http://localhost:3000/userworkouthistory/user_id=\(userId)"
-        //"http://localhost:3000/userworkouthistory/user_id=\(userId)"
-        guard let url = URL(string: urlString) else { return }
+        guard let url = URL(string: urlString) else {
+            self.isLoading = false
+            return
+        }
+        
+        self.isLoading = true
         URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else { return }
-            do {
-                let apiResponse = try JSONDecoder().decode(PerformanceData.self, from: data)
-                DispatchQueue.main.async {
-                    //idk if this will work, good news
-                    
-                    self.performance = apiResponse.performance
+            DispatchQueue.main.async {
+                self.isLoading = false
+                
+                if let error = error {
+                    print("Network error:", error)
+                    self.performance = []
+                    return
                 }
-            } catch {
-                print("Failed to decode JSON:", error)
-
+                
+                guard let data = data else {
+                    print("No data received")
+                    self.performance = []
+                    return
+                }
+                
+                do {
+                    let apiResponse = try JSONDecoder().decode(PerformanceData.self, from: data)
+                    self.performance = apiResponse.performance
+                } catch {
+                    print("Failed to decode JSON:", error)
+                    self.performance = []
+                }
             }
         }.resume()
     }
@@ -88,7 +124,7 @@ struct WorkoutPlan: Identifiable, Codable, Equatable {
     let endDate: String
     let active: Int
     let workouts: [Workout]
-
+    
     enum CodingKeys: String, CodingKey {
         case id = "plan_id"
         case startDate = "start_date"
@@ -97,12 +133,12 @@ struct WorkoutPlan: Identifiable, Codable, Equatable {
     }
     
     static func == (lhs: WorkoutPlan, rhs: WorkoutPlan) -> Bool {
-            return lhs.id == rhs.id &&
-                   lhs.startDate == rhs.startDate &&
-                   lhs.endDate == rhs.endDate &&
-                   lhs.active == rhs.active &&
-                   lhs.workouts.map { $0.id } == rhs.workouts.map { $0.id }
-        }
+        return lhs.id == rhs.id &&
+        lhs.startDate == rhs.startDate &&
+        lhs.endDate == rhs.endDate &&
+        lhs.active == rhs.active &&
+        lhs.workouts.map { $0.id } == rhs.workouts.map { $0.id }
+    }
 }
 
 struct Workout: Identifiable, Codable {
@@ -111,7 +147,7 @@ struct Workout: Identifiable, Codable {
     let intensity: String
     let duration: Int
     let exercises: [Exercise]
-
+    
     enum CodingKeys: String, CodingKey {
         case id = "workout_id"
         case name = "exercise_name"
@@ -130,7 +166,7 @@ struct WorkoutHistory:Identifiable, Codable{
     let repPerf:Int
     let weightPerf:Double
     let dateCompleted:String
-
+    
     enum CodingKeys:String, CodingKey {
         case userId = "user_id"
         case firstName = "fname"
@@ -142,13 +178,12 @@ struct WorkoutHistory:Identifiable, Codable{
         case weightPerf = "actual_weight"
         case dateCompleted = "perf_date"
     }
-
-
+    
+    
 }
 struct PerformanceData: Codable {
     let performance: [WorkoutHistory]
 }
-
 
 
 let workout1Exercises = [
@@ -195,3 +230,4 @@ let sampleWorkoutPlanData = WorkoutPlanData(workoutPlan: sampleWorkoutPlan)
 let apiBaseUrl = "http://localhost:3000"
 //Sample workouthistorydata
 let sampleWorkoutHistory = WorkoutHistoryData(userId: 7572)
+

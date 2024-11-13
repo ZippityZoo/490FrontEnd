@@ -6,9 +6,8 @@ struct WorkoutSessionDetailView: View {
     
     @State private var expandedIndex: Int? = nil
     @State private var isShowingFeedbackView = false
-    
-    
     @State private var completedSets: [Int: Double] = [:]
+    @State private var allSetsCompleted: [Int: Bool] = [:]
     
     var body: some View {
         ZStack {
@@ -41,6 +40,9 @@ struct WorkoutSessionDetailView: View {
                     }
                 }
             }
+            .onChange(of: workoutPlanData.workoutPlan) {
+                resetCompletionData()
+            }
         }
     }
     
@@ -56,6 +58,11 @@ struct WorkoutSessionDetailView: View {
         if let expandedIndex = expandedIndex {
             UserDefaults.standard.set(expandedIndex, forKey: "expandedIndex")
         }
+    }
+    
+    private func resetCompletionData() {
+        completedSets = [:]
+        allSetsCompleted = [:]
     }
     
     private func topNavigation() -> some View {
@@ -74,7 +81,7 @@ struct WorkoutSessionDetailView: View {
     private func titleHeader() -> some View {
         HStack {
             Spacer()
-            Text("Today's Workout")
+            Text(workoutPlanData.workoutPlan?.id == 4 ? "Today's Workout" : "Upcoming Workout")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(Color("DarkBlue"))
@@ -109,7 +116,6 @@ struct WorkoutSessionDetailView: View {
             }
         }
     }
-
     
     private func feedbackView() -> some View {
         Button(action: {
@@ -154,7 +160,7 @@ struct WorkoutSessionDetailView: View {
                         .foregroundColor(Color("Cream"))
                     Text("\(exercise.planWeight, specifier: "%.1f") lbs")
                         .foregroundColor(Color("Cream"))
-                        .font(.subheadline)
+                        .font(.callout)
                 }
                 Spacer()
                 
@@ -164,7 +170,7 @@ struct WorkoutSessionDetailView: View {
                         .foregroundColor(Color("Cream"))
                     Text("\(exercise.planReps)")
                         .foregroundColor(Color("Cream"))
-                        .font(.subheadline)
+                        .font(.callout)
                 }
                 Spacer()
                 
@@ -174,7 +180,7 @@ struct WorkoutSessionDetailView: View {
                         .foregroundColor(Color("Cream"))
                     Text("\(exercise.restTime)s")
                         .foregroundColor(Color("Cream"))
-                        .font(.subheadline)
+                        .font(.callout)
                 }
                 Spacer()
             }
@@ -182,45 +188,43 @@ struct WorkoutSessionDetailView: View {
             
             HStack {
                 Spacer()
-                VStack(alignment: .leading) {
-                    HStack {
-                        Text("Completed Sets")
-                            .font(.headline)
-                            .foregroundColor(Color("Cream"))
-                        
-                        Text("\(Int(completedSets[index] ?? 0)) / \(totalSets)")
-                            .foregroundColor(Color("Cream"))
-                            .font(.subheadline)
+                Text("Completed All Sets")
+                    .foregroundColor(Color("Cream"))
+                    .padding(.trailing, -1)
+                    .font(.subheadline)
+                
+                Toggle("", isOn: Binding(
+                    get: { allSetsCompleted[index] ?? false },
+                    set: { newValue in
+                        allSetsCompleted[index] = newValue
+                        if newValue {
+                            completedSets[index] = Double(totalSets)
+                        }
                     }
-                }
+                ))
+                .toggleStyle(SwitchToggleStyle(tint: Color(.gray).opacity(0.2)))
                 Spacer()
             }
+            .padding(.horizontal)
+            Spacer()
             
-            HStack {
-                Text("0")
+            if !(allSetsCompleted[index] ?? false) {
+                HStack {
+                    Text("0")
+                        .foregroundColor(Color("Cream"))
+                    Slider(value: Binding(
+                        get: { completedSets[index] ?? 0 },
+                        set: { completedSets[index] = $0 }
+                    ), in: 0...Double(totalSets), step: 1)
+                    .accentColor(Color("DarkBlue"))
+                    .cornerRadius(5)
+                    .frame(height: 20)
+                    .padding(.horizontal)
+                    .tint(Color("Cream"))
                     .foregroundColor(Color("Cream"))
-                Slider(value: Binding(
-                    get: { completedSets[index] ?? 0 },
-                    set: { completedSets[index] = $0 }
-                ), in: 0...Double(totalSets), step: 1)
-                .accentColor(Color("DarkBlue"))
-                .cornerRadius(5)
-                .frame(height: 20)
-                .padding(.horizontal)
-                .tint(Color("Cream"))
-                .foregroundColor(Color("Cream"))
-                .onAppear {
-                    if completedSets[index] == nil {
-                        completedSets[index] = 0
-                    }
-                    if let thumbImage = UIImage(systemName: "circle.fill")?
-                        .withTintColor(UIColor(named: "Cream") ?? .white, renderingMode: .alwaysOriginal)
-                    {
-                        UISlider.appearance().setThumbImage(thumbImage, for: .normal)
-                    }
+                    Text("\(totalSets)")
+                        .foregroundColor(Color("Cream"))
                 }
-                Text("\(totalSets)")
-                    .foregroundColor(Color("Cream"))
             }
             
             Spacer()
@@ -232,6 +236,7 @@ struct WorkoutSessionDetailView: View {
     }
 
 }
+
 
 #Preview {
     WorkoutSessionDetailView()

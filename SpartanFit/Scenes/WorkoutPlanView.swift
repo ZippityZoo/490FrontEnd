@@ -48,8 +48,12 @@ struct WorkoutPlanBody: View {
     let workoutPlan: WorkoutPlan
     
     var body: some View {
+        let startDate = Calendar.current.startOfDay(for: Date()).addingTimeInterval(workoutPlan.id == 4 ? 0 : 86400) // Today if id is 4, tomorrow otherwise
+        
         List {
             ForEach(Array(workoutPlan.workouts.enumerated()), id: \.element.id) { index, workout in
+                let workoutDate = Calendar.current.date(byAdding: .day, value: index, to: startDate)!
+                
                 Section {
                     VStack(alignment: .leading, spacing: 10) {
                         ForEach(workout.exercises, id: \.id) { exercise in
@@ -71,7 +75,7 @@ struct WorkoutPlanBody: View {
                     .background(Color("DarkBlue").cornerRadius(25))
                     
                 } header: {
-                    Text("\(ordinalWorkoutText(for: index)) Workout")
+                    Text(dateFormatter.string(from: workoutDate))
                         .font(.headline)
                         .foregroundColor(Color("DarkBlue"))
                         .padding(.vertical, 5)
@@ -83,15 +87,10 @@ struct WorkoutPlanBody: View {
         .scrollContentBackground(.hidden)
     }
     
-    private func ordinalWorkoutText(for index: Int) -> String {
-        switch index {
-        case 0: return "First"
-        case 1: return "Second"
-        case 2: return "Third"
-        case 3: return "Fourth"
-        case 4: return "Fifth"
-        default: return "\(index + 1)th"
-        }
+    private var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMMM d" 
+        return formatter
     }
 }
 

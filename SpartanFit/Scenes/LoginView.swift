@@ -5,65 +5,92 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var userData: UserData
-    @EnvironmentObject var workoutPlanData: WorkoutPlanData // WorkoutPlanData as EnvironmentObject
-    @State var isAuthenticated:Bool  = false
+    @EnvironmentObject var workoutPlanData: WorkoutPlanData
+    @State var isAuthenticated: Bool = false
 
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
-                Color("Cream").ignoresSafeArea()
+                Color("DarkBlue").ignoresSafeArea()
                 
                 VStack {
-                    
+                    Spacer()
                     
                     ZStack {
                         Color("DarkBlue")
+                            .cornerRadius(25) // Rounded corners for the blue section
+                            .padding(.horizontal, 20)
+                            
                         
-                        
-                        VStack {
+                        VStack(spacing: 20) {
                             Spacer()
+                            
                             Image("LOGO")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 350, height: 350)
                                 .padding(.bottom, 20)
-                        
-                            TextField("Enter Email", text: $email)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .padding(.bottom, 20)
                             
-                            SecureField("Enter Password", text: $password)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                            
-                            HStack {
-                                Spacer()
-                                Button("Login") {
-                                    authenticateUser(email: email)
-                                }
-                                .padding()
-                                .background(Color("DarkBlue"))
-                                .clipShape(RoundedRectangle(cornerRadius: 15.0))
-                                .foregroundColor(.white)
+                            VStack(spacing: 15) {
+                                TextField("Enter Email", text: $email)
+                                    .padding()
+                                    .background(Color("Cream").opacity(0.8))
+                                    .cornerRadius(10)
+                                    .padding(.horizontal, 20)
+                                    .autocapitalization(.none)
+                                    .keyboardType(.emailAddress)
+                                
+                                SecureField("Enter Password", text: $password)
+                                    .padding()
+                                    .background(Color("Cream").opacity(0.8))
+                                    .cornerRadius(10)
+                                    .padding(.horizontal, 20)
                             }
-                                NavigationLink(destination: SignUpView()) {
-                                    Text("Sign Up").foregroundStyle(.blue).underline()
-                                }
+                            
+                            Button(action: {
+                                authenticateUser(email: email)
+                            }) {
+                                Text("Login")
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color("Cream"))
+                                    .foregroundColor(Color("DarkBlue"))
+                                    .font(.headline)
+                                    .cornerRadius(10)
+                                    .padding(.horizontal, 20)
+                                    .shadow(radius: 5)
+                            }
+                            
+                            NavigationLink(destination: SignUpView()) {
+                                Text("Don't have an account? Sign Up")
+                                    .foregroundColor(Color("Cream"))
+                                    .font(.headline)
+                                    .padding(.top, 10)
+                            }
                             
                             Spacer()
-                        }.navigationDestination(for: String.self) { view in
-                            if view == "WelcomeView" {
-                                WelcomeView()
-                            }
                         }
+                        .padding(.top, 30)
+                        .padding(.bottom, 30)
                     }
-                    .padding(.vertical, 30)
-                    .clipShape(RoundedRectangle(cornerRadius: 25.0))
+                }
+                .padding(.bottom, 30)
+            }
+            .navigationDestination(for: String.self) { view in
+                if view == "WelcomeView" {
+                    WelcomeView()
                 }
             }
-            .navigationDestination(for: User.self) { user in
-                WelcomeView()
-                    .environmentObject(WorkoutPlanData(userId: user.id)) // Initialize WorkoutPlanData with userId
+            .onAppear {
+                refreshWorkoutData()
             }
+        }
+    }
+    
+    private func refreshWorkoutData() {
+        if let userId = userData.user?.id {
+            workoutPlanData.isLoading = true
+            workoutPlanData.fetchWorkoutPlan(userId: userId)
         }
     }
     
@@ -86,7 +113,7 @@ struct LoginView: View {
                         self.userData.updateUser(fetchedUser)
                         self.isAuthenticated = true
                         self.path.append("WelcomeView")
-                        fetchPreferences(userId: fetchedUser.id) // Fetch preferences after updating user
+                        fetchPreferences(userId: fetchedUser.id)
                     } else {
                         self.isAuthenticated = false
                         print("User not found.")
@@ -97,23 +124,12 @@ struct LoginView: View {
             }
         }.resume()
     }
-
     
     func fetchPreferences(userId: Int) {
         let urlString = "\(apiBaseUrl)/preferences/\(userId)"
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
-            //for debugging
-            /*
-            if let jsondata = data {
-                if let jsonString = String(data: jsondata, encoding: .utf8) {
-                    print(jsonString) // This will help you see the exact JSON structure
-                }
-            }
-             */
-            //print(url) no json here
-            
             guard let data = data, error == nil else {
                 print("Network or URL error:", error ?? "Unknown error")
                 return
@@ -122,11 +138,8 @@ struct LoginView: View {
             do {
                 let apiResponse = try JSONDecoder().decode(UserPreferencesResponse.self, from: data)
                 DispatchQueue.main.async {
-                    // Only update preferences
                     self.userData.updateUserPreference(apiResponse.preferences)
-                    
-                    // Perform navigation if `path` is valid and available
-                    self.path.append(apiResponse.user) // Navigate once preferences are loaded
+                    self.path.append(apiResponse.user)
                 }
             } catch {
                 print("Failed to decode JSON:", error)

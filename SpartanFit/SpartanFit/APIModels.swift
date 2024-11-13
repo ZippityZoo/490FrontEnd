@@ -82,7 +82,7 @@ struct RecommendedPlan: Codable {
     let workoutPlans: [WorkoutPlan]
 }
 
-struct WorkoutPlan: Identifiable, Codable {
+struct WorkoutPlan: Identifiable, Codable, Equatable {
     let id: Int
     let startDate: String
     let endDate: String
@@ -95,6 +95,14 @@ struct WorkoutPlan: Identifiable, Codable {
         case endDate = "end_date"
         case active, workouts
     }
+    
+    static func == (lhs: WorkoutPlan, rhs: WorkoutPlan) -> Bool {
+            return lhs.id == rhs.id &&
+                   lhs.startDate == rhs.startDate &&
+                   lhs.endDate == rhs.endDate &&
+                   lhs.active == rhs.active &&
+                   lhs.workouts.map { $0.id } == rhs.workouts.map { $0.id }
+        }
 }
 
 struct Workout: Identifiable, Codable {

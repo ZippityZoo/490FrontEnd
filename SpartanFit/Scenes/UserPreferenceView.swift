@@ -46,10 +46,10 @@ struct UserPreferencesView: View {
     // View for displaying preferences
     var userPreferenceDisplay: some View {
         VStack(alignment: .leading, spacing: 15) {
-            preferenceRow(label: "Preferred Types", value: userData.preferences?.preferredTypes ?? "N/A")
-            preferenceRow(label: "Preferred Intensity", value: userData.preferences?.preferredIntensity ?? "N/A")
-            preferenceRow(label: "Preferred Duration", value: "\(userData.preferences?.preferredDuration ?? 0) mins")
-            preferenceRow(label: "Preferred Exercise", value: userData.preferences?.preferredExercise ?? "N/A")
+            preferenceRow(label: "Preferred Workout Type", value: userData.preferences?.preferredTypes ?? "N/A")
+            preferenceRow(label: "Preferred Workout Intensity", value: userData.preferences?.preferredIntensity ?? "N/A")
+            preferenceRow(label: "Preferred Workout Duration", value: "\(userData.preferences?.preferredDuration ?? 0) mins")
+//            preferenceRow(label: "Preferred Exercise", value: userData.preferences?.preferredExercise ?? "N/A")
         }
         .padding()
         .background(Color("DarkBlue"))

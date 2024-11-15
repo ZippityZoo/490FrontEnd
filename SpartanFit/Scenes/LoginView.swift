@@ -86,6 +86,7 @@ struct LoginView: View {
             .navigationDestination(for: User.self) { user in
                 WelcomeView()
                     .environmentObject(WorkoutPlanData(userId: user.id)) // Initialize WorkoutPlanData with userId
+                    .environmentObject(WorkoutHistoryData(userId: user.id))
             }
         }
     }
@@ -125,7 +126,7 @@ struct LoginView: View {
                     }
                 }
             } catch {
-                print("Failed to decode JSON:", error)
+                print("Failed to decode JSON:Auth", error)
             }
         }.resume()
     }

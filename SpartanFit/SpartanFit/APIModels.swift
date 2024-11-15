@@ -198,7 +198,7 @@ let sampleWorkoutPlanData = WorkoutPlanData(workoutPlan: sampleWorkoutPlan)
 
 //let apiBaseUrl = "http://localhost:3000"
 //let apiBaseUrl = "http://172.16.2.143:3000"
-let apiBaseUrl = "https://live-saved-elf.ngrok-free.app"
+let apiBaseUrl = "http://localhost:3000"//"https://live-saved-elf.ngrok-free.app"
 
 //Sample workouthistorydata
 let sampleWorkoutHistory = WorkoutHistoryData(userId: 7572)

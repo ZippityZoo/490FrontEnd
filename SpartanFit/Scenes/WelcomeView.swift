@@ -32,13 +32,13 @@ struct WelcomeView: View {
                         }
                         .padding(.bottom, 10)
                         .padding()
-                    }else {
+                    }else{
                         NavigationLink(destination: ProgressView().environmentObject(workoutHistoryData)) {
                             ZStack{
                                 Color("DarkBlue")
                                     .frame(height: 275)
                                     .clipShape(RoundedRectangle(cornerRadius: 25))
-                                Text("No History Let's Get Started")
+                                Text("No History, Let's Get Started Below")
                                     .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                                     .foregroundStyle(Color("Cream"))
                             }
@@ -64,6 +64,7 @@ struct WelcomeView: View {
         if let userId = userData.user?.id {
             workoutPlanData.isLoading = true
             workoutPlanData.fetchWorkoutPlan(userId: userId)
+            //workoutHistoryData.fetchWorkoutHistory(userId: userId)
         }
     }
     
@@ -181,11 +182,12 @@ struct WelcomeView: View {
     }
     func noHistory(){
         if let historycheck  =  workoutHistoryData.performance {
-            if(historycheck.isEmpty){
-                past = false
+            if(historycheck.count == 0){
+                self.past = false
+                return
             }
         }
-        past = true
+        self.past = true
     }
 }
 

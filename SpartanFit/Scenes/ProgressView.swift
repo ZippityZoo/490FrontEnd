@@ -41,7 +41,7 @@ struct ProgressView: View {
                         ForEach(countuniqeIds().sorted(),id: \.self){workoutname in
                                 
                                 HStack{
-                                    NavigationLink(destination: BarChartSubView(exname: workoutname).environmentObject(sampleWorkoutHistory)){
+                                    NavigationLink(destination: BarChartSubView(exname: workoutname).environmentObject(workoutHistoryData)){
                                         Text("\(workoutname)")
                                     }.foregroundStyle(Color.white)
                                         .onAppear{
@@ -146,7 +146,7 @@ struct BarChartSubView: View {
     @State var width:MarkDimension = 45
     @State private var isPortrait = UIDevice.current.orientation.isPortrait
     @State var isrecent:Bool = true
-    @State var today:Date = Date.now
+    @State var month:Date = Date.now
     //@State var workout:String = "Default"
     @State var welcomeView:Bool = false
     var body: some View{
@@ -161,80 +161,101 @@ struct BarChartSubView: View {
             }
             VStack{
                 Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(Color("Cream"))
-                    if let performance = workoutHistoryData.performance{
-                        
+                if let performance = workoutHistoryData.performance{
+                    if performance.count > 0{
                         let thisWorkout = copy(performance:performance,id:exname)
-                        let latestDate = getLatestDate(thisWorkout: thisWorkout)
+                        let latestDate = getLastDayOfSpecificMonth(date:  getLatestDate(thisWorkout: thisWorkout))
                         let start = retRecentOrOverall(thisWorkout: thisWorkout)
+                        let month = getWholeMonth(date: start)
                         let trend = trendline(thisWorkout: thisWorkout)
-                        let _ = getMonthlys(thisWorkout: thisWorkout)
+                        //let _ = getMonthlys(thisWorkout: thisWorkout)
                         var setcount = 1
-                        Chart(){
-                            
-                            ForEach(thisWorkout){day in
-                                let date = convertStringtoDate(datestr: day.dateCompleted)
-                                BarMark(
-                                    
-                                    x:.value("Date",date),
-                                    y:.value("Reps (units)", day.repPerf),width: width
-                                    
-                                )
+                            Chart(){
+                                //if(isrecent){
                                 
-                                .foregroundStyle(by:.value("Set",String(setcount)))
-                                .annotation(position:.overlay){
-                                    Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())
-                                        .layoutPriority(1)
-                                    
-                                }
-                                
-                                let _ = setcount += 1
-                                if (day.setPerf < setcount){
-                                    let _ = setcount = 1
-                                }
-                            }
-                            /*
-                            if(!isrecent){
-                                ForEach(trend){point in
-                                    LineMark(
-                                        x:.value("Date", point.date),
-                                        y:.value("Index",point.val)
+                                var n = 0
+                                /*
+                                 ForEach(getWholeMonth(date: start),id:\.self) { day in
+                                 let date = convertStringtoDate(datestr: thisWorkout[n].dateCompleted)
+                                 if(day == date){
+                                 BarMark(
+                                 x:.value("Date",day),
+                                 y:.value("HUH",n)
+                                 )
+                                 }
+                                 let _ = n += 1
+                                 }
+                                 */
+                                ForEach(thisWorkout){day in
+                                    let date = convertStringtoDate(datestr: day.dateCompleted)
+                                    BarMark(
+                                        
+                                        x:.value("Date",date),
+                                        y:.value("Reps (units)", day.repPerf),width: width
+                                        
                                     )
+                                    .foregroundStyle(by:.value("Set",String(setcount)))
+                                    .annotation(position:.overlay){
+                                        Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())
+                                            .layoutPriority(1)
+                                        
+                                    }
+                                    let _ = setcount += 1
+                                    if (day.setPerf < setcount){
+                                        let _ = setcount = 1
+                                    }
                                 }
+                                //}
+                                if(!isrecent){
+                                    /*
+                                     ForEach(trend){point in
+                                     //let date = convertStringtoDate(datestr: point.dateCompleted)
+                                     LineMark(
+                                     x:.value("Date", point.date),
+                                     y:.value("Index",point.val)
+                                     ).foregroundStyle(.blue)
+                                     .lineStyle(StrokeStyle(lineWidth: 4))
+                                     }
+                                     */
+                                }
+                                
                             }
-                             */
-                        }
-                        
-                        .chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
-                        .foregroundStyle(.white)
-                         
-                        .chartXScale(
+                            
+                            .chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
+                            .foregroundStyle(.white)
+                            
+                            .chartXScale(
                                 domain: start...latestDate,
-                                range: .plotDimension(startPadding: 40, endPadding: 40)
+                                range: .plotDimension(startPadding: 20, endPadding: 20)
                                 
                             )
-                        .chartXAxis {
-                        AxisMarks(preset: .aligned){
-                                            AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
-                                        }
-                                    }
-                                    .chartYAxis {
-                                        AxisMarks {
-                                            AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
-                                        }
-                                    }
-                        //.chartScrollableAxes(.horizontal)
-                         
-                         /*
-                        let _ = print("\(start)")
-                        let _ = print("\(latestDate)")
-                        */
-                    
+                            .chartXAxis {
+                                AxisMarks(preset: .aligned){
+                                    AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
+                                    
+                                }
+                            }
+                            .chartYAxis {
+                                AxisMarks {
+                                    AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
+                                }
+                            }
+                            //.chartScrollableAxes(.horizontal)
+                        //.plotDimension(startPadding: 20, endPadding: 20)
+                        /*
+                         let _ = print("\(start)")
+                         let _ = print("\(latestDate)")
+                         */
+                    }
+                }else{
+                    Text("No History, Let's Get Started")
                 }
             }
             .padding()
             .background(Color("DarkBlue"))
             .cornerRadius(10)
         }
+            
     }.onAppear{
         /*NotificationCenter.default.addObserver(
                         forName: UIDevice.orientationDidChangeNotification,
@@ -252,13 +273,13 @@ struct BarChartSubView: View {
                 HStack{
                     Spacer()
                     Button(action:recent){
-                        Text("Recent")
+                        Text("Past 7 Days")
                     }
                     Spacer()
                     Divider()
                     Spacer()
                     Button(action:overall){
-                        Text("Overall")
+                        Text("This Month")
                     }
                     Spacer()
                 }
@@ -272,16 +293,17 @@ struct BarChartSubView: View {
         }
         func overall(){
             isrecent = false
-            width = 5
+            width = 45
             print(isrecent)
         }
         func retRecentOrOverall(thisWorkout:[WorkoutHistory]) -> Date{
-            var date:Date = getLatestDate(thisWorkout: thisWorkout)
+            let date:Date = getLatestDate(thisWorkout: thisWorkout)
             if(isrecent){
                 return date.addingTimeInterval(86400 * -7)
             }
-            date = getEarliestDate(thisWorkout: thisWorkout)
-            return date
+            //date = getEarliestDate(thisWorkout: thisWorkout)
+            return getFirstDayOfSpecificMonth(date: date)
+            //return date
             
         }
     func convertStringtoDate(datestr:String)->Date{
@@ -290,6 +312,7 @@ struct BarChartSubView: View {
         if let date = dateFormatter.date(from: datestr){
             dateFormatter.dateFormat = "yyyy-MM-dd"
             let datereduced = dateFormatter.string(from: date)
+            
             if let finalDate = dateFormatter.date(from: datereduced){
                 //print(finalDate)
                 return finalDate
@@ -298,14 +321,9 @@ struct BarChartSubView: View {
         return Date.now
     }
     //temp perfomance is all good
-    func printThisWorkout(thisWorkout:[WorkoutHistory]){
-        let c = setArray(thisWorkout: thisWorkout)
-        var n:Int = 0
-        for day in thisWorkout {
-            print(day)
-            print(c[n])
-            n += 1
-        }
+    func fillin(thisWorkout:[WorkoutHistory],start:Date){
+        let month = getWholeMonth(date: start)
+        
     }
     func copy(performance:[WorkoutHistory],id:String)->[WorkoutHistory]{
         var thisWorkout:[WorkoutHistory] = []
@@ -377,7 +395,46 @@ struct BarChartSubView: View {
             n += 1
         }
     }
+    func getFirstDayOfSpecificMonth(date:Date) -> Date{
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year,.month], from: date)
+        if let firstDays = calendar.date(from: components){
+            return firstDays
+        }
+        return date
+    }
+    func getLastDayOfSpecificMonth(date:Date) -> Date {
+        let calendar = Calendar.current
+        if let startOfNextMonth = calendar.date(byAdding: .month, value: 1, to: date){
+            let firstOfNextMonth = getFirstDayOfSpecificMonth(date:startOfNextMonth)
+            
+            if let lastDays = calendar.date(byAdding: .day, value: -1, to: firstOfNextMonth){
+                //print(lastDays)
+                return lastDays
+            }
+        }
+        
+        return date
+    }
+    func getWholeMonth(date:Date) -> [Date]{
+        var allDates:[Date] = []
+        let calendar = Calendar.current
+        let start = getFirstDayOfSpecificMonth(date: date)
+        let end = getLastDayOfSpecificMonth(date: date)
+        var inc = start
+        var n = 0
+        while(inc < end){
+            allDates.append(inc)
+            if let inc2 = calendar.date(byAdding: .day, value: 1, to: inc){
+                inc = inc2
+            }
+        }
+        return allDates
+    }
 }
+
+
+
 struct Point: Identifiable{
     var id = UUID()
     var date:Date
@@ -386,6 +443,16 @@ struct Point: Identifiable{
 //TODO: connect to db
 //Will Have a list of workouts for the user to select
 
+struct Triangle: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY)) // Top point
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY)) // Bottom left point
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY)) // Bottom right point
+        path.closeSubpath() // Closes the path to form a triangle
+        return path
+    }
+}
 
 //Stuff to simulate DB info
 enum SetNum: String {

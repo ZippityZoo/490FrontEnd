@@ -225,7 +225,7 @@ struct SignUpView3: View{
                 else{
                     InjuryForm(listedInjuries:$listedInjuries,showForm: $showForm)
                         .scaledToFit()
-                        //.animation(.easeInOut)
+                        .animation(.easeInOut, value: 2)
                        
                 }
                 Spacer()

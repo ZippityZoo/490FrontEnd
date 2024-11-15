@@ -30,8 +30,8 @@
             filePath = "SpartanFit/APIModels.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
             landmarkName = "fetchWorkoutHistory(userId:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,9 +46,9 @@
             filePath = "Scenes/LoginView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
-            landmarkName = "fetchPreferences(userId:)"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "authenticateUser(email:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -94,8 +94,8 @@
             filePath = "Scenes/WelcomeView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "9"
-            endingLineNumber = "9"
+            startingLineNumber = "11"
+            endingLineNumber = "11"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -110,10 +110,122 @@
             filePath = "Scenes/ProgressView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "275"
-            endingLineNumber = "275"
-            landmarkName = "retRecentOrOverall(thisWorkout:)"
-            landmarkType = "9">
+            startingLineNumber = "296"
+            endingLineNumber = "296"
+            landmarkName = "overall()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "91B114C2-B067-4AE9-8742-B09C0202AB18"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Scenes/ProgressView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "310"
+            endingLineNumber = "310"
+            landmarkName = "convertStringtoDate(datestr:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C2D9F6FB-F735-4B6D-B72F-F44591528F7F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Scenes/ProgressView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "312"
+            endingLineNumber = "312"
+            landmarkName = "convertStringtoDate(datestr:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C2D9F6FB-F735-4B6D-B72F-F44591528F7F - 4443362774ed8477"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SpartanFit.BarChartSubView.convertStringtoDate(datestr: Swift.String) -&gt; Foundation.Date"
+                  moduleName = "SpartanFit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/CollinHarris/Documents/GitHub/490FrontEnd/SpartanFit/Scenes/ProgressView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "292"
+                  endingLineNumber = "292"
+                  offsetFromSymbolStart = "440">
+               </Location>
+               <Location
+                  uuid = "C2D9F6FB-F735-4B6D-B72F-F44591528F7F - 4443362774ed8477"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SpartanFit.BarChartSubView.convertStringtoDate(datestr: Swift.String) -&gt; Foundation.Date"
+                  moduleName = "SpartanFit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/CollinHarris/Documents/GitHub/490FrontEnd/SpartanFit/Scenes/ProgressView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "292"
+                  endingLineNumber = "292"
+                  offsetFromSymbolStart = "756">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EF4381BF-D435-4845-8486-077B8738861A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Scenes/ProgressView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "316"
+            endingLineNumber = "316"
+            landmarkName = "convertStringtoDate(datestr:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "EF4381BF-D435-4845-8486-077B8738861A - 4443362774ed84d8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SpartanFit.BarChartSubView.convertStringtoDate(datestr: Swift.String) -&gt; Foundation.Date"
+                  moduleName = "SpartanFit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/CollinHarris/Documents/GitHub/490FrontEnd/SpartanFit/Scenes/ProgressView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "295"
+                  endingLineNumber = "295"
+                  offsetFromSymbolStart = "1060">
+               </Location>
+               <Location
+                  uuid = "EF4381BF-D435-4845-8486-077B8738861A - 4443362774ed84d8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SpartanFit.BarChartSubView.convertStringtoDate(datestr: Swift.String) -&gt; Foundation.Date"
+                  moduleName = "SpartanFit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/CollinHarris/Documents/GitHub/490FrontEnd/SpartanFit/Scenes/ProgressView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "295"
+                  endingLineNumber = "295"
+                  offsetFromSymbolStart = "1400">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

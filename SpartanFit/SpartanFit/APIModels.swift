@@ -36,7 +36,7 @@ class WorkoutPlanData: ObservableObject {
                     self.isLoading = false
                 }
             } catch {
-                print("Failed to decode JSON:", error)
+                print("Failed to decode JSON:Plan", error)
             }
         }.resume()
     }
@@ -49,10 +49,14 @@ class WorkoutHistoryData: ObservableObject{
     init(userId: Int){
         fetchWorkoutHistory(userId: userId)
     }
+    
+    init(performance:[WorkoutHistory]){
+        self.performance = performance
+    }
+    
     func fetchWorkoutHistory(userId: Int){
         //getting the right json info time to use it huh
-        let urlString = "http://localhost:3000/userworkouthistory/user_id=\(userId)"
-        //"http://localhost:3000/userworkouthistory/user_id=\(userId)"
+        let urlString = "\(apiBaseUrl)/userworkouthistory/user_id=\(userId)"
         guard let url = URL(string: urlString) else { return }
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else { return }
@@ -64,7 +68,7 @@ class WorkoutHistoryData: ObservableObject{
                     self.performance = apiResponse.performance
                 }
             } catch {
-                print("Failed to decode JSON:", error)
+                print("Failed to decode JSON: History", error)
 
             }
         }.resume()

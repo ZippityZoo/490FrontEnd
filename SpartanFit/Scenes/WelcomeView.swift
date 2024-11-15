@@ -3,7 +3,9 @@ import SwiftUI
 struct WelcomeView: View {
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
+    @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
     @State var currentIndex: Int = 0
+    @State var past:Bool = false
     //var barViews: ProgressView().BarChartView
     var body: some View {
         //NavigationView {
@@ -22,21 +24,35 @@ struct WelcomeView: View {
                     Spacer()
                     headerView
                     //Spacer()
-                    
-                    NavigationLink(destination: ProgressView().environmentObject(sampleWorkoutHistory)) {
-                        progressView
-                            .frame(height: 275)
-                        
+                    if(past){
+                        NavigationLink(destination: ProgressView().environmentObject(workoutHistoryData)) {
+                            progressView
+                                .frame(height: 275)
+                            
+                        }
+                        .padding(.bottom, 10)
+                        .padding()
+                    }else {
+                        NavigationLink(destination: ProgressView().environmentObject(workoutHistoryData)) {
+                            ZStack{
+                                Color("DarkBlue")
+                                    .frame(height: 275)
+                                    .clipShape(RoundedRectangle(cornerRadius: 25))
+                                Text("No History Let's Get Started")
+                                    .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                                    .foregroundStyle(Color("Cream"))
+                            }
+                        }
+                        .padding(.bottom, 10)
+                        .padding()
                     }
-                    .padding(.bottom, 10)
-                    .padding()
-                    
                     workoutPreviewView()
                         .padding(.bottom, 10)
                 }
                 .padding()
                 .onAppear {
                     refreshWorkoutData()
+                    noHistory()
                 }
                 .navigationBarBackButtonHidden(true)
             }
@@ -58,8 +74,8 @@ struct WelcomeView: View {
              AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
              AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
              */
-            AnyView(BarChartSubView(exname:"Bench Press",welcomeView: true).environmentObject(sampleWorkoutHistory)),
-            AnyView(BarChartSubView(exname:"Squat",welcomeView: true).environmentObject(sampleWorkoutHistory))
+            AnyView(BarChartSubView(exname:"Bench Press",welcomeView: true).environmentObject(workoutHistoryData)),
+            AnyView(BarChartSubView(exname:"Squat",welcomeView: true).environmentObject(workoutHistoryData))
         ]
     }
     
@@ -162,6 +178,14 @@ struct WelcomeView: View {
         }
         .clipShape(RoundedRectangle(cornerRadius: 25))
         .padding()
+    }
+    func noHistory(){
+        if let historycheck  =  workoutHistoryData.performance {
+            if(historycheck.isEmpty){
+                past = false
+            }
+        }
+        past = true
     }
 }
 

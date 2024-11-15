@@ -6,6 +6,7 @@ struct LoginView: View {
     @State private var password = ""
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
+    @EnvironmentObject var workoutHistoryData: WorkoutHistoryData
     @State var isAuthenticated: Bool = false
 
     var body: some View {
@@ -79,6 +80,8 @@ struct LoginView: View {
             .navigationDestination(for: String.self) { view in
                 if view == "WelcomeView" {
                     WelcomeView()
+                        .environmentObject(workoutPlanData)
+                        .environmentObject(workoutHistoryData)
                 }
             }
             .onAppear {
@@ -91,6 +94,8 @@ struct LoginView: View {
         if let userId = userData.user?.id {
             workoutPlanData.isLoading = true
             workoutPlanData.fetchWorkoutPlan(userId: userId)
+            workoutHistoryData.fetchWorkoutHistory(userId: userId)
+            
         }
     }
     
@@ -148,8 +153,10 @@ struct LoginView: View {
     }
 }
 
+
 #Preview {
     LoginView()
         .environmentObject(UserData())
         .environmentObject(WorkoutPlanData(workoutPlan: sampleWorkoutPlan))
+        .environmentObject(WorkoutHistoryData(userId: 7572))
 }

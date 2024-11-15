@@ -5,7 +5,7 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var userData: UserData
-    @EnvironmentObject var workoutPlanData: WorkoutPlanData
+    @EnvironmentObject var workoutPlanData: WorkoutPlanData // WorkoutPlanData as EnvironmentObject
     @State var isAuthenticated: Bool = false
 
     var body: some View {
@@ -20,7 +20,6 @@ struct LoginView: View {
                         Color("DarkBlue")
                             .cornerRadius(25) // Rounded corners for the blue section
                             .padding(.horizontal, 20)
-                            
                         
                         VStack(spacing: 20) {
                             Spacer()
@@ -81,16 +80,10 @@ struct LoginView: View {
                     WelcomeView()
                 }
             }
-            .onAppear {
-                refreshWorkoutData()
+            .navigationDestination(for: User.self) { user in
+                WelcomeView()
+                    .environmentObject(WorkoutPlanData(userId: user.id)) // Initialize WorkoutPlanData with userId
             }
-        }
-    }
-    
-    private func refreshWorkoutData() {
-        if let userId = userData.user?.id {
-            workoutPlanData.isLoading = true
-            workoutPlanData.fetchWorkoutPlan(userId: userId)
         }
     }
     
@@ -113,7 +106,7 @@ struct LoginView: View {
                         self.userData.updateUser(fetchedUser)
                         self.isAuthenticated = true
                         self.path.append("WelcomeView")
-                        fetchPreferences(userId: fetchedUser.id)
+                        fetchPreferences(userId: fetchedUser.id) // Fetch preferences after updating user
                     } else {
                         self.isAuthenticated = false
                         print("User not found.")
@@ -124,6 +117,7 @@ struct LoginView: View {
             }
         }.resume()
     }
+
     
     func fetchPreferences(userId: Int) {
         let urlString = "\(apiBaseUrl)/preferences/\(userId)"
@@ -138,8 +132,11 @@ struct LoginView: View {
             do {
                 let apiResponse = try JSONDecoder().decode(UserPreferencesResponse.self, from: data)
                 DispatchQueue.main.async {
+                    // Only update preferences
                     self.userData.updateUserPreference(apiResponse.preferences)
-                    self.path.append(apiResponse.user)
+                    
+                    // Perform navigation if path is valid and available
+                    self.path.append(apiResponse.user) // Navigate once preferences are loaded
                 }
             } catch {
                 print("Failed to decode JSON:", error)

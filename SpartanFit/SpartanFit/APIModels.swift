@@ -51,7 +51,7 @@ class WorkoutHistoryData: ObservableObject{
     }
     func fetchWorkoutHistory(userId: Int){
         //getting the right json info time to use it huh
-        let urlString = "http://localhost:3000/userworkouthistory/user_id=\(userId)"
+        let urlString = "\(apiBaseUrl)/userworkouthistory/user_id=\(userId)"
         //"http://localhost:3000/userworkouthistory/user_id=\(userId)"
         guard let url = URL(string: urlString) else { return }
         URLSession.shared.dataTask(with: url) { data, response, error in
@@ -192,6 +192,9 @@ let sampleWorkoutPlan = WorkoutPlan(
 // Creating an instance of WorkoutPlanData with sample data
 let sampleWorkoutPlanData = WorkoutPlanData(workoutPlan: sampleWorkoutPlan)
 
-let apiBaseUrl = "http://localhost:3000"
+//let apiBaseUrl = "http://localhost:3000"
+//let apiBaseUrl = "http://172.16.2.143:3000"
+let apiBaseUrl = "https://live-saved-elf.ngrok-free.app"
+
 //Sample workouthistorydata
 let sampleWorkoutHistory = WorkoutHistoryData(userId: 7572)

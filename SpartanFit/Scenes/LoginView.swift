@@ -13,25 +13,24 @@ struct LoginView: View {
         NavigationStack(path: $path) {
             ZStack {
                 Color("DarkBlue").ignoresSafeArea()
-                
+
                 VStack {
                     Spacer()
-                    
+
                     ZStack {
                         Color("DarkBlue")
                             .cornerRadius(25) // Rounded corners for the blue section
                             .padding(.horizontal, 20)
-                            
-                        
+
                         VStack(spacing: 20) {
                             Spacer()
-                            
+
                             Image("LOGO")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 350, height: 350)
                                 .padding(.bottom, 20)
-                            
+
                             VStack(spacing: 15) {
                                 TextField("Enter Email", text: $email)
                                     .padding()
@@ -40,14 +39,14 @@ struct LoginView: View {
                                     .padding(.horizontal, 20)
                                     .autocapitalization(.none)
                                     .keyboardType(.emailAddress)
-                                
+
                                 SecureField("Enter Password", text: $password)
                                     .padding()
                                     .background(Color("Cream").opacity(0.8))
                                     .cornerRadius(10)
                                     .padding(.horizontal, 20)
                             }
-                            
+
                             Button(action: {
                                 authenticateUser(email: email)
                             }) {
@@ -61,14 +60,14 @@ struct LoginView: View {
                                     .padding(.horizontal, 20)
                                     .shadow(radius: 5)
                             }
-                            
+
                             NavigationLink(destination: SignUpView()) {
                                 Text("Don't have an account? Sign Up")
                                     .foregroundColor(Color("Cream"))
                                     .font(.headline)
                                     .padding(.top, 10)
                             }
-                            
+
                             Spacer()
                         }
                         .padding(.top, 30)
@@ -84,32 +83,33 @@ struct LoginView: View {
                         .environmentObject(workoutHistoryData)
                 }
             }
-            .onAppear {
-                refreshWorkoutData()
+            .navigationDestination(for: User.self) { user in
+                WelcomeView()
+                    .environmentObject(WorkoutPlanData(userId: user.id)) // Initialize WorkoutPlanData with userId
             }
         }
     }
-    
+
     private func refreshWorkoutData() {
         if let userId = userData.user?.id {
             workoutPlanData.isLoading = true
             workoutPlanData.fetchWorkoutPlan(userId: userId)
             workoutHistoryData.fetchWorkoutHistory(userId: userId)
-            
+
         }
     }
-    
+
     func authenticateUser(email: String) {
         let userId = 3601
         let urlString = "\(apiBaseUrl)/userprofile/user_id=\(userId)"
         guard let url = URL(string: urlString) else { return }
-        
+
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else {
                 print("Network or URL error:", error ?? "Unknown error")
                 return
             }
-            
+
             do {
                 let apiResponse = try JSONDecoder().decode(UserProfileResponse.self, from: data)
                 DispatchQueue.main.async {
@@ -118,7 +118,7 @@ struct LoginView: View {
                         self.userData.updateUser(fetchedUser)
                         self.isAuthenticated = true
                         self.path.append("WelcomeView")
-                        fetchPreferences(userId: fetchedUser.id)
+                        fetchPreferences(userId: fetchedUser.id) // Fetch preferences after updating user
                     } else {
                         self.isAuthenticated = false
                         print("User not found.")
@@ -129,22 +129,26 @@ struct LoginView: View {
             }
         }.resume()
     }
-    
+
+
     func fetchPreferences(userId: Int) {
         let urlString = "\(apiBaseUrl)/preferences/\(userId)"
         guard let url = URL(string: urlString) else { return }
-        
+
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else {
                 print("Network or URL error:", error ?? "Unknown error")
                 return
             }
-            
+
             do {
                 let apiResponse = try JSONDecoder().decode(UserPreferencesResponse.self, from: data)
                 DispatchQueue.main.async {
+                    // Only update preferences
                     self.userData.updateUserPreference(apiResponse.preferences)
-                    self.path.append(apiResponse.user)
+
+                    // Perform navigation if path is valid and available
+                    self.path.append(apiResponse.user) // Navigate once preferences are loaded
                 }
             } catch {
                 print("Failed to decode JSON:", error)

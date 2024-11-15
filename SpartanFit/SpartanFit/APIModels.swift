@@ -49,11 +49,11 @@ class WorkoutHistoryData: ObservableObject{
     init(userId: Int){
         fetchWorkoutHistory(userId: userId)
     }
-    
+
     init(performance:[WorkoutHistory]){
         self.performance = performance
     }
-    
+
     func fetchWorkoutHistory(userId: Int){
         //getting the right json info time to use it huh
         let urlString = "\(apiBaseUrl)/userworkouthistory/user_id=\(userId)"
@@ -64,7 +64,7 @@ class WorkoutHistoryData: ObservableObject{
                 let apiResponse = try JSONDecoder().decode(PerformanceData.self, from: data)
                 DispatchQueue.main.async {
                     //idk if this will work, good news
-                    
+
                     self.performance = apiResponse.performance
                 }
             } catch {
@@ -99,7 +99,7 @@ struct WorkoutPlan: Identifiable, Codable, Equatable {
         case endDate = "end_date"
         case active, workouts
     }
-    
+
     static func == (lhs: WorkoutPlan, rhs: WorkoutPlan) -> Bool {
             return lhs.id == rhs.id &&
                    lhs.startDate == rhs.startDate &&
@@ -196,6 +196,9 @@ let sampleWorkoutPlan = WorkoutPlan(
 // Creating an instance of WorkoutPlanData with sample data
 let sampleWorkoutPlanData = WorkoutPlanData(workoutPlan: sampleWorkoutPlan)
 
-let apiBaseUrl = "http://localhost:3000"
+//let apiBaseUrl = "http://localhost:3000"
+//let apiBaseUrl = "http://172.16.2.143:3000"
+let apiBaseUrl = "https://live-saved-elf.ngrok-free.app"
+
 //Sample workouthistorydata
 let sampleWorkoutHistory = WorkoutHistoryData(userId: 7572)

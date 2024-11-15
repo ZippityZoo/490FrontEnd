@@ -3,7 +3,8 @@ import SwiftUI
 struct UserProfileView: View {
     @EnvironmentObject var userData: UserData
     @State private var isEditingProfile = false
-
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
     var body: some View {
         ZStack {
             Color("Cream").ignoresSafeArea()
@@ -12,6 +13,18 @@ struct UserProfileView: View {
                 Spacer()
                 
                 HStack {
+                    Button(action: {
+                        // Logout action: navigate back to LoginView
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Logout")
+                            .bold()
+                            .padding(10)
+                            .background(Color("DarkBlue"))
+                            .foregroundColor(Color("Cream"))
+                            .cornerRadius(10)
+                    }
+                    
                     Spacer()
                     Button(action: {
                         isEditingProfile.toggle()
@@ -110,4 +123,4 @@ struct UserProfileView: View {
     UserProfileView()
         .environmentObject(UserData(user: sampleUser))
 }
- 
+

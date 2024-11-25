@@ -10,8 +10,9 @@ import SwiftUI
 @main
 struct SpartanFitApp: App {
     @StateObject private var workoutPlanData = WorkoutPlanData(userId: 0) 
+    @StateObject private var userD = UserData()
     @StateObject private var userData = UserData(user: sampleUser, userPreference: sampleUserPreference)
-    @StateObject private var workoutHistory = WorkoutHistoryData(userId: 7572)
+    @StateObject private var workoutHistory = WorkoutHistoryData(userId: 0)
 
     var body: some Scene {
         WindowGroup {

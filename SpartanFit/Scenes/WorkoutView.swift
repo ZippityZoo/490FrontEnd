@@ -6,210 +6,158 @@
 ////
 //
 import SwiftUI
-//
-//struct WorkoutView: View {
-//    var body: some View {
-//        Text("Workout View")
-//        Exercise_Page(setCount: 3)
-//    }
-//}
-//struct Exercise_Page:View {
-//    @State var setCount: Int
-//    let setViews = [SetView]()
-//    let threeSets = [
-//        SetView(),
-//        SetView(),
-//        SetView()
-//    ]
-//    var id = UUID()
-//    //var setview :Int
-//    var body: some View{
-//        ZStack{
-//            Color(red:0.5,green:0.5,blue:0.5)
-//            VStack{
-//                Spacer()
-//                HStack{
-//                        //SetView()
-//                    ForEach(threeSets, id:\.id) { view in
-//                        view
-//                    }
-//                    
-//                    }
-//                }
-//                Spacer()
-//                HStack{
-//                    ForEach(setViews, id: \.id){view in
-//                        view
-//                    }
-//                }
-//            }
-//        }
-//    /*
-//    init(setCount: Int) {
-//        self.setCount = setCount
-//    }
-//     */
-//}
-//
-//
-//
-//
-////so each set view has to
-////UUID
-////
-//struct SetView:View {
-//    var id = UUID()
-//    //@Published var data = [SetData]()
-//    @State private var weight = 120
-//    @State private var reps = 0
-//    @State private var goal = 10
-//    @State private var sets = 0
-//    var body: some View {
-//        ZStack{
-//            Color(red:0.5,green:0.5,blue:0.5)
-//            HStack{
-//                VStack{
-//                    Text(String(weight))
-//                    Divider()
-//                    Text(String(reps))
-//                    Text(String(goal))
-//                }.padding(10).background().clipShape(RoundedRectangle(cornerRadius: 15.0))
-//            }
-//        }
-//        
-//    }
-//}
-//
-//struct SetData: Identifiable {
-//    var id = UUID()
-//    var text = String()
-//}
-//
-//#Preview {
-//    WorkoutView()
-//}
-import SwiftUI
 import Charts
-/*
-struct ValuePerCategory {
-    var category: String
-    var value: Double
-}
+import Foundation
 
-
-let data: [ValuePerCategory] = [
-    .init(category: "A", value: 5),
-    .init(category: "B", value: 9),
-    .init(category: "C", value: 7)
-]
-
-struct ContentView: View {
-    var body: some View {
-        ZStack{
-            Chart(data, id: \.category) { item in
-                BarMark(
-                    x: .value("Category", item.category),
-                    y: .value("Value", item.value)
-                )
-            }
-        }
-    }
-}
- */
-//let workoutNamesTest:AllWorkoutNames = sampleWorkoutNames
-
-
-struct LChartView: View {
-    var body: some View {
-        Text("Line Chart")
-            .font(.largeTitle)
-            .padding()
-            .background(Color.blue.opacity(0.3))
-            .cornerRadius(12)
-    }
-}
-
-struct BChartView: View {
-    var body: some View {
-        Text("Bar Chart")
-            .font(.largeTitle)
-            .padding()
-            .background(Color.green.opacity(0.3))
-            .cornerRadius(12)
-    }
-}
-
-struct PChartView: View {
-    var body: some View {
-        Text("Pie Chart")
-            .font(.largeTitle)
-            .padding()
-            .background(Color.red.opacity(0.3))
-            .cornerRadius(12)
-    }
-}
-/*
-struct ContentView: View {
-    @State private var currentIndex: Int = 0
-    let chartViews: [AnyView] = [
-        AnyView(LChartView()),
-        AnyView(BChartView()),
-        AnyView(PChartView())
-    ]
-
-    var body: some View {
-        VStack {
-            chartViews[currentIndex]
-                .transition(.slide)
-                .animation(.easeInOut)
-
-            HStack {
-                Button("Previous") {
-                    withAnimation {
-                        currentIndex = (currentIndex - 1 + chartViews.count) % chartViews.count
-                    }
-                }
-                .disabled(currentIndex == 0)
-
-                Spacer()
-
-                Button("Next") {
-                    withAnimation {
-                        currentIndex = (currentIndex + 1) % chartViews.count
-                    }
-                }
-                .disabled(currentIndex == chartViews.count - 1)
-            }
-            .padding()
-        }
-        .padding()
-    }
-}
-
-*/
-struct ContentView : View {
-    //var head:ProgressView = ProgressView()
-    /*
-    var progview:[AnyView] = [
-        AnyView(BarChartSubView().environmentObject(sampleWorkoutHistory)),
-        AnyView(BarChartSubView().environmentObject(sampleWorkoutHistory)),
-        AnyView(BarChartSubView().environmentObject(sampleWorkoutHistory))
-    ]
-     */
+struct Test: View {
+    @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
+    var exname:String
+    @State var width:MarkDimension = 45
+    @State private var isPortrait = UIDevice.current.orientation.isPortrait
+    @State var isrecent:Bool = true
+    @State var month:Date = Date.now
+    @State var start:Date = Date.now
+    @State var end:Date = Date.now
+    //@State var workout:String = "Default"
+    @State var welcomeView:Bool = false
     var body: some View{
-        
-        VStack{
-            //progview[0]
-            //BarChartSubView().environmentObject(sampleWorkoutHistory)
-            Text("OHHHHH NOOOOOO")
+        ZStack{
+            Color("Cream").ignoresSafeArea()
+            VStack{
+                if(welcomeView){
+                    EmptyView()
+                }else{
+                    EmptyView()
+                    NavBar
+                }
+                GeometryReader { geometry in
+                    //CurrentChart
+                    TESTCHART
+                        .gesture(
+                            DragGesture()
+                                .onEnded { value in
+                                    let threshold = geometry.size.width / 4
+                                    /*
+                                     if value.translation.width < -threshold && currentIndex < colors.count - 1 {
+                                     currentIndex += 1
+                                     } else if value.translation.width > threshold && currentIndex > 0 {
+                                     currentIndex -= 1
+                                     }
+                                     */
+                                }
+                        )
+                }
+            }
+            
+        }.onAppear{
+            
+            /*NotificationCenter.default.addObserver(
+             forName: UIDevice.orientationDidChangeNotification,
+             object: nil,
+             queue: .main
+             ) { _ in
+             self.isPortrait = UIDevice.current.orientation.isPortrait
+             }
+             */
         }
-        //BarChartSubView().environmentObject(sampleWorkoutHistory)
     }
-    
+        var TESTCHART:some View{
+            VStack{
+                Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(Color("Cream"))
+                if let performance = workoutHistoryData.performance{
+                    if performance.count > 0 {
+                        let rp = reducePerfomance(perfomance: performance)
+                        let crp = copy(performance:rp,id: exname)
+                        //let thisWorkout = copy(performance:performance,id:exname)
+                        if crp.count > 0 {
+                        }
+                        var setcount = 1
+                        Chart(){
+                            ForEach(crp){day in
+                                //let date = convertStringtoDate(datestr: day.dateCompleted)
+                                //let _ = print(day)
+                                BarMark(
+                                    
+                                    x:.value("Date",day.dateCompleted),
+                                    y:.value("Reps (units)", day.repPerf),width: width
+                                    
+                                )
+                                .foregroundStyle(by:.value("Set",String(setcount)))
+                                .annotation(position:.overlay){
+                                    Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())
+                                        .layoutPriority(1)
+                                    
+                                }
+                                let _ = setcount += 1
+                                if (day.setPerf < setcount){
+                                    let _ = setcount = 1
+                                }
+                            }
+                        }.chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
+                            .foregroundStyle(.white)
+                        
+                            .chartXScale(
+                                domain: start...end,
+                                range: .plotDimension(startPadding: 20, endPadding: 20)
+                                
+                            )
+                            .chartXAxis {
+                                AxisMarks(preset: .aligned,values:.stride(by:.day)){
+                                    AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
+                                        .offset()
+                                    
+                                }
+                            }
+                            .chartYAxis {
+                                AxisMarks {
+                                    AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
+                                }
+                            }
+                    }
+                }
+            }
+        }
+        var NavBar: some View{
+            ZStack{
+                Color("Cream")
+                HStack{
+                    Spacer()
+                    Button(action:recent){
+                        Text("Past 7 Days")
+                    }
+                    Spacer()
+                    Divider()
+                    Spacer()
+                    Button(action:overall){
+                        Text("This Month")
+                    }
+                    Spacer()
+                }
+            }.frame(height:40)
+                .clipShape(RoundedRectangle(cornerRadius: 10)).padding(4).background(.black).clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+        func recent(){
+            isrecent = true
+            width = 45
+            print(isrecent)
+        }
+        func overall(){
+            isrecent = false
+            width = 45
+            print(isrecent)
+        }
+        func copy(performance:[ReducedHistory],id:String)->[ReducedHistory]{
+            var thisWorkout:[ReducedHistory] = []
+            for  day in performance {
+                if(id == day.exerciseName){
+                    thisWorkout.append(day)
+                }
+            }
+            return thisWorkout
+        }
 }
-
 #Preview{
-    ContentView()
+    Test(exname:"Bench").environmentObject(sampleWorkoutHistory)
 }
 
 

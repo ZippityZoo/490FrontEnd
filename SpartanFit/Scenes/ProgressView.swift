@@ -7,12 +7,16 @@
 
 import SwiftUI
 import Charts
+import UIKit
+
 
 struct ProgressView: View {
     @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
+    
     //@State var setofexercises: Set<String> = []
     @State var workout: String = "Default"
     //@State var setData = DBSets.setsTest2
+    @State var selected:Bool = false
     @State var welcomeView: Bool = false
     @State var isrecent:Bool = true
     let colorMapping: [String: Color] = [
@@ -26,9 +30,10 @@ struct ProgressView: View {
     
     var body: some View {
         //temp
-        //NavigationView{
+        NavigationView{
             WorkoutProgressList
-        //}
+            
+        }
     }
     var WorkoutProgressList: some View{
             ZStack{
@@ -41,11 +46,23 @@ struct ProgressView: View {
                         ForEach(countuniqeIds().sorted(),id: \.self){workoutname in
                                 
                                 HStack{
-                                    NavigationLink(destination: BarChartSubView(exname: workoutname).environmentObject(workoutHistoryData)){
-                                        Text("\(workoutname)")
+                                    NavigationLink(destination: BarChartSubView(exname: workoutname)
+                                        .environmentObject(workoutHistoryData)
+                                        //.forceRotation(orientation: UIInterfaceOrientationMask.landscapeLeft)
+                                    ){
+                                        ZStack{
+                                            Text("\(workoutname)")
+                                        }
+                                            
                                     }.foregroundStyle(Color.white)
                                         .onAppear{
                                             self.workout = workoutname
+                                            print("appear")
+                                            
+                                        }
+                                        .onDisappear{
+                                            print("dissappear")
+                                            
                                         }
                                 }
                         }.listRowBackground(Color("DarkBlue"))
@@ -140,132 +157,158 @@ struct ProgressView: View {
         return Date.now
     }
 }
+//Load all data separated by month and week
 struct BarChartSubView: View {
     @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
+    //var bymonth :[ReducedHistory:Date] = [:]//the date value will be the first of the month of that year to better separate
+    //var byweek:[[ReducedHistory]:Date] = [[]:]
     var exname:String
+    @State var isPortrait:Bool = UIDevice.current.orientation.isPortrait
     @State var width:MarkDimension = 45
-    @State private var isPortrait = UIDevice.current.orientation.isPortrait
+    @State private var isLandscape = UIDevice.current.orientation.isLandscape
     @State var isrecent:Bool = true
     @State var month:Date = Date.now
+    @State var start:Date = Date.now
+    @State var end:Date = Date.now
     //@State var workout:String = "Default"
     @State var welcomeView:Bool = false
     var body: some View{
-    ZStack{
-        Color("Cream").ignoresSafeArea()
+        ZStack{
+                Color("Cream").ignoresSafeArea()
+                VStack{
+                    if(welcomeView){
+                        EmptyView()
+                    }else{
+                        EmptyView()
+                        NavBar
+                    }
+                    GeometryReader { geometry in
+                        //CurrentChart
+                        TESTCHART
+                            .gesture(
+                                DragGesture()
+                                    .onEnded { value in
+                                        let threshold = geometry.size.width / 4
+                                        if value.translation.width < -threshold {
+                                            //if is recent go back 7 days
+                                            print("go forward")
+                                            if(isrecent){
+                                                start = start.addingTimeInterval(86400 * 7)
+                                                end  = end.addingTimeInterval(86400 * 7)
+                                                
+                                            }else{
+                                                //print("go forward")
+                                                //print(start)
+                                                //print(end)
+                                                getNextMonth()
+                                            }
+                                        } else if value.translation.width > threshold{
+                                            print("go back")
+                                            if(isrecent){
+                                                start = start.addingTimeInterval(86400 * -7)
+                                                end  = end.addingTimeInterval(86400 * -7)
+                                                
+                                            }else{//go back a month
+                                                //print("go forward")
+                                                getLastMonth()
+                                            }
+                                        }
+                                        /*
+                                         if value.translation.width < -threshold && currentIndex < colors.count - 1 {
+                                         currentIndex += 1
+                                         } else if value.translation.width > threshold && currentIndex > 0 {
+                                         currentIndex -= 1
+                                         }
+                                         */
+                                    }
+                            )
+                    }
+                }.onAppear{
+                    UIDevice.forceRotation(to: UIInterfaceOrientation.landscapeLeft)
+                /*
+                 NotificationCenter.default.addObserver(
+                 forName: UIDevice.orientationDidChangeNotification,
+                 object: nil,
+                 queue: .main
+                 ) { _ in
+                 self.isLandscape = UIDevice.current.orientation.isLandscape
+                 }
+                 */
+                }
+                .onDisappear{
+                    UIDevice.forceRotation(to: UIInterfaceOrientation.portrait)
+                }
+        }
+    }
+    var TESTCHART:some View{
         VStack{
-            if(welcomeView){
-                EmptyView()
-            }else{
-                EmptyView()
-                NavBar
-            }
-            VStack{
-                Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(Color("Cream"))
-                if let performance = workoutHistoryData.performance{
-                    if performance.count > 0{
-                        let thisWorkout = copy(performance:performance,id:exname)
-                        let latestDate = getLastDayOfSpecificMonth(date:  getLatestDate(thisWorkout: thisWorkout))
-                        let start = retRecentOrOverall(thisWorkout: thisWorkout)
-                        let month = getWholeMonth(date: start)
-                        let trend = trendline(thisWorkout: thisWorkout)
-                        //let _ = getMonthlys(thisWorkout: thisWorkout)
-                        var setcount = 1
-                            Chart(){
-                                //if(isrecent){
+            Text(exname).font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().foregroundStyle(Color("Cream"))
+            if let performance = workoutHistoryData.performance{
+                if performance.count > 0 {
+                    let rp = reducePerfomance(perfomance: performance)
+                    let crp = copy(performance:rp,id: exname)
+                    //let thisWorkout = copy(performance:performance,id:exname)
+                    if crp.count > 0 {
+                    }
+                    var setcount = 1
+                    Chart(){
+                        ForEach(crp){day in
+                            //let date = convertStringtoDate(datestr: day.dateCompleted)
+                            //let _ = print(day)
+                            BarMark(
                                 
-                                var n = 0
-                                /*
-                                 ForEach(getWholeMonth(date: start),id:\.self) { day in
-                                 let date = convertStringtoDate(datestr: thisWorkout[n].dateCompleted)
-                                 if(day == date){
-                                 BarMark(
-                                 x:.value("Date",day),
-                                 y:.value("HUH",n)
-                                 )
-                                 }
-                                 let _ = n += 1
-                                 }
-                                 */
-                                ForEach(thisWorkout){day in
-                                    let date = convertStringtoDate(datestr: day.dateCompleted)
-                                    BarMark(
-                                        
-                                        x:.value("Date",date),
-                                        y:.value("Reps (units)", day.repPerf),width: width
-                                        
-                                    )
-                                    .foregroundStyle(by:.value("Set",String(setcount)))
-                                    .annotation(position:.overlay){
-                                        Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())
-                                            .layoutPriority(1)
-                                        
-                                    }
-                                    let _ = setcount += 1
-                                    if (day.setPerf < setcount){
-                                        let _ = setcount = 1
-                                    }
-                                }
-                                //}
-                                if(!isrecent){
-                                    /*
-                                     ForEach(trend){point in
-                                     //let date = convertStringtoDate(datestr: point.dateCompleted)
-                                     LineMark(
-                                     x:.value("Date", point.date),
-                                     y:.value("Index",point.val)
-                                     ).foregroundStyle(.blue)
-                                     .lineStyle(StrokeStyle(lineWidth: 4))
-                                     }
-                                     */
-                                }
-                                
-                            }
-                            
-                            .chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
-                            .foregroundStyle(.white)
-                            
-                            .chartXScale(
-                                domain: start...latestDate,
-                                range: .plotDimension(startPadding: 20, endPadding: 20)
+                                x:.value("Date",day.dateCompleted),
+                                y:.value("Reps (units)", day.repPerf),width: width
                                 
                             )
-                            .chartXAxis {
-                                AxisMarks(preset: .aligned){
-                                    AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
-                                    
-                                }
+                            .foregroundStyle(by:.value("Set",String(setcount)))
+                            .annotation(position:.overlay){
+                                Text("\(String(format:"%.1f",day.weightPerf))").font(.caption.bold())
+                                    .layoutPriority(1)
+                                
                             }
-                            .chartYAxis {
-                                AxisMarks {
-                                    AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
-                                }
+                            let _ = setcount += 1
+                            if (day.setPerf < setcount){
+                                let _ = setcount = 1
                             }
-                            //.chartScrollableAxes(.horizontal)
-                        //.plotDimension(startPadding: 20, endPadding: 20)
-                        /*
-                         let _ = print("\(start)")
-                         let _ = print("\(latestDate)")
-                         */
-                    }
-                }else{
-                    Text("No History, Let's Get Started")
+                        }
+                    }.chartForegroundStyleScale(["1": Color("Set1"), "2": Color("Set2"), "3": Color("Set3"), "4": Color("Set4"),"5": Color("Set5"),"6": Color("Set6")])
+                        .foregroundStyle(.white)
+                        
+                        .chartXScale(
+                            domain: start...end,
+                            range: .plotDimension(startPadding: 20, endPadding: 20)
+                            
+                        )
+                        .chartXAxis {
+                            AxisMarks(preset: .aligned,values:.stride(by:.day)){
+                                AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
+                                    .offset()
+                                
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks {
+                                AxisValueLabel().foregroundStyle(Color("Cream")).font(.caption)  // Adjust font and color
+                            }
+                        }
+                        .onAppear{
+                            //let _ = print(start)
+                            //let _ = print(end)
+                            end = getLastDayOfSpecificMonth(date: start)
+                            UIDevice.forceRotation(to: .landscapeLeft)
+                        }
+                        .onDisappear{
+                            UIDevice.forceRotation(to: .portrait)
+                        }
                 }
+                
             }
-            .padding()
-            .background(Color("DarkBlue"))
-            .cornerRadius(10)
-        }
             
-    }.onAppear{
-        /*NotificationCenter.default.addObserver(
-                        forName: UIDevice.orientationDidChangeNotification,
-                        object: nil,
-                        queue: .main
-                    ) { _ in
-                        self.isPortrait = UIDevice.current.orientation.isPortrait
-                    }
-         */
-    }
+        }
+        .padding()
+        .background(Color("DarkBlue"))
+        .cornerRadius(10)
     }
     var NavBar: some View{
             ZStack{
@@ -287,21 +330,33 @@ struct BarChartSubView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10)).padding(4).background(.black).clipShape(RoundedRectangle(cornerRadius: 10))
         }
         func recent(){
-            isrecent = true
-            width = 45
-            print(isrecent)
+            if(!isrecent){
+                isrecent = true
+                width = 45
+                end = Date.now
+                start = end.addingTimeInterval(86400 * -7)
+                print(isrecent)
+            }
         }
         func overall(){
-            isrecent = false
-            width = 45
-            print(isrecent)
+            if(isrecent){
+                isrecent = false
+                width = 45
+                start = Date.now
+                start = getFirstDayOfSpecificMonth(date: start)
+                //print(start)
+                end = getLastDayOfSpecificMonth(date: start)
+                print(isrecent)
+            }
         }
-        func retRecentOrOverall(thisWorkout:[WorkoutHistory]) -> Date{
+        func retRecentOrOverall(thisWorkout:[ReducedHistory]) -> Date{
             let date:Date = getLatestDate(thisWorkout: thisWorkout)
             if(isrecent){
+                self.start = date.addingTimeInterval(86400 * -7)
                 return date.addingTimeInterval(86400 * -7)
             }
             //date = getEarliestDate(thisWorkout: thisWorkout)
+            self.start = getFirstDayOfSpecificMonth(date: date)
             return getFirstDayOfSpecificMonth(date: date)
             //return date
             
@@ -320,13 +375,44 @@ struct BarChartSubView: View {
         }
         return Date.now
     }
-    //temp perfomance is all good
-    func fillin(thisWorkout:[WorkoutHistory],start:Date){
-        let month = getWholeMonth(date: start)
-        
+    func formatDate(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // Desired format
+        return dateFormatter.string(from: date)
     }
-    func copy(performance:[WorkoutHistory],id:String)->[WorkoutHistory]{
-        var thisWorkout:[WorkoutHistory] = []
+    func convertDateAtoWHA(month:[Date],workout:String) -> [ReducedHistory]{
+        var out:[ReducedHistory] = []
+        var id = -1
+        for date in month {
+            //let d = formatDate(date: date)
+            let dummy = ReducedHistory(id: 0, exerciseName: workout, setPerf: 0, repPerf: 0, weightPerf: 0, dateCompleted: date)
+            out.append(dummy)
+            id -= 1
+        }
+        //print(out)
+        return out
+    }
+    //temp perfomance is all good
+    func fillin(thisWorkout:[ReducedHistory],start:Date) -> [ReducedHistory]{
+        //get all dates convert these dates to the same data type
+        var dummys:[ReducedHistory] = []
+        let month = getWholeMonth(date: start)
+        if let first = thisWorkout.first{
+            dummys = convertDateAtoWHA(month: month, workout: first.exerciseName)
+        }
+        let this = reduceWorkout(this: thisWorkout, startdate: month.first!, enddate: month.last!)
+        //print(this)
+        return mergeSort(dummys: dummys, this: this)
+        
+        //print(final)
+        //now combine them
+        //for each date
+        //insert date after
+        //merge sort
+    }
+    
+    func copy(performance:[ReducedHistory],id:String)->[ReducedHistory]{
+        var thisWorkout:[ReducedHistory] = []
         for  day in performance {
             if(id == day.exerciseName){
                 thisWorkout.append(day)
@@ -347,10 +433,11 @@ struct BarChartSubView: View {
         }
         return setCount
     }
-    func getLatestDate(thisWorkout:[WorkoutHistory]) -> Date{
+    func getLatestDate(thisWorkout:[ReducedHistory]) -> Date{
         var date:Date = Date.now
         if let datecompleted = thisWorkout.last{
-            date = convertStringtoDate(datestr: datecompleted.dateCompleted)
+            date = datecompleted.dateCompleted
+            //date = convertStringtoDate(datestr: datecompleted.dateCompleted)
             //let _ = print("Latest Date \(date)")
         }
         return date
@@ -365,23 +452,24 @@ struct BarChartSubView: View {
         return date
     }
     //trendline stuff
-    func trendline(thisWorkout:[WorkoutHistory]) -> [Point]{
+    func trendline(thisWorkout:[ReducedHistory]) -> [Point]{
         var progressIndex:[Point] = []
         let q1 = q1(thisWorkout: thisWorkout)
         let q3 = q3(thisWorkout: thisWorkout)
         for workout in thisWorkout{
             let progin = ((workout.weightPerf - q1) * Double(workout.repPerf)) + q3
-            let date = convertStringtoDate(datestr: workout.dateCompleted)
-            progressIndex.append(.init(date:date, val:progin/10))
+            //let date = convertStringtoDate(datestr: workout.dateCompleted)
+            print(progin)
+            progressIndex.append(.init(date:workout.dateCompleted, val:progin/10))
         }
         //print(progressIndex)
         return progressIndex
     }
-    func q1(thisWorkout:[WorkoutHistory]) -> Double{
+    func q1(thisWorkout:[ReducedHistory]) -> Double{
         let  n = thisWorkout.count/4
         return thisWorkout[n+1].weightPerf
     }
-    func q3(thisWorkout:[WorkoutHistory]) -> Double{
+    func q3(thisWorkout:[ReducedHistory]) -> Double{
         let  n = (thisWorkout.count/4) * 3
         return thisWorkout[n+1].weightPerf
     }
@@ -431,9 +519,196 @@ struct BarChartSubView: View {
         }
         return allDates
     }
+    func mergeSort(dummys:[ReducedHistory],this:[ReducedHistory])->[ReducedHistory]{
+        var i = 0
+        var j = 0
+        var mergedArray: [ReducedHistory] = []
+            
+            // Merge elements from both arrays
+            while i < dummys.count && j < this.count {
+                if dummys[i] < this[j] {
+                    mergedArray.append(dummys[i])
+                    i += 1
+                } else {
+                    mergedArray.append(this[j])
+                    j += 1
+                }
+            }
+            
+            // Append remaining elements from array1 (if any)
+            while i < dummys.count {
+                mergedArray.append(dummys[i])
+                i += 1
+            }
+            
+            // Append remaining elements from array2 (if any)
+            while j < this.count {
+                mergedArray.append(this[j])
+                j += 1
+            }
+            //print(mergedArray)
+            return mergedArray
+    }
+    //reduce workout by month by giving start date and end date
+    func reduceWorkout(this:[ReducedHistory],startdate:Date,enddate:Date)->[ReducedHistory]{
+        var reduced:[ReducedHistory] = []
+        
+        for workout in this{
+            let wd = workout.dateCompleted
+            if wd >= startdate && wd <= enddate{
+                reduced.append(workout)
+            }
+        }
+        //print(reduced)
+        return reduced
+        //print(reduced)
+    }
+    func getNextMonth(starts: inout Date,ends: inout Date){
+        let calendar = Calendar.current
+        if let startOfNextMonth = calendar.date(byAdding: .month, value: 1, to: end){
+            start = startOfNextMonth
+            starts = startOfNextMonth
+        }
+        ends = getLastDayOfSpecificMonth(date: starts)
+    }
+    func getNextMonth(){
+        let calendar = Calendar.current
+        if let startOfNextMonth = calendar.date(byAdding: .month, value: 1, to: start){
+            start = startOfNextMonth
+        }
+        end  = getLastDayOfSpecificMonth(date: start)
+        //print(start)
+        //print(end)
+    }
+    func getLastMonth(starts: inout Date,ends: inout Date){
+        let calendar = Calendar.current
+        if let endOflastMonth = calendar.date(byAdding: .month, value: -1, to: end){
+            ends = endOflastMonth
+            end = endOflastMonth
+        }
+        starts = getFirstDayOfSpecificMonth(date: ends)
+    }
+    func getLastMonth(){
+        let calendar = Calendar.current
+        if let endOflastMonth = calendar.date(byAdding: .month, value: -1, to: end){
+            end = endOflastMonth
+        }
+        start = getFirstDayOfSpecificMonth(date: end)
+    }
+    
+}
+extension View {
+    @ViewBuilder
+    func forceRotation(orientation: UIInterfaceOrientationMask) -> some View {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            self.onAppear() {
+                AppDelegate.orientationLock = orientation
+            }
+            // Reset orientation to previous setting
+            let currentOrientation = AppDelegate.orientationLock
+            self.onDisappear() {
+                AppDelegate.orientationLock = currentOrientation
+            }
+        } else {
+            self
+        }
+    }
+}
+class AppDelegate: NSObject, UIApplicationDelegate {
+
+    static var orientationLock = UIInterfaceOrientationMask.portrait {
+        didSet {
+            if #available(iOS 16.0, *) {
+                UIApplication.shared.connectedScenes.forEach { scene in
+                    if let windowScene = scene as? UIWindowScene {
+                        windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: orientationLock))
+                    }
+                }
+                UIViewController.attemptRotationToDeviceOrientation()
+            } else {
+                if orientationLock == .landscape {
+                    UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+                } else {
+                    UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+                }
+            }
+        }
+    }
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        return true
+    }
+    
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return AppDelegate.orientationLock
+    }
+}
+extension UIDevice {
+    static func forceRotation(to orientation: UIInterfaceOrientation) {
+        UIDevice.current.setValue(orientation.rawValue, forKey: "orientation")
+        //UIViewController.attemptRotationToDeviceOrientation()
+    }
 }
 
 
+struct ReducedHistory:Identifiable,Hashable{
+    var id: Int
+    var exerciseName: String
+    var setPerf:Int
+    var repPerf:Int
+    var weightPerf:Double
+    var dateCompleted:Date
+    
+    init(id:Int, exerciseName:String, setPerf:Int, repPerf:Int, weightPerf:Double, dateCompleted:Date){
+        self.id = id
+        self.exerciseName = exerciseName
+        self.setPerf = setPerf
+        self.repPerf = repPerf
+        self.weightPerf = weightPerf
+        self.dateCompleted = Date.now
+    }
+    
+    init(history:WorkoutHistory){
+        self.id = history.id
+        self.exerciseName = history.exerciseName
+        self.setPerf = history.setPerf
+        self.repPerf = history.repPerf
+        self.weightPerf = history.weightPerf
+        self.dateCompleted = Date.now
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy'-'MM'-'dd' 'HH':'mm':'ss'"
+        if let date = dateFormatter.date(from: history.dateCompleted){
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let datereduced = dateFormatter.string(from: date)
+            
+            if let finalDate = dateFormatter.date(from: datereduced){
+                //print(finalDate)
+                self.dateCompleted = finalDate
+            }
+        }
+    }
+    /*
+    func hash(into hasher: inout Hasher){
+        hasher.combine(id)
+    }
+     */
+    static func <(lhs:ReducedHistory,rhs:ReducedHistory) -> Bool{
+        return lhs.dateCompleted < rhs.dateCompleted
+    }
+    static func  ==(lhs:ReducedHistory,rhs:ReducedHistory)-> Bool{
+        return lhs.id == rhs.id
+    }
+}
+func reducePerfomance(perfomance:[WorkoutHistory]) -> [ReducedHistory]{
+    var reducedPerf:[ReducedHistory] = []
+    for workout in perfomance{
+        let red = ReducedHistory(history:workout)
+        reducedPerf.append(red)
+    }
+    return reducedPerf
+}
+
+let emptyHistory = WorkoutHistory(userId: 0, firstName: "", lastName: "", id: -1, exerciseName:"" , setPerf: 0, repPerf: 0, weightPerf: 0.0, dateCompleted: "")
 
 struct Point: Identifiable{
     var id = UUID()
@@ -453,6 +728,36 @@ struct Triangle: Shape {
         return path
     }
 }
+/*
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    var window: UIWindow?
+
+    func application(
+        _ application: UIApplication,
+        supportedInterfaceOrientationsFor window: UIWindow?
+    ) -> UIInterfaceOrientationMask {
+        return .landscapeLeft // Set the desired orientation
+    }
+}
+ */
+
+class CustomViewController: UIViewController {
+    var selected:Bool = false
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        if selected {
+            return .landscapeLeft
+        } else {
+            return [.landscapeLeft, .landscapeRight, .portrait]
+        }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Trigger an update if conditions change
+        self.setNeedsUpdateOfSupportedInterfaceOrientations()
+    }
+}
 
 //Stuff to simulate DB info
 enum SetNum: String {
@@ -463,6 +768,7 @@ enum SetNum: String {
     case SetFive = "Set5"
     case SetSix = "Set6"
 }
+
 /*
 func convert(setNum:Int) ->SetNum{
     switch(setNum){
@@ -542,10 +848,12 @@ let workoutNames = ["Bench Press","Squat","Deadlift","OverHead Press","Pull-Up",
 */
 #Preview {
     //NavBar()
-    //ProgressView().environmentObject(sampleWorkoutHistory)
+    ProgressView().environmentObject(sampleWorkoutHistory)
+
     //WorkoutProgressList
     //workout this later
-    BarChartSubView(exname:"Bench Press").environmentObject(sampleWorkoutHistory)
+    //BarChartSubView(exname:"Bench Press").environmentObject(sampleWorkoutHistory)
     //EmptyView()
 }
+
 

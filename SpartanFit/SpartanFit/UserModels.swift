@@ -103,4 +103,27 @@ let sampleUserPreference = UserPreference(
     preferredExercise: "Bench Press"
 )
 
+let sampleUser2 = User(
+    id: 7572,
+    fname: "Harris",
+    lname: "Emerich",
+    username: "HAHAHAHA",
+    password: "UG1YP@$$WURD",
+    email: "coll@example.com",
+    fit_goal: "Hypertrophy",
+    exp_level: "Advanced",
+    created_at: "2024-01-09 01:16:10",
+    muscle_id : 1,
+    muscle_name: "bicep",
+    muscle_position: "left",
+    injury_intensity: "low"
+)
 
+let sampleUserPreference2 = UserPreference(
+    id: 2,
+    userId: 7572,
+    preferredTypes: "Hypertrophy",
+    preferredIntensity: "Advanced",
+    preferredDuration: 60,
+    preferredExercise: "Squat"
+)

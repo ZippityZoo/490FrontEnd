@@ -45,13 +45,15 @@ class WorkoutPlanData: ObservableObject {
 
 class WorkoutHistoryData: ObservableObject{
     @Published var performance:[WorkoutHistory]?
-
+    @Published var isLoading = true
+    
     init(userId: Int){
         fetchWorkoutHistory(userId: userId)
     }
 
     init(performance:[WorkoutHistory]){
         self.performance = performance
+        self.isLoading = false
     }
 
     func fetchWorkoutHistory(userId: Int){
@@ -64,8 +66,9 @@ class WorkoutHistoryData: ObservableObject{
                 let apiResponse = try JSONDecoder().decode(PerformanceData.self, from: data)
                 DispatchQueue.main.async {
                     //idk if this will work, good news
-
+                    //print(apiResponse.performance)
                     self.performance = apiResponse.performance
+                    self.isLoading = false
                 }
             } catch {
                 print("Failed to decode JSON: History", error)
@@ -146,7 +149,38 @@ struct WorkoutHistory:Identifiable, Codable{
         case weightPerf = "actual_weight"
         case dateCompleted = "perf_date"
     }
-
+    static func <(lhs:WorkoutHistory,rhs:WorkoutHistory) -> Bool{
+        var left:Date = Date.now
+        var right:Date = Date.now
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy'-'MM'-'dd' 'HH':'mm':'ss'"
+        if let date = dateFormatter.date(from: lhs.dateCompleted){
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let datereduced = dateFormatter.string(from: date)
+            
+            if let finalDate = dateFormatter.date(from: datereduced){
+                //print(finalDate)
+                left = finalDate
+            }
+        }
+        if let date = dateFormatter.date(from: rhs.dateCompleted){
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let datereduced = dateFormatter.string(from: date)
+            
+            if let finalDate = dateFormatter.date(from: datereduced){
+                //print(finalDate)
+                right = finalDate
+            }
+        }
+        print(left," < ",right)
+        if left < right {
+            
+            return true
+        }
+        else{
+            return false
+        }
+    }
 
 }
 struct PerformanceData: Codable {

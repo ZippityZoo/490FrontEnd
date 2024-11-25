@@ -4,10 +4,13 @@ struct WelcomeView: View {
     @EnvironmentObject var userData: UserData
     @EnvironmentObject var workoutPlanData: WorkoutPlanData
     @EnvironmentObject var workoutHistoryData:WorkoutHistoryData
+    @State var pview:[AnyView] = []
     @State var currentIndex: Int = 0
     @State var past:Bool = false
+    @State var exnames:[String] = []
     //var barViews: ProgressView().BarChartView
     var body: some View {
+        //temp
         //NavigationView {
             ZStack {
                 Color("Cream").ignoresSafeArea()
@@ -26,9 +29,8 @@ struct WelcomeView: View {
                     //Spacer()
                     if(past){
                         NavigationLink(destination: ProgressView().environmentObject(workoutHistoryData)) {
-                            progressView
-                                .frame(height: 275)
-                            
+                                progressView
+                                    .frame(height: 275)
                         }
                         .padding(.bottom, 10)
                         .padding()
@@ -53,6 +55,11 @@ struct WelcomeView: View {
                 .onAppear {
                     refreshWorkoutData()
                     noHistory()
+                    //if(!past){
+                        exnames = pickRelevant()
+                    //}
+                    pview = matchingHistory()
+                    //print(exnames)
                 }
                 .navigationBarBackButtonHidden(true)
             }
@@ -64,7 +71,7 @@ struct WelcomeView: View {
         if let userId = userData.user?.id {
             workoutPlanData.isLoading = true
             workoutPlanData.fetchWorkoutPlan(userId: userId)
-            //workoutHistoryData.fetchWorkoutHistory(userId: userId)
+            workoutHistoryData.fetchWorkoutHistory(userId: userId)
         }
     }
     
@@ -75,7 +82,7 @@ struct WelcomeView: View {
              AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
              AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
              */
-            AnyView(BarChartSubView(exname:"Bench Press",welcomeView: true).environmentObject(workoutHistoryData)),
+            AnyView(BarChartSubView(exname:"Bench",welcomeView: true).environmentObject(workoutHistoryData)),
             AnyView(BarChartSubView(exname:"Squat",welcomeView: true).environmentObject(workoutHistoryData))
         ]
     }
@@ -115,19 +122,19 @@ struct WelcomeView: View {
     }
     
     var progressView: some View {
-        ZStack {
-            progview[currentIndex]
-                .id(currentIndex)
-                .transition(.asymmetric(
-                    insertion: .slide,
-                    removal: .opacity
-                ))
-                .animation(.easeInOut(duration: 0.8), value: currentIndex)
-                .onAppear {
-                    currentIndex = Int.random(in: 0..<progview.count)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 25))
-        }
+            ZStack {
+                pview[currentIndex]
+                    .id(currentIndex)
+                    .transition(.asymmetric(
+                        insertion: .slide,
+                        removal: .opacity
+                    ))
+                    .animation(.easeInOut(duration: 0.8), value: currentIndex)
+                    .onAppear {
+                        currentIndex = Int.random(in: 0..<pview.count)
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 25))
+            }
     }
     
     
@@ -148,7 +155,6 @@ struct WelcomeView: View {
         }
         .frame(height: 300)
     }
-    
     func workoutSummaryView() -> some View {
         ZStack {
             Color("DarkBlue").ignoresSafeArea()
@@ -182,13 +188,46 @@ struct WelcomeView: View {
     }
     func noHistory(){
         if let historycheck  =  workoutHistoryData.performance {
-            if(historycheck.count == 0){
-                self.past = false
+            if(historycheck.count > 0){
+                self.past = true
                 return
             }
         }
-        self.past = true
+        self.past = false
     }
+    func pickRelevant() -> [String]{
+        var exnames:[String] = []
+        if let workoutPlan = workoutPlanData.workoutPlan{
+            for w in workoutPlan.workouts.first?.exercises ?? [] {
+                exnames.append(w.name)
+                //print(w.name)
+            }
+        }
+        return exnames
+    }
+    func pickAll() -> [String]{
+        var temp:[String] = []
+        if let performance = workoutHistoryData.performance{
+            for w in performance{
+                temp.append(w.exerciseName)
+            }
+        }
+        let exnames = Array(Set(temp))
+        return exnames
+    }
+    func matchingHistory()-> [AnyView]{
+        var progview:[AnyView] = []
+        var names = pickAll() //not only pick relevant pick the history if no relevant ones
+        //names.append(contentsOf: pickAll())
+        for name in names{
+            //if(past){
+                print(name)
+                progview.append( AnyView(BarChartSubView(exname:name,welcomeView: true).environmentObject(workoutHistoryData)))
+            //}
+        }
+        return progview
+    }
+    
 }
 
 #Preview {

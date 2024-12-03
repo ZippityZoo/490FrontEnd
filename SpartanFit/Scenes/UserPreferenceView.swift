@@ -100,7 +100,7 @@ struct EditPreferencesView: View {
                     dropdownField(label: "Preferred Types", selection: $preferredTypes, options: preferredTypesOptions)
                     dropdownField(label: "Preferred Intensity", selection: $preferredIntensity, options: preferredIntensityOptions)
                     textField(label: "Preferred Duration (mins)", value: $preferredDuration)
-                    textField(label: "Preferred Exercise", value: $preferredExercise)
+                    //textField(label: "Preferred Exercise", value: $preferredExercise)
                 }
                 .padding()
                 .background(Color("DarkBlue"))

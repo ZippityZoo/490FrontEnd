@@ -9,7 +9,7 @@ import SwiftUI
 
 //TODO: Insert Into DB
 struct SignUpView: View {
-    @EnvironmentObject var newUser:UserData//integrate this 
+    @State var newUser:UserData = UserData()//integrate this
     @State var fname:String = ""
     @State var lname:String = ""
     @State var email:String = ""
@@ -18,68 +18,77 @@ struct SignUpView: View {
     @State var passwordCheck: String = ""
     @State var match: Bool = false
     var body: some View {
-            ZStack{
-                Color("Cream").ignoresSafeArea()
-                VStack{
-                    Text(" SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(Color("DarkBlue"))
-                    ZStack{
-                        Color("DarkBlue").frame(width:390,height:435,alignment: .center)
-                            .clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
-                        VStack{
-                            Text(" Sign Up").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(.white)
-                            HStack{
-                                
-                                Spacer()
-                                TextField("Enter Email",text: $email).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
-                                Spacer()
-                            }
-                            HStack{
-                                Spacer()
-                                TextField("Username",text: $username).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
-                                Spacer()
-                            }
-                            HStack{
-                                Spacer()
-                                TextField("First Name",text: $fname).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
-                                TextField("Last Name",text: $lname).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
-                                Spacer()
-                            }
-                            HStack{
-                                Spacer()
-                                SecureField("Enter Password",text: $password).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
-                                Spacer()
-                            }
+        NavigationView{
+        ZStack{
+            Color("Cream").ignoresSafeArea()
+            VStack{
+                Text(" SPARTANFIT").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(Color("DarkBlue"))
+                ZStack{
+                    Color("DarkBlue").frame(width:390,height:435,alignment: .center)
+                        .clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
+                    VStack{
+                        Text(" Sign Up").font(/*@START_MENU_TOKEN@*/.largeTitle/*@END_MENU_TOKEN@*/).fontWeight(.heavy).foregroundColor(.white)
+                        HStack{
                             
-                            HStack{
-                                Spacer()
-                                SecureField("Re-Enter Password",text: $passwordCheck).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
-                                Spacer()
-                            }
-                            if(!password.isEmpty || !passwordCheck.isEmpty){
-                                comparePasswords(password: password, passwordCheck: passwordCheck, match: $match)
+                            Spacer()
+                            TextField("Enter Email",text: $email).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
+                            Spacer()
+                        }
+                        HStack{
+                            Spacer()
+                            TextField("Username",text: $username).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
+                            Spacer()
+                        }
+                        HStack{
+                            Spacer()
+                            TextField("First Name",text: $fname).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
+                            TextField("Last Name",text: $lname).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
+                            Spacer()
+                        }
+                        HStack{
+                            Spacer()
+                            SecureField("Enter Password",text: $password).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
+                            Spacer()
+                        }
+                        
+                        HStack{
+                            Spacer()
+                            SecureField("Re-Enter Password",text: $passwordCheck).textFieldStyle(RoundedBorderTextFieldStyle()).background().clipShape(RoundedRectangle(cornerRadius: 5.0)).padding(.bottom,20)
+                            Spacer()
+                        }
+                        if(!password.isEmpty || !passwordCheck.isEmpty){
+                            comparePasswords(password: password, passwordCheck: passwordCheck, match: $match)
+                            
+                        }
+                        HStack{
+                            Spacer()
+                            ZStack{
+                                NavigationLink (destination:{ SignUpView2()
+                                }, label: {
+                                    Text("Next").foregroundStyle(.black).bold()
+                                })
+                                .padding(5)
+                                .background(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                                .padding(10)
                                 
-                            }
-                            HStack{
-                                Spacer()
-                                ZStack{
-                                    NavigationLink (destination:{ SignUpView2()
-                                    }, label: {
-                                        Text("Next").foregroundStyle(.black).bold()
-                                    })
+                                Color("\(ifAllAreTrue() ? "":"DarkBlue")")
                                     .padding(5)
-                                    .background(.white)
                                     .clipShape(RoundedRectangle(cornerRadius: 10.0))
-                                    .padding(10)
-                                    
-                                    Color("\(ifAllAreTrue() ? "":"DarkBlue")")
-                                        .padding(5)
-                                        .clipShape(RoundedRectangle(cornerRadius: 10.0))
-                                }
                             }
                         }
-                    }.padding(.vertical,145).clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
-                }
+                    }
+                }.padding(.vertical,145).clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
+                    .onDisappear{
+                        var user = newUser.user
+                        user?.fname = fname
+                        user?.lname = lname
+                        user?.email = email
+                        user?.exp_level = ""
+                        user?.fit_goal
+                    }
             }
+        }}
         }
     func inputIntoUser(){
         newUser.user?.fname = fname
@@ -96,7 +105,10 @@ struct SignUpView: View {
         }
         return false
     }
-    
+    func initNewUser(){
+        //check if email and user_id are taken
+        //init all values if not 
+    }
 }
 //Also add password checking
 func comparePasswords(password: String,passwordCheck: String,match:Binding<Bool>)->some View{
@@ -152,14 +164,15 @@ struct SignUpView2: View{
                 }
             }
         }
-        
     }
+    
 }
 
 struct SignUpView3: View{
     @State var showForm:Bool = false
     @State var shown:Int = 0
     @State var listedInjuries:[String] = []
+    @State var intensity:[String] = []
     @State var muscleImages:[String] = [
         "Biceps Brachii-Left",
         "Biceps Brachii-Right",
@@ -223,7 +236,7 @@ struct SignUpView3: View{
                     })
                 }
                 else{
-                    InjuryForm(listedInjuries:$listedInjuries,showForm: $showForm)
+                    InjuryForm(listedInjuries:$listedInjuries,showForm: $showForm, intensity: $intensity)
                         .scaledToFit()
                         .animation(.easeInOut, value: 2)
                        
@@ -250,7 +263,7 @@ struct SignUpView3: View{
                             print("hi")
                         }
                         )
-                    ForEach(muscleImages,id:\.self){ name in
+                    ForEach(listedInjuries,id:\.self){ name in
                         Image(name).resizable(capInsets: EdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 0.0), resizingMode: .stretch).cornerRadius(10).aspectRatio(contentMode:.fit)
                             .onTapGesture(perform:{_ in
                                 print(name)
@@ -268,6 +281,10 @@ struct SignUpView3: View{
             }
         }
     }
+    func imgparser(muscle:String, position:String){
+        let img = muscle + "-" + position
+        print(img)
+    }
 }
 
 
@@ -275,6 +292,7 @@ struct SignUpView3: View{
 struct InjuryForm: View{
     @Binding var listedInjuries:[String]
     @Binding var showForm:Bool
+    @Binding var intensity:[String]
     @State var muscleSelection:String = "Front Deltoid"
     @State var muscleIndex:Int = 0
     @State var intensitySelection:String = "Low"
@@ -325,7 +343,8 @@ struct InjuryForm: View{
                     Button(
                         action:{
                             print("submit")
-                            listedInjuries.append("\(muscleSelection + "-" + pos + " (" +  intensitySelection))")
+                            listedInjuries.append("\(muscleSelection + "-" + pos )")//+ " (" +  intensitySelection))"
+                            intensity.append("\(intensitySelection))")
                             showForm.toggle()
                         },label: {
                             Text("Submit")
@@ -341,9 +360,10 @@ struct InjuryForm: View{
         .background(Color("DarkBlue"))
         .clipShape(RoundedRectangle(cornerRadius: 10.0))
     }
+    
 }
 #Preview {
-    SignUpView3()
+    SignUpView()
     //InjuryForm()
 }
 

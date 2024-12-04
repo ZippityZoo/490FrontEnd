@@ -132,7 +132,8 @@ struct WelcomeView: View {
     }
     
     var progressView: some View {
-            ZStack {
+        ZStack {
+            if !pview.isEmpty {
                 pview[currentIndex]
                     .id(currentIndex)
                     .transition(.asymmetric(
@@ -141,11 +142,24 @@ struct WelcomeView: View {
                     ))
                     .animation(.easeInOut(duration: 0.8), value: currentIndex)
                     .onAppear {
-                        currentIndex = Int.random(in: 0..<pview.count)
+                        // Ensure we only update currentIndex if pview is not empty
+                        if !pview.isEmpty {
+                            currentIndex = Int.random(in: 0..<pview.count)
+                        }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 25))
+            } else {
+                // Placeholder or fallback view when pview is empty
+                Text("Loading...")
+                    .foregroundColor(Color("Cream"))
+                    .font(.title)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color("DarkBlue"))
+                    .clipShape(RoundedRectangle(cornerRadius: 25))
             }
+        }
     }
+
     
     
     func workoutPreviewView() -> some View {

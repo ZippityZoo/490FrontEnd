@@ -19,7 +19,7 @@ struct LoginView: View {
                     
                     ZStack {
                         Color("DarkBlue")
-                            .cornerRadius(25) // Rounded corners for the blue section
+                            .cornerRadius(25) 
                             .padding(.horizontal, 20)
                         
                         VStack(spacing: 20) {
@@ -32,7 +32,7 @@ struct LoginView: View {
                                 .padding(.bottom, 20)
                             
                             VStack(spacing: 15) {
-                                TextField("Enter Email", text: $email)
+                                TextField("Enter Username", text: $email)
                                     .padding()
                                     .background(Color("Cream").opacity(0.8))
                                     .cornerRadius(10)

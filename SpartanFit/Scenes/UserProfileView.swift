@@ -4,9 +4,10 @@ struct UserProfileView: View {
     @EnvironmentObject var userData: UserData
     @State private var isEditingProfile = false
     @State private var isEditingInjury = false
-    @State var injuries:[Injury] = []
-    @State var listedInjuries:[String] = []
+    @State var injuries: [Injury] = []
+    @State var listedInjuries: [String] = []
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
     var body: some View {
         ZStack {
             Color("Cream").ignoresSafeArea()
@@ -16,7 +17,6 @@ struct UserProfileView: View {
                 
                 HStack {
                     Button(action: {
-                        // Logout action: navigate back to LoginView
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Logout")
@@ -46,7 +46,6 @@ struct UserProfileView: View {
                         userInfoRow(label: "First Name", value: user.fname)
                         userInfoRow(label: "Last Name", value: user.lname)
                         userInfoRow(label: "Username", value: user.username)
-                        //userInfoRow(label: "Password", value: "••••••••")
                         userInfoRow(label: "Email", value: user.email)
                         userInfoRow(label: "Fitness Goal", value: user.fit_goal)
                         userInfoRow(label: "Experience Level", value: user.exp_level)
@@ -57,16 +56,13 @@ struct UserProfileView: View {
                     .cornerRadius(15)
                     .padding(.horizontal)
                 }
-                HStack{
-                    Spacer()
-                    
-                }
+                
                 if let user = userData.user {
                     VStack(alignment: .leading, spacing: 15) {
                         HStack {
                             Text("Injury Information")
                                 .font(.headline)
-                                .foregroundColor(Color("Cream"))
+                                .foregroundColor(Color("Cream")) // Text color consistent with the profile section
                             
                             Spacer()
                             
@@ -77,45 +73,59 @@ struct UserProfileView: View {
                                     .bold()
                                     .padding(10)
                                     .background(Color("Cream").opacity(0.1))
-                                    .foregroundColor(Color("Cream"))
+                                    .foregroundColor(Color("Cream")) // Button text color consistent with the profile section
                                     .cornerRadius(8)
                             }
                         }
                         .padding(.horizontal)
                         
-                        VStack(alignment: .leading, spacing: 10) {
-                            ForEach(userData.injuries, id: \.self) { injury in
-                                VStack(alignment: .leading, spacing: 8) {
-                                    userInfoRow(label: "Muscle Name", value: injury.muscle)
-                                    userInfoRow(label: "Muscle Position", value: injury.position)
-                                    userInfoRow(label: "Injury Intensity", value: injury.intensity)
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 10) {
+                                if userData.injuries.isEmpty {
+                                    Text("No injuries listed. Click 'Edit Injuries' to add.")
+                                        .foregroundColor(Color("Cream")) // Placeholder text color matches the section
+                                        .padding()
+                                        .background(Color("DarkBlue")) // Background for placeholder matches injury cards
+                                        .cornerRadius(10)
+                                } else {
+                                    ForEach(userData.injuries, id: \.self) { injury in
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            userInfoRow(label: "Muscle Name", value: injury.muscle)
+                                            userInfoRow(label: "Muscle Position", value: injury.position)
+                                            userInfoRow(label: "Injury Intensity", value: injury.intensity)
+                                        }
+                                        .padding(8)
+                                        .background(Color("DarkBlue")) // Background matches the injury section design
+                                        .cornerRadius(10)
+                                    }
                                 }
-                                .background(Color("DarkBlue"))
-                                .cornerRadius(10)
                             }
                         }
+                        .frame(height: 150) // Fixed height for the scroll box
                         .padding(.horizontal)
+                        .background(Color("DarkBlue")) // Scroll view background consistent with injury cards
+                        .cornerRadius(15)
                     }
                     .padding()
-                    .background(Color("DarkBlue"))
+                    .background(Color("DarkBlue")) // Background for the entire injury section matches the profile
                     .cornerRadius(15)
                     .padding(.horizontal)
                 }
+
                 
+                Spacer() // Push the button to the bottom
+                
+                NavigationLink(destination: UserPreferencesView()) {
+                    Text("View Preferences")
+                        .bold()
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color("DarkBlue"))
+                        .foregroundColor(Color("Cream"))
+                        .cornerRadius(10)
+                }
+                .padding(.horizontal)
             }
-            
-            NavigationLink(destination: UserPreferencesView()) {
-                Text("View Preferences")
-                    .bold()
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color("DarkBlue"))
-                    .foregroundColor(Color("Cream"))
-                    .cornerRadius(10)
-            }
-            .padding(.horizontal, -10)
-            
-            Spacer()
         }
         .navigationTitle("User Profile")
         .sheet(isPresented: $isEditingProfile) {
@@ -125,11 +135,12 @@ struct UserProfileView: View {
         .sheet(isPresented: $isEditingInjury) {
             SelectInjuries(isPresented: $isEditingInjury,
                            injuries: $userData.injuries,
-                           listedInjuries: .constant([]))
+                           listedInjuries: $listedInjuries)
         }
         .environmentObject(userData)
     }
 }
+
 
 func userInfoRow(label: String, value: String) -> some View {
     HStack {

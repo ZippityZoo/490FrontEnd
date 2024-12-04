@@ -59,43 +59,49 @@ struct UserProfileView: View {
                 }
                 HStack{
                     Spacer()
-                    Button(action: {
-                        isEditingInjury.toggle()
-                    }) {
-                        Text("Edit Injury")
-                            .bold()
-                            .padding(10)
-                            .background(Color("DarkBlue"))
-                            .foregroundColor(Color("Cream"))
-                            .cornerRadius(10)
-                    }.padding(.trailing,20)
+                    
                 }
                 if let user = userData.user {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Injury Information")
-                            .font(.headline)
-                            .foregroundColor(Color("Cream"))
-                        List{
-                            userInfoRow(label: "Muscle ID", value: user.muscle_id?.description ?? "N/A").listRowBackground(Color("DarkBlue"))
-                            userInfoRow(label: "Muscle Name", value: user.muscle_name ?? "N/A").listRowBackground(Color("DarkBlue"))
-                            userInfoRow(label: "Muscle Position", value: user.muscle_position ?? "N/A").listRowBackground(Color("DarkBlue"))
-                            userInfoRow(label: "Injury Intensity", value: user.injury_intensity ?? "N/A").listRowBackground(Color("DarkBlue"))
-                            ForEach(injuries,id:\.self){ injury in
-                                userInfoRow(label: "Muscle Name", value:injury.muscle)
-                                userInfoRow(label: "Muscle Position", value:injury.position)
-                                userInfoRow(label: "Injurt Intensity", value:injury.intensity)
+                    VStack(alignment: .leading, spacing: 15) {
+                        HStack {
+                            Text("Injury Information")
+                                .font(.headline)
+                                .foregroundColor(Color("Cream"))
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                isEditingInjury.toggle()
+                            }) {
+                                Text("Edit Injuries")
+                                    .bold()
+                                    .padding(10)
+                                    .background(Color("Cream").opacity(0.1))
+                                    .foregroundColor(Color("Cream"))
+                                    .cornerRadius(8)
                             }
-                            .listRowBackground(Color("DarkBlue"))
                         }
-                        .background(Color("DarkBlue"))
-                        .scrollContentBackground(.hidden)
-                        .listRowBackground(Color("DarkBlue"))
-                        .frame(height: 200)
+                        .padding(.horizontal)
+
+                        VStack(alignment: .leading, spacing: 10) {
+                            ForEach(injuries, id: \.self) { injury in
+                                VStack(alignment: .leading, spacing: 8) {
+                                    userInfoRow(label: "Muscle Name", value: injury.muscle)
+                                    userInfoRow(label: "Muscle Position", value: injury.position)
+                                    userInfoRow(label: "Injury Intensity", value: injury.intensity)
+                                }
+                                //.padding()
+                                .background(Color("DarkBlue"))
+                                .cornerRadius(10)
+                            }
+                        }
+                        .padding(.horizontal)
                     }
                     .padding()
                     .background(Color("DarkBlue"))
                     .cornerRadius(15)
                     .padding(.horizontal)
+
                 }
                 
                 NavigationLink(destination: UserPreferencesView()) {
@@ -170,8 +176,8 @@ struct SelectInjuries: View {
                     let _ = displayMuscle()
                     Text("Injuries").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().padding(.top,10)
                     if(shown <= 0){
-                        Text("Please submit you injuries below")
-                        Text("Click on Injury to remove it")
+                        Text("Please submit your injuries below")
+                        Text("Click on an injury to remove it")
                     }
                     Divider()
                     ForEach(listedInjuries.indices,id:\.self){injury in
@@ -240,7 +246,7 @@ struct SelectInjuries: View {
             ZStack{
                 VStack(alignment: .leading){
                     HStack{
-                        Text("Muscle:").foregroundStyle(.white).bold().font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                        Text("Muscle:").foregroundStyle(.white).bold().font(.subheadline)
                         Spacer()
                         Picker("Select an option", selection: $muscleSelection) {
                             ForEach(muscles, id: \.self) { option in
@@ -248,12 +254,12 @@ struct SelectInjuries: View {
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
-                        .padding()
+                        .padding(-1)
                         .foregroundStyle(.black)
                         .background(Color.gray.opacity(0.2))
                     }
                     HStack{
-                        Text("Position:").foregroundStyle(.white).bold().font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                        Text("Position:").foregroundStyle(.white).bold().font(.subheadline)
                         Spacer()
                         Picker("Select an option", selection: $pos) {
                             ForEach(mposition, id: \.self) { option in
@@ -261,7 +267,7 @@ struct SelectInjuries: View {
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
-                        .padding()
+                        .padding(-1)
                         .foregroundStyle(.black)
                         .background(Color.gray.opacity(0.2))
                         .scaledToFill()
@@ -269,7 +275,7 @@ struct SelectInjuries: View {
                     }
                     HStack{
                         Text("Injury Intensity:")
-                            .foregroundStyle(.white).bold().font(.title)
+                            .foregroundStyle(.white).bold().font(.subheadline)
                         Spacer()
                         Picker("Select an option", selection: $intensitySelection) {
                             ForEach(intensityc, id: \.self) { option in
@@ -277,7 +283,7 @@ struct SelectInjuries: View {
                             }
                         }
                         .pickerStyle(MenuPickerStyle())
-                        .padding()
+                        .padding(-1)
                         .foregroundStyle(.black)
                         .background(Color.gray.opacity(0.2))
                     }

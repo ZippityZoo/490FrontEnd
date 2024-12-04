@@ -11,11 +11,13 @@ import Combine
 class UserData: ObservableObject {
     @Published var user: User?
     @Published var preferences: UserPreference?
+    @Published var injuries: [Injury] = [] // New property for injuries
 
-    init(user: User? = nil, userPreference: UserPreference? = nil) {
-            self.user = user
-            self.preferences = userPreference
-        }
+    init(user: User? = nil, userPreference: UserPreference? = nil, injuries: [Injury] = []) {
+        self.user = user
+        self.preferences = userPreference
+        self.injuries = injuries
+    }
     
     func updateUser(_ user: User) {
         self.user = user
@@ -24,7 +26,16 @@ class UserData: ObservableObject {
     func updateUserPreference(_ preference: UserPreference) {
         self.preferences = preference
     }
+    
+    func addInjury(_ injury: Injury) {
+        self.injuries.append(injury)
+    }
+    
+    func removeInjury(at index: Int) {
+        self.injuries.remove(at: index)
+    }
 }
+
 
 struct UserProfileResponse: Codable {
     let status: String

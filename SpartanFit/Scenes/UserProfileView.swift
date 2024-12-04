@@ -7,14 +7,14 @@ struct UserProfileView: View {
     @State var injuries: [Injury] = []
     @State var listedInjuries: [String] = []
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    
+
     var body: some View {
         ZStack {
             Color("Cream").ignoresSafeArea()
-            
+
             VStack(alignment: .leading, spacing: 20) {
                 Spacer()
-                
+
                 HStack {
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
@@ -26,7 +26,7 @@ struct UserProfileView: View {
                             .foregroundColor(Color("Cream"))
                             .cornerRadius(10)
                     }
-                    
+
                     Spacer()
                     Button(action: {
                         isEditingProfile.toggle()
@@ -40,7 +40,7 @@ struct UserProfileView: View {
                     }
                 }
                 .padding(.horizontal)
-                
+
                 if let user = userData.user {
                     VStack(alignment: .leading, spacing: 10) {
                         userInfoRow(label: "First Name", value: user.fname)
@@ -56,16 +56,16 @@ struct UserProfileView: View {
                     .cornerRadius(15)
                     .padding(.horizontal)
                 }
-                
+
                 if let user = userData.user {
                     VStack(alignment: .leading, spacing: 15) {
                         HStack {
                             Text("Injury Information")
                                 .font(.headline)
                                 .foregroundColor(Color("Cream")) // Text color consistent with the profile section
-                            
+
                             Spacer()
-                            
+
                             Button(action: {
                                 isEditingInjury.toggle()
                             }) {
@@ -78,7 +78,7 @@ struct UserProfileView: View {
                             }
                         }
                         .padding(.horizontal)
-                        
+
                         ScrollView {
                             VStack(alignment: .leading, spacing: 10) {
                                 if userData.injuries.isEmpty {
@@ -110,11 +110,12 @@ struct UserProfileView: View {
                     .background(Color("DarkBlue")) // Background for the entire injury section matches the profile
                     .cornerRadius(15)
                     .padding(.horizontal)
+
                 }
 
-                
+
                 Spacer() // Push the button to the bottom
-                
+
                 NavigationLink(destination: UserPreferencesView()) {
                     Text("View Preferences")
                         .bold()
@@ -127,10 +128,17 @@ struct UserProfileView: View {
                 .padding(.horizontal)
             }
         }
-        .navigationTitle("User Profile")
-        .sheet(isPresented: $isEditingProfile) {
-            EditProfileView(isPresented: $isEditingProfile)
-                .environmentObject(userData)
+        .padding(8)
+        .background(Color.gray.opacity(0.15))
+        .cornerRadius(10)
+    }
+
+    func dateFormatter(_ dateString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        if let date = formatter.date(from: dateString) {
+            formatter.dateStyle = .long
+            return formatter.string(from: date)
         }
         .sheet(isPresented: $isEditingInjury) {
             SelectInjuries(isPresented: $isEditingInjury,
@@ -167,7 +175,7 @@ func dateFormatter(_ dateString: String) -> String {
 }
 
 struct SelectInjuries: View {
-    
+
     @State var shown:Int = 0
     @State var showForm:Bool = false
     @State var muscleSelection:String = muscles[0]
@@ -199,7 +207,7 @@ struct SelectInjuries: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 10.0))
                                 .foregroundStyle(.white)
                         })
-                        
+
                     }
                     if(!showForm){
                         Button (action:{
@@ -213,7 +221,7 @@ struct SelectInjuries: View {
                         InjuryForm
                             .scaledToFit()
                             .animation(.easeInOut, value: 2)
-                        
+
                     }
                     Spacer()
                     Divider()
@@ -221,7 +229,7 @@ struct SelectInjuries: View {
                         Spacer()
                         Button (action:{
                             isPresented.toggle()
-                            
+
                         }, label: {
                             Text("Finish").foregroundStyle(.black).bold()
                         })
@@ -245,81 +253,81 @@ struct SelectInjuries: View {
                                     print(name)
                                 })
                         }
-                        
+
                     }
                 }
             }
         }
     }
     var InjuryForm:  some View{
-        ZStack{
-            VStack(alignment: .leading){
-                HStack{
-                    Text("Muscle:").foregroundStyle(.white).bold().font(.subheadline)
-                    Spacer()
-                    Picker("Select an option", selection: $muscleSelection) {
-                        ForEach(muscles, id: \.self) { option in
-                            Text(option).tag(option)
+            ZStack{
+                VStack(alignment: .leading){
+                    HStack{
+                        Text("Muscle:").foregroundStyle(.white).bold().font(.subheadline)
+                        Spacer()
+                        Picker("Select an option", selection: $muscleSelection) {
+                            ForEach(muscles, id: \.self) { option in
+                                Text(option).tag(option)
+                            }
                         }
+                        .pickerStyle(MenuPickerStyle())
+                        .padding(-1)
+                        .foregroundStyle(.black)
+                        .background(Color.gray.opacity(0.2))
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding(-1)
-                    .foregroundStyle(.black)
-                    .background(Color.gray.opacity(0.2))
-                }
-                HStack{
-                    Text("Position:").foregroundStyle(.white).bold().font(.subheadline)
-                    Spacer()
-                    Picker("Select an option", selection: $pos) {
-                        ForEach(mposition, id: \.self) { option in
-                            Text(option).tag(option)
+                    HStack{
+                        Text("Position:").foregroundStyle(.white).bold().font(.subheadline)
+                        Spacer()
+                        Picker("Select an option", selection: $pos) {
+                            ForEach(mposition, id: \.self) { option in
+                                Text(option).tag(option)
+                            }
                         }
+                        .pickerStyle(MenuPickerStyle())
+                        .padding(-1)
+                        .foregroundStyle(.black)
+                        .background(Color.gray.opacity(0.2))
+                        .scaledToFill()
+
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding(-1)
-                    .foregroundStyle(.black)
-                    .background(Color.gray.opacity(0.2))
-                    .scaledToFill()
-                    
-                }
-                HStack{
-                    Text("Injury Intensity:")
-                        .foregroundStyle(.white).bold().font(.subheadline)
-                    Spacer()
-                    Picker("Select an option", selection: $intensitySelection) {
-                        ForEach(intensityc, id: \.self) { option in
-                            Text(option).tag(option)
+                    HStack{
+                        Text("Injury Intensity:")
+                            .foregroundStyle(.white).bold().font(.subheadline)
+                        Spacer()
+                        Picker("Select an option", selection: $intensitySelection) {
+                            ForEach(intensityc, id: \.self) { option in
+                                Text(option).tag(option)
+                            }
                         }
+                        .pickerStyle(MenuPickerStyle())
+                        .padding(-1)
+                        .foregroundStyle(.black)
+                        .background(Color.gray.opacity(0.2))
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding(-1)
-                    .foregroundStyle(.black)
-                    .background(Color.gray.opacity(0.2))
+                    HStack{
+                        Spacer()
+                        //on submit return a view of the injury
+                        Button(
+                            action:{
+                                print("submit")
+                                listedInjuries.append("\(muscleSelection + "-" + pos )")//+ " (" +  intensitySelection))"
+                                intensity.append("\(intensitySelection))")
+                                showForm.toggle()
+                                createInjury()
+                                //imgparser(muscle: muscleSelection, position: intensitySelection)
+                            },label: {
+                                Text("Submit")
+                                    .padding()
+                                    .background(Color.gray.opacity(0.2))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                            }
+                        )
+                    }.padding()
                 }
-                HStack{
-                    Spacer()
-                    //on submit return a view of the injury
-                    Button(
-                        action:{
-                            print("submit")
-                            listedInjuries.append("\(muscleSelection + "-" + pos )")//+ " (" +  intensitySelection))"
-                            intensity.append("\(intensitySelection))")
-                            showForm.toggle()
-                            createInjury()
-                            //imgparser(muscle: muscleSelection, position: intensitySelection)
-                        },label: {
-                            Text("Submit")
-                                .padding()
-                                .background(Color.gray.opacity(0.2))
-                                .clipShape(RoundedRectangle(cornerRadius: 10.0))
-                        }
-                    )
-                }.padding()
             }
-        }
-        .padding(20)
-        .background(Color("DarkBlue"))
-        .clipShape(RoundedRectangle(cornerRadius: 10.0))
+            .padding(20)
+            .background(Color("DarkBlue"))
+            .clipShape(RoundedRectangle(cornerRadius: 10.0))
     }
     func displayMuscle(){
         for listedInjury in listedInjuries {
@@ -336,11 +344,10 @@ struct Injury: Hashable{
     var muscle:String
     var position:String
     var intensity:String
-    
+
 }
 
 #Preview {
     UserProfileView()
         .environmentObject(UserData(user: sampleUser))
 }
-

@@ -224,7 +224,9 @@ struct BarChartSubView: View {
                             )
                     }
                 }.onAppear{
-                    UIDevice.forceRotation(to: UIInterfaceOrientation.landscapeLeft)
+                    //UIDevice.forceRotation(to: UIInterfaceOrientation.landscapeLeft)
+                    print(start)
+                    print(end)
                 /*
                  NotificationCenter.default.addObserver(
                  forName: UIDevice.orientationDidChangeNotification,
@@ -236,7 +238,7 @@ struct BarChartSubView: View {
                  */
                 }
                 .onDisappear{
-                    UIDevice.forceRotation(to: UIInterfaceOrientation.portrait)
+                    //UIDevice.forceRotation(to: UIInterfaceOrientation.portrait)
                 }
         }
     }
@@ -295,7 +297,12 @@ struct BarChartSubView: View {
                         .onAppear{
                             //let _ = print(start)
                             //let _ = print(end)
-                            end = getLastDayOfSpecificMonth(date: start)
+                            if(!isrecent){
+                                end = getLastDayOfSpecificMonth(date: start)
+                            }else{
+                                end = Date.now
+                                start = end.addingTimeInterval(86400 * -7)
+                            }
                             UIDevice.forceRotation(to: .landscapeLeft)
                         }
                         .onDisappear{

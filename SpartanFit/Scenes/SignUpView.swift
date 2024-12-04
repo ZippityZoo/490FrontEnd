@@ -101,7 +101,7 @@ struct SignUpViewMain: View {
                             user?.lname = lname
                             user?.email = email
                             user?.exp_level = ""
-                            user?.fit_goal
+                            user?.fit_goal = ""
                         }
                 }
             }

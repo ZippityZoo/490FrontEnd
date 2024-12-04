@@ -3,8 +3,10 @@ import SwiftUI
 struct UserProfileView: View {
     @EnvironmentObject var userData: UserData
     @State private var isEditingProfile = false
+    @State private var isEditingInjury = false
+    @State var injuries:[Injury] = []
+    @State var listedInjuries:[String] = []
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    
     var body: some View {
         ZStack {
             Color("Cream").ignoresSafeArea()
@@ -55,17 +57,40 @@ struct UserProfileView: View {
                     .cornerRadius(15)
                     .padding(.horizontal)
                 }
-                
+                HStack{
+                    Spacer()
+                    Button(action: {
+                        isEditingInjury.toggle()
+                    }) {
+                        Text("Edit Injury")
+                            .bold()
+                            .padding(10)
+                            .background(Color("DarkBlue"))
+                            .foregroundColor(Color("Cream"))
+                            .cornerRadius(10)
+                    }.padding(.trailing,20)
+                }
                 if let user = userData.user {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Injury Information")
                             .font(.headline)
                             .foregroundColor(Color("Cream"))
-                        
-                        userInfoRow(label: "Muscle ID", value: user.muscle_id?.description ?? "N/A")
-                        userInfoRow(label: "Muscle Name", value: user.muscle_name ?? "N/A")
-                        userInfoRow(label: "Muscle Position", value: user.muscle_position ?? "N/A")
-                        userInfoRow(label: "Injury Intensity", value: user.injury_intensity ?? "N/A")
+                        List{
+                            userInfoRow(label: "Muscle ID", value: user.muscle_id?.description ?? "N/A").listRowBackground(Color("DarkBlue"))
+                            userInfoRow(label: "Muscle Name", value: user.muscle_name ?? "N/A").listRowBackground(Color("DarkBlue"))
+                            userInfoRow(label: "Muscle Position", value: user.muscle_position ?? "N/A").listRowBackground(Color("DarkBlue"))
+                            userInfoRow(label: "Injury Intensity", value: user.injury_intensity ?? "N/A").listRowBackground(Color("DarkBlue"))
+                            ForEach(injuries,id:\.self){ injury in
+                                userInfoRow(label: "Muscle Name", value:injury.muscle)
+                                userInfoRow(label: "Muscle Position", value:injury.position)
+                                userInfoRow(label: "Injurt Intensity", value:injury.intensity)
+                            }
+                            .listRowBackground(Color("DarkBlue"))
+                        }
+                        .background(Color("DarkBlue"))
+                        .scrollContentBackground(.hidden)
+                        .listRowBackground(Color("DarkBlue"))
+                        .frame(height: 200)
                     }
                     .padding()
                     .background(Color("DarkBlue"))
@@ -91,6 +116,14 @@ struct UserProfileView: View {
                 EditProfileView(isPresented: $isEditingProfile)
                     .environmentObject(userData)
             }
+            .sheet(isPresented: $isEditingInjury) {
+                SelectInjuries(isPresented: $isEditingInjury,
+                               injuries: $injuries,
+                               listedInjuries: $listedInjuries
+                )
+                    .environmentObject(userData)
+            }
+            
         }
     }
     
@@ -117,6 +150,178 @@ struct UserProfileView: View {
         }
         return dateString
     }
+}
+struct SelectInjuries: View {
+    
+    @State var shown:Int = 0
+    @State var showForm:Bool = false
+    @State var muscleSelection:String = muscles[0]
+    @State var pos:String = mposition[0]
+    @State var intensitySelection:String = intensityc[0]
+    @State var intensity:[String] = []
+    @Binding var isPresented:Bool
+    @Binding var injuries:[Injury]
+    @Binding var listedInjuries:[String]
+    var body: some View{
+        NavigationView{
+            ZStack{
+                Color("Cream").ignoresSafeArea()
+                VStack{
+                    let _ = displayMuscle()
+                    Text("Injuries").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/).bold().padding(.top,10)
+                    if(shown <= 0){
+                        Text("Please submit you injuries below")
+                        Text("Click on Injury to remove it")
+                    }
+                    Divider()
+                    ForEach(listedInjuries.indices,id:\.self){injury in
+                        Button(action: {
+                            listedInjuries.remove(at: injury)
+                        }, label: {
+                            Text(listedInjuries[injury])
+                                .padding(5)
+                                .background(Color("DarkBlue"))
+                                .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                                .foregroundStyle(.white)
+                        })
+                        
+                    }
+                    if(!showForm){
+                        Button (action:{
+                            showForm.toggle()
+                            shown += 1
+                        },label:{
+                            Text("Add Injury")
+                        })
+                    }
+                    else{
+                        InjuryForm
+                            .scaledToFit()
+                            .animation(.easeInOut, value: 2)
+                        
+                    }
+                    Spacer()
+                    Divider()
+                    HStack{
+                        Spacer()
+                        Button (action:{
+                            isPresented.toggle()
+                            
+                        }, label: {
+                            Text("Finish").foregroundStyle(.black).bold()
+                        })
+                        .padding(5)
+                        .background(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                        .padding(.trailing,10)
+                    }
+                    Spacer()
+                    ZStack{
+                        Image("0BASE").resizable(capInsets: EdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 0.0), resizingMode: .stretch).cornerRadius(10).aspectRatio(contentMode:.fit)
+                            .onHover(perform: { hovering in
+                                let _ = print("on body")
+                            }).onTapGesture(perform:{_ in
+                                print("hi")
+                            }
+                            )
+                        ForEach(listedInjuries,id:\.self){ name in
+                            Image(name).resizable(capInsets: EdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 0.0), resizingMode: .stretch).cornerRadius(10).aspectRatio(contentMode:.fit)
+                                .onTapGesture(perform:{_ in
+                                    print(name)
+                                })
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+    var InjuryForm:  some View{
+            ZStack{
+                VStack(alignment: .leading){
+                    HStack{
+                        Text("Muscle:").foregroundStyle(.white).bold().font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                        Spacer()
+                        Picker("Select an option", selection: $muscleSelection) {
+                            ForEach(muscles, id: \.self) { option in
+                                Text(option).tag(option)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .padding()
+                        .foregroundStyle(.black)
+                        .background(Color.gray.opacity(0.2))
+                    }
+                    HStack{
+                        Text("Position:").foregroundStyle(.white).bold().font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                        Spacer()
+                        Picker("Select an option", selection: $pos) {
+                            ForEach(mposition, id: \.self) { option in
+                                Text(option).tag(option)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .padding()
+                        .foregroundStyle(.black)
+                        .background(Color.gray.opacity(0.2))
+                        .scaledToFill()
+                        
+                    }
+                    HStack{
+                        Text("Injury Intensity:")
+                            .foregroundStyle(.white).bold().font(.title)
+                        Spacer()
+                        Picker("Select an option", selection: $intensitySelection) {
+                            ForEach(intensityc, id: \.self) { option in
+                                Text(option).tag(option)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .padding()
+                        .foregroundStyle(.black)
+                        .background(Color.gray.opacity(0.2))
+                    }
+                    HStack{
+                        Spacer()
+                        //on submit return a view of the injury
+                        Button(
+                            action:{
+                                print("submit")
+                                listedInjuries.append("\(muscleSelection + "-" + pos )")//+ " (" +  intensitySelection))"
+                                intensity.append("\(intensitySelection))")
+                                showForm.toggle()
+                                createInjury()
+                                //imgparser(muscle: muscleSelection, position: intensitySelection)
+                            },label: {
+                                Text("Submit")
+                                    .padding()
+                                    .background(Color.gray.opacity(0.2))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10.0))
+                            }
+                        )
+                    }.padding()
+                }
+            }
+            .padding(20)
+            .background(Color("DarkBlue"))
+            .clipShape(RoundedRectangle(cornerRadius: 10.0))
+    }
+    func displayMuscle(){
+        for listedInjury in listedInjuries {
+            if let filename = listedInjury.firstIndex(of: "("){
+                print(filename)
+            }
+        }
+    }
+    func createInjury(){
+        injuries.append(Injury(muscle: muscleSelection, position: pos, intensity: intensitySelection))
+    }
+}
+struct Injury: Hashable{
+    var muscle:String
+    var position:String
+    var intensity:String
+    
 }
 
 #Preview {

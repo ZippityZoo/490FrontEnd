@@ -40,7 +40,7 @@ struct WelcomeView: View {
                                 Color("DarkBlue")
                                     .frame(height: 275)
                                     .clipShape(RoundedRectangle(cornerRadius: 25))
-                                Text("No History, Let's Get Started Below")
+                                Text("Loading")
                                     .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                                     .foregroundStyle(Color("Cream"))
                             }
@@ -54,12 +54,15 @@ struct WelcomeView: View {
                 .padding()
                 .onAppear {
                     refreshWorkoutData()
-                    noHistory()
-                    //if(!past){
+                    loadData()
+                    
+                    print(past)
+                    if(!past){
                         exnames = pickRelevant()
-                    //}
+                    }
                     pview = matchingHistory()
-                    //print(exnames)
+                    print(pview)
+                    print(workoutHistoryData.performance)
                 }
                 .navigationBarBackButtonHidden(true)
             }
@@ -82,9 +85,16 @@ struct WelcomeView: View {
              AnyView(BarChartView(workout: "Bench Press", setData: DBSets.setsTest2, welcomeView: true).id(UUID())),
              AnyView(BarChartView(workout: "Deadlift", setData: DBSets.setsTest, welcomeView: true).id(UUID()))
              */
-            AnyView(BarChartSubView(exname:"Bench",welcomeView: true).environmentObject(workoutHistoryData)),
-            AnyView(BarChartSubView(exname:"Squat",welcomeView: true).environmentObject(workoutHistoryData))
+            AnyView(BarChartSubView(exname:exnames[pickRandExname()],welcomeView: true).environmentObject(workoutHistoryData)),
         ]
+    }
+    func pickRandExname()->Int{
+        let range = exnames.count - 1
+        var n = 0
+        if range > 0 {
+            n = Int.random(in: 0...range)
+        }
+        return n
     }
     
     // MARK: - Subviews
@@ -190,10 +200,11 @@ struct WelcomeView: View {
         if let historycheck  =  workoutHistoryData.performance {
             if(historycheck.count > 0){
                 self.past = true
+                print(self.past)
                 return
             }
         }
-        self.past = false
+        past = false
     }
     func pickRelevant() -> [String]{
         var exnames:[String] = []
@@ -226,6 +237,11 @@ struct WelcomeView: View {
             //}
         }
         return progview
+    }
+    func loadData (){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+            noHistory()
+        }
     }
     
 }

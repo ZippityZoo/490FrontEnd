@@ -61,7 +61,7 @@ struct LoginView: View {
                                     .shadow(radius: 5)
                             }
 
-                            NavigationLink(destination: SignUpView()) {
+                            NavigationLink(destination: SignUpViewMain()) {
                                 Text("Don't have an account? Sign Up")
                                     .foregroundColor(Color("Cream"))
                                     .font(.headline)
